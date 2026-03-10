@@ -1,8 +1,11 @@
 package com.softropic.sendam.security.api;
 
 
+import com.softropic.sendam.client.contract.exception.CancelNotAllowedException;
 import com.softropic.sendam.client.contract.exception.DuplicateTransactionIdException;
 import com.softropic.sendam.client.contract.exception.InsufficientBalanceException;
+import com.softropic.sendam.client.contract.exception.RateLimitExceededException;
+import com.softropic.sendam.client.contract.exception.SmsValidationException;
 import com.softropic.sendam.client.contract.exception.TopupAlreadyProcessedException;
 import jakarta.persistence.LockTimeoutException;
 import org.springframework.dao.CannotAcquireLockException;
@@ -385,6 +388,50 @@ public class ApiAdvice {
     public ErrorDto topupAlreadyProcessedHandler(final TopupAlreadyProcessedException exception) {
         final String defaultMsg = "This top-up has already been processed and cannot be modified.";
         return logErrorAndReturnDTO(exception, defaultMsg, "TOPUP_ALREADY_PROCESSED");
+    }
+
+    /**
+     * Handles SmsValidationException thrown by SmsService for input validation failures:
+     * INVALID_PHONE_NUMBER, INVALID_SENDER_ID, INVALID_SCHEDULE_TIME.
+     *
+     * @param exception SmsValidationException with the specific SmsError code
+     * @return 400 Bad Request with error_code from SmsError (e.g. INVALID_PHONE_NUMBER)
+     */
+    @ExceptionHandler(SmsValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorDto smsValidationHandler(final SmsValidationException exception) {
+        final String defaultMsg = "SMS validation failed.";
+        final String errorCode = exception.getErrorCode() != null ? exception.getErrorCode().getErrorCode() : "SMS_VALIDATION_ERROR";
+        return logErrorAndReturnDTO(exception, defaultMsg, errorCode);
+    }
+
+    /**
+     * Handles CancelNotAllowedException thrown when a client attempts to cancel
+     * an SMS request that is not in ACCEPTED status or is not a scheduled request.
+     *
+     * @param exception CancelNotAllowedException
+     * @return 409 Conflict with error_code CANCEL_NOT_ALLOWED
+     */
+    @ExceptionHandler(CancelNotAllowedException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorDto cancelNotAllowedHandler(final CancelNotAllowedException exception) {
+        final String defaultMsg = "This SMS request cannot be cancelled.";
+        return logErrorAndReturnDTO(exception, defaultMsg, "CANCEL_NOT_ALLOWED");
+    }
+
+    /**
+     * Handles RateLimitExceededException thrown when the recipient rate limit
+     * (1000 recipients/min) is exceeded. Returns HTTP 429 — distinct from
+     * AuthorizationException which continues to return HTTP 401.
+     *
+     * @param exception RateLimitExceededException
+     * @return 429 Too Many Requests with error_code TOO_MANY_REQUESTS
+     */
+    @ExceptionHandler(RateLimitExceededException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ErrorDto rateLimitExceededHandler(final RateLimitExceededException exception) {
+        final String defaultMsg = "Rate limit exceeded. Please retry after a short delay.";
+        return logErrorAndReturnDTO(exception, defaultMsg, "TOO_MANY_REQUESTS");
     }
 
     /**
