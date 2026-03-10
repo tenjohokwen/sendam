@@ -81,49 +81,47 @@
 
 ## Traceability
 
-Which phases cover which requirements. Updated by create-roadmap.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | — | Pending |
-| AUTH-02 | — | Pending |
-| AUTH-03 | — | Pending |
-| AUTH-04 | — | Pending |
-| AUTH-05 | — | Pending |
-| CREDIT-01 | — | Pending |
-| CREDIT-02 | — | Pending |
-| CREDIT-03 | — | Pending |
-| TOPUP-01 | — | Pending |
-| TOPUP-02 | — | Pending |
-| TOPUP-03 | — | Pending |
-| SMS-01 | — | Pending |
-| SMS-02 | — | Pending |
-| SMS-03 | — | Pending |
-| SMS-04 | — | Pending |
-| SMS-05 | — | Pending |
-| SMS-06 | — | Pending |
-| SMS-07 | — | Pending |
-| STATUS-01 | — | Pending |
-| STATUS-02 | — | Pending |
-| STATUS-03 | — | Pending |
-| WEBHOOK-01 | — | Pending |
-| WEBHOOK-02 | — | Pending |
-| WEBHOOK-03 | — | Pending |
-| APIKEY-01 | — | Pending |
-| APIKEY-02 | — | Pending |
-| APIKEY-03 | — | Pending |
-| PROVIDER-01 | — | Pending |
-| PROVIDER-02 | — | Pending |
-| PROVIDER-03 | — | Pending |
-| ADMIN-01 | — | Pending |
-| ADMIN-02 | — | Pending |
-| ADMIN-03 | — | Pending |
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Pending |
+| AUTH-05 | Phase 1 | Pending |
+| APIKEY-01 | Phase 1 | Pending |
+| APIKEY-02 | Phase 1 | Pending |
+| APIKEY-03 | Phase 1 | Pending |
+| ADMIN-01 | Phase 1 | Pending |
+| CREDIT-01 | Phase 2 | Pending |
+| CREDIT-02 | Phase 2 | Pending |
+| CREDIT-03 | Phase 2 | Pending |
+| TOPUP-01 | Phase 2 | Pending |
+| TOPUP-02 | Phase 2 | Pending |
+| TOPUP-03 | Phase 2 | Pending |
+| ADMIN-02 | Phase 2 | Pending |
+| ADMIN-03 | Phase 2 | Pending |
+| SMS-01 | Phase 3 | Pending |
+| SMS-02 | Phase 3 | Pending |
+| SMS-03 | Phase 3 | Pending |
+| SMS-04 | Phase 3 | Pending |
+| SMS-05 | Phase 3 | Pending |
+| SMS-06 | Phase 3 | Pending |
+| PROVIDER-01 | Phase 4 | Pending |
+| PROVIDER-02 | Phase 4 | Pending |
+| PROVIDER-03 | Phase 4 | Pending |
+| SMS-07 | Phase 4 | Pending |
+| STATUS-01 | Phase 4 | Pending |
+| STATUS-02 | Phase 4 | Pending |
+| STATUS-03 | Phase 4 | Pending |
+| WEBHOOK-01 | Phase 5 | Pending |
+| WEBHOOK-02 | Phase 5 | Pending |
+| WEBHOOK-03 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 33 total
-- Mapped to phases: 0 (run /gsd:create-roadmap)
-- Unmapped: 33 ⚠️
+- Mapped to phases: 33
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-10*
-*Last updated: 2026-03-10 after initial definition*
+*Last updated: 2026-03-10 after roadmap created*
