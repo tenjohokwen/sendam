@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 ## Current Position
 
 Phase: 3 of 5 (Send SMS)
-Plan: 03 of 3
-Status: Phase complete
-Last activity: 2026-03-10 — Completed 03-03-PLAN.md (SmsSchedulerService + cancelScheduled + DELETE /v1/sms/scheduled/{id})
+Plan: 04 of 4 (gap closure)
+Status: Phase complete (including gap closure)
+Last activity: 2026-03-10 — Completed 03-04-PLAN.md (typed exception classes, HTTP 400/409/429 gap closure)
 
 Progress: ██████████ 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
+- Total plans completed: 6
 - Average duration: 6 min
-- Total execution time: 31 min
+- Total execution time: 35 min
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: ██████████ 100%
 |-------|-------|-------|----------|
 | 01-client-api-key-auth | 3 | 15 min | 5 min |
 | 02-credit-ledger-topups | 2 | 16 min | 8 min |
-| 03-send-sms | 3 | 22 min | 7 min |
+| 03-send-sms | 4 | 26 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 8 min, 8 min, 8 min, 6 min, 8 min
+- Last 5 plans: 8 min, 8 min, 6 min, 8 min, 4 min
 - Trend: stable
 
 ## Accumulated Context
@@ -72,7 +72,10 @@ Recent decisions affecting current work:
 - SmsError does NOT duplicate INSUFFICIENT_CLIENT_BALANCE — ClientError.INSUFFICIENT_CLIENT_BALANCE is the canonical code; SmsError owns only SMS-specific codes
 - send_status column (not status) used for SMS lifecycle in send_request and send_request_recipient — avoids Hibernate mapping collision with inherited status from AbstractAuditingEntity
 - @RateLimited placed on SmsService.sendSms (service boundary) as well as SmsResource — authoritative enforcement regardless of caller
-- Recipient rate limit throws AuthorizationException(TOO_MANY_REQUESTS) → HTTP 401, matching existing RateLimitingAspect pattern; plan's "429" notation reflects intent, not a new exception type
+- Recipient rate limit now throws RateLimitExceededException (extends ApplicationException, NOT AuthorizationException) → HTTP 429; AuthorizationException -> 401 path unchanged
+- RateLimitExceededException must extend ApplicationException directly (not AuthorizationException) — inheriting AuthorizationException would inherit the 401 handler; sibling hierarchy enables independent 429 mapping
+- SmsValidationException carries SmsError as constructor parameter — single class handles INVALID_PHONE_NUMBER, INVALID_SENDER_ID, INVALID_SCHEDULE_TIME with distinct error_code values in responses
+- Three new ApiAdvice handlers: SmsValidationException -> 400, CancelNotAllowedException -> 409, RateLimitExceededException -> 429 (all after topupAlreadyProcessedHandler)
 - BalanceResponse.availableBalance() is the correct record accessor (not .balance()) — maps to @JsonProperty("available_balance")
 - getStatus pageSize clamped to 200 — matches CreditService.getLedgerHistory convention
 - fixedDelay (not fixedRate) on SmsSchedulerService — prevents overlapping scheduled dispatch runs
@@ -84,7 +87,7 @@ Recent decisions affecting current work:
 
 - LockTimeoutException handler now COMPLETE — added to ApiAdvice in 03-01 (LockTimeoutException + CannotAcquireLockException both handled)
 - AUTH-05 now COMPLETE — N-token tryConsume wired in SmsService.sendSms (03-02); @RateLimited(10/s) on both resource and service
-- Phase 3 (SMS-01 through SMS-06) now COMPLETE — all six requirements satisfied after 03-03
+- Phase 3 (SMS-01 through SMS-06) now COMPLETE — all six requirements satisfied + all HTTP status code gaps closed (03-04)
 
 ### Blockers/Concerns
 
@@ -92,6 +95,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-10T19:43:45Z
-Stopped at: Completed 03-03-PLAN.md (SmsSchedulerService + cancelScheduled + DELETE /v1/sms/scheduled/{id}) — Phase 3 complete
+Last session: 2026-03-10T19:13:30Z
+Stopped at: Completed 03-04-PLAN.md (typed exceptions + HTTP 400/409/429 gap closure) — Phase 3 complete including gap closure
 Resume file: None
