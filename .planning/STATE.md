@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 ## Current Position
 
 Phase: 4 of 5 (Provider Integration)
-Plan: 01 of 3
+Plan: 02 of 3
 Status: In progress
-Last activity: 2026-03-10 — Completed 04-01-PLAN.md (Nexah HTTP client, DTOs, circuit breaker, DR callback skeleton)
+Last activity: 2026-03-10 — Completed 04-02-PLAN.md (DR callback state machine, NexahDispatchService, stale recovery)
 
-Progress: ░░░░░░░░░░ (04-01 of 04 complete)
+Progress: ░░░░░░░░░░ (04-02 of 04 complete)
 
 ## Performance Metrics
 
@@ -30,10 +30,10 @@ Progress: ░░░░░░░░░░ (04-01 of 04 complete)
 | 01-client-api-key-auth | 3 | 15 min | 5 min |
 | 02-credit-ledger-topups | 2 | 16 min | 8 min |
 | 03-send-sms | 4 | 26 min | 7 min |
-| 04-provider-integration | 1 | 6 min | 6 min |
+| 04-provider-integration | 2 | 12 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 8 min, 6 min, 8 min, 4 min, 6 min
+- Last 5 plans: 6 min, 8 min, 4 min, 6 min, 6 min
 - Trend: stable
 
 ## Accumulated Context
@@ -88,6 +88,11 @@ Recent decisions affecting current work:
 - NexahSecurityConfiguration @Order(0) with securityMatcher('/v1/provider/**') — scoped narrowly so @Order(1) API key chain still guards /v1/sms/**, /v1/credits/**
 - DrCallbackResource is a deliberate stub in Plan 04-01 — Plan 04-02 wires DrCallbackService
 - checkAvailability() in NexahClient not wrapped by circuit breaker — it IS the probe, not the guarded operation
+- NexahDispatchService matches recipients by mobileNo (not array index) — safe for partial/reordered Nexah responses; unmatched stay ACCEPTED for stale recovery
+- finalizeParentIfAllTerminal extracted as shared helper called by processDr and forceFinalizeStaleSms — single debit() path, no duplication
+- Debit cap: Math.min(totalActualSegments, reservedCredits) — prevents IllegalArgumentException when actual > reserved; zero fallback uses reservedCredits conservatively
+- DR idempotency: TERMINAL_STATUSES EnumSet guards duplicate DR processing — status=1 returned without re-calling debit()
+- SmsService checks CircuitBreaker OPEN || HALF_OPEN before reserve() — no ledger entry created during provider outage (in-memory check, no network call)
 
 ### Pending Todos
 
@@ -101,6 +106,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-10T19:48:31Z
-Stopped at: Completed 04-01-PLAN.md (Nexah client infra + DR callback skeleton)
+Last session: 2026-03-10T19:57:52Z
+Stopped at: Completed 04-02-PLAN.md (DR callback state machine + NexahDispatchService + stale recovery)
 Resume file: None
