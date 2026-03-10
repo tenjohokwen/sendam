@@ -1,7 +1,9 @@
 package com.softropic.sendam.security.api;
 
 
+import com.softropic.sendam.client.contract.exception.DuplicateTransactionIdException;
 import com.softropic.sendam.client.contract.exception.InsufficientBalanceException;
+import com.softropic.sendam.client.contract.exception.TopupAlreadyProcessedException;
 import com.softropic.sendam.common.exception.ApplicationException;
 import com.softropic.sendam.common.exception.ResourceNotFoundException;
 import com.softropic.sendam.common.message.ErrorDto;
@@ -353,6 +355,34 @@ public class ApiAdvice {
     public ErrorDto insufficientBalanceHandler(final InsufficientBalanceException exception) {
         final String defaultMsg = "Insufficient credit balance to complete the operation.";
         return logErrorAndReturnDTO(exception, defaultMsg, "INSUFFICIENT_CLIENT_BALANCE");
+    }
+
+    /**
+     * Handles DuplicateTransactionIdException thrown when a client submits a top-up
+     * with a transaction_id that already exists for that client.
+     *
+     * @param exception DuplicateTransactionIdException
+     * @return 409 Conflict with error_code DUPLICATE_TRANSACTION_ID, retryable=false
+     */
+    @ExceptionHandler(DuplicateTransactionIdException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorDto duplicateTransactionIdHandler(final DuplicateTransactionIdException exception) {
+        final String defaultMsg = "A top-up with this transaction_id already exists for this client.";
+        return logErrorAndReturnDTO(exception, defaultMsg, "DUPLICATE_TRANSACTION_ID");
+    }
+
+    /**
+     * Handles TopupAlreadyProcessedException thrown when an admin attempts to approve or
+     * reject a top-up that has already been processed.
+     *
+     * @param exception TopupAlreadyProcessedException
+     * @return 409 Conflict with error_code TOPUP_ALREADY_PROCESSED, retryable=false
+     */
+    @ExceptionHandler(TopupAlreadyProcessedException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorDto topupAlreadyProcessedHandler(final TopupAlreadyProcessedException exception) {
+        final String defaultMsg = "This top-up has already been processed and cannot be modified.";
+        return logErrorAndReturnDTO(exception, defaultMsg, "TOPUP_ALREADY_PROCESSED");
     }
 
 
