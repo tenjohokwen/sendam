@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Phase 1 — Client & API Key Authentication
+**Current focus:** Phase 2 — Credit Ledger & Top-Ups
 
 ## Current Position
 
-Phase: 1 of 5 (Client & API Key Authentication)
-Plan: 03 of 3 (01-03 complete — Phase 1 complete)
-Status: Phase complete
-Last activity: 2026-03-10 — Completed 01-03-PLAN.md (ClientApiKeyResource POST/GET/DELETE /v1/api/keys, rate limiting with client_id, X-Request-ID global filter)
+Phase: 2 of 5 (Credit Ledger & Top-Ups)
+Plan: 01 of 3 (in progress)
+Status: In progress
+Last activity: 2026-03-10 — Completed 02-01-PLAN.md (ledger foundation, CreditService, balance + ledger endpoints)
 
 Progress: ████████░░ 80%
 
@@ -56,6 +56,10 @@ Recent decisions affecting current work:
 - Refill.greedy for sub-60s windows in RateLimitingService — prevents burst-at-boundary for 1s rate limit
 - revokeKey uses identical ResourceNotFoundException message for missing vs cross-client keys — obscures ownership
 - N-token tryConsume overload added to RateLimitingService in Phase 1 as infrastructure; enforcement in Phase 3 SMS send endpoint
+- ClientError enum owns INSUFFICIENT_CLIENT_BALANCE error code — each domain defines its own ErrorCode enum (SecError, ResourceError, ClientError)
+- TOPUP_PENDING entries (amount=0) pass through applyLedgerEntry without modifying balance — audit trail only; balance update happens on TOPUP_APPROVED
+- size clamped to max 200 in CreditService.getLedgerHistory — prevents unbounded page size requests
+- CreditService.applyLedgerEntry is the single canonical write path for all credit mutations — TopupService and CreditReservationService must use this method, never write directly to ledger or balance tables
 
 ### Pending Todos
 
@@ -68,6 +72,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-10T13:51:00Z
-Stopped at: Completed 01-03-PLAN.md (Phase 1 complete)
+Last session: 2026-03-10T14:12:00Z
+Stopped at: Completed 02-01-PLAN.md (credit ledger foundation + balance/ledger endpoints)
 Resume file: None
