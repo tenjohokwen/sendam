@@ -91,6 +91,22 @@ custom:
 apikey:
   pepper: ${APIKEY_PEPPER:change-me-in-production}
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      nexah:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+        registerHealthIndicator: true
+
+nexah:
+  user: ${NEXAH_USER}
+  password: ${NEXAH_PASSWORD}
+  senderid: ${NEXAH_SENDERID}
+  baseUrl: https://smsvas.com/bulk/public/index.php/api/v1
+
 email:
   providerConfigs:
     -
