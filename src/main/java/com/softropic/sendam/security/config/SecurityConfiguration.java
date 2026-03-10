@@ -20,6 +20,7 @@ import com.softropic.sendam.security.service.LoginDecisionManager;
 import com.softropic.sendam.security.infrastructure.SecuredHttpEndpointGuard;
 import com.softropic.sendam.security.service.TwoFactorLoginService;
 import com.softropic.sendam.security.infrastructure.UnanimousAuthorizationManager;
+import com.softropic.sendam.security.infrastructure.filter.RequestIdResponseFilter;
 import com.softropic.sendam.security.service.DaoAuthProvider;
 import com.softropic.sendam.security.service.LoadUserByUserNameService;
 
@@ -141,6 +142,19 @@ public class SecurityConfiguration {
         FilterRegistrationBean<ForwardedHeaderFilter> registration = new FilterRegistrationBean<>(filter);
         registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return registration;
+    }
+
+    /**
+     * Adds X-Request-ID response header to every response (AUTH-03).
+     * Registered at HIGHEST_PRECEDENCE + 1 so it runs after ForwardedHeaderFilter
+     * but before any security chain filter. Applies globally to all requests.
+     */
+    @Bean
+    public FilterRegistrationBean<RequestIdResponseFilter> requestIdResponseFilter() {
+        FilterRegistrationBean<RequestIdResponseFilter> reg =
+            new FilterRegistrationBean<>(new RequestIdResponseFilter());
+        reg.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+        return reg;
     }
 
     @Bean

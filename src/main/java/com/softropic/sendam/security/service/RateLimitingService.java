@@ -34,8 +34,25 @@ public class RateLimitingService {
         return bucket.tryConsume(1);
     }
 
+    /**
+     * Attempts to consume N tokens from the bucket. Infrastructure for per-unit limits
+     * (e.g., recipient count for SMS sends in Phase 3).
+     * NOTE: This method provides the bucket mechanics only. The 1000 recipients/min
+     * enforcement (AUTH-05 second half) is wired in Phase 3's SMS send endpoint
+     * where recipient count is available.
+     */
+    public boolean tryConsume(String identifier, String limitKey, long capacity,
+                              long duration, TimeUnit unit, long tokensToConsume) {
+        String bucketKey = limitKey + ":" + identifier;
+        Bucket bucket = buckets.computeIfAbsent(bucketKey, k -> createBucket(capacity, duration, unit));
+        return bucket.tryConsume(tokensToConsume);
+    }
+
     private Bucket createBucket(long capacity, long duration, TimeUnit unit) {
-        Refill refill = Refill.intervally(capacity, Duration.of(duration, unit.toChronoUnit()));
+        Duration window = Duration.of(duration, unit.toChronoUnit());
+        Refill refill = window.toSeconds() < 60
+            ? Refill.greedy(capacity, window)
+            : Refill.intervally(capacity, window);
         Bandwidth limit = Bandwidth.classic(capacity, refill);
         return Bucket.builder()
                 .addLimit(limit)

@@ -10,6 +10,8 @@ import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import static com.softropic.sendam.security.contract.exception.SecurityError.TOO_MANY_REQUESTS;
@@ -61,9 +63,17 @@ public class RateLimitingAspect {
 
     private String getClientIdentifier() {
         try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated()
+                    && auth.getAuthorities().stream()
+                           .anyMatch(a -> "ROLE_API_CLIENT".equals(a.getAuthority()))) {
+                // API-key authenticated request: use client_id as identifier
+                return "client:" + auth.getPrincipal().toString();
+            }
+            // Fallback: use IP address for portal/JWT requests
             return RequestMetadataProvider.getClientInfo().getIpAddress();
         } catch (Exception e) {
-            LOGGER.warn("Failed to get client IP address for rate limiting, using 'unknown'");
+            LOGGER.warn("Failed to get client identifier for rate limiting, using 'unknown'");
             return "unknown";
         }
     }
