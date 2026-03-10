@@ -1,5 +1,6 @@
 package com.softropic.sendam.client.service;
 
+import com.softropic.sendam.client.contract.CancelSmsResponse;
 import com.softropic.sendam.client.contract.MessageStatusEntry;
 import com.softropic.sendam.client.contract.MessageStatusResponse;
 import com.softropic.sendam.client.contract.SendRequestStatus;
@@ -208,6 +209,43 @@ public class SmsService {
                 effectivePageSize,
                 allRecipients.size(),
                 entries);
+    }
+
+    /**
+     * Cancels an ACCEPTED scheduled SMS request and releases the reserved credits.
+     *
+     * <p>Cancel is allowed ONLY when the request is in ACCEPTED status AND has a
+     * non-null scheduleTime. Immediate (non-scheduled) sends and already-submitted
+     * or finalized requests cannot be cancelled.
+     *
+     * @param clientId      the authenticated client
+     * @param sendRequestId the caller-supplied send request identifier
+     * @return a {@link CancelSmsResponse} with status CANCELLED
+     * @throws ResourceNotFoundException if the send request does not exist for this client
+     * @throws ApplicationException      with CANCEL_NOT_ALLOWED if cancellation is not permitted
+     */
+    public CancelSmsResponse cancelScheduled(Long clientId, String sendRequestId) {
+        SendRequest request = sendRequestRepo.findByClientIdAndSendRequestId(clientId, sendRequestId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Send request not found",
+                        "send_request"));
+
+        if (request.getSendStatus() != SendRequestStatus.ACCEPTED || request.getScheduleTime() == null) {
+            String reason = request.getScheduleTime() == null
+                    ? " and is not a scheduled request"
+                    : "";
+            throw new ApplicationException(
+                    "Cannot cancel: request status is " + request.getSendStatus().name() + reason,
+                    SmsError.CANCEL_NOT_ALLOWED);
+        }
+
+        creditReservationService.release(clientId, request.getReservationId());
+
+        request.setSendStatus(SendRequestStatus.CANCELLED);
+        sendRequestRepo.save(request);
+
+        log.debug("Cancelled scheduled request {} for clientId={}", sendRequestId, clientId);
+        return new CancelSmsResponse(sendRequestId, "CANCELLED");
     }
 
     // -------------------------------------------------------------------------

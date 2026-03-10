@@ -1,5 +1,6 @@
 package com.softropic.sendam.client.api;
 
+import com.softropic.sendam.client.contract.CancelSmsResponse;
 import com.softropic.sendam.client.contract.MessageStatusResponse;
 import com.softropic.sendam.client.contract.SendSmsRequest;
 import com.softropic.sendam.client.contract.SendSmsResponse;
@@ -9,6 +10,7 @@ import com.softropic.sendam.security.contract.util.RateLimited;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,6 +62,21 @@ public class SmsResource {
             @RequestParam(defaultValue = "20") int pageSize) {
         Long clientId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         MessageStatusResponse response = smsService.getStatus(clientId, sendRequestId, page, pageSize);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Cancels an ACCEPTED scheduled SMS request and releases the reserved credits.
+     * DELETE /v1/sms/scheduled/{sendRequestId}
+     *
+     * <p>Returns 200 CANCELLED when successful. Returns 409 CANCEL_NOT_ALLOWED if
+     * the request is not in ACCEPTED status or is not a scheduled request.
+     * Not rate-limited per v8 contract.
+     */
+    @DeleteMapping("/scheduled/{sendRequestId}")
+    public ResponseEntity<CancelSmsResponse> cancelScheduled(@PathVariable String sendRequestId) {
+        Long clientId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CancelSmsResponse response = smsService.cancelScheduled(clientId, sendRequestId);
         return ResponseEntity.ok(response);
     }
 }
