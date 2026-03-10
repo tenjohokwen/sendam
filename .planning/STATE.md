@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 ## Current Position
 
 Phase: 3 of 5 (Send SMS)
-Plan: 01 of 3
+Plan: 02 of 3
 Status: In progress
-Last activity: 2026-03-10 — Completed 03-01-PLAN.md (Phase 3 foundation: schema, entities, contracts, calculator, security fix)
+Last activity: 2026-03-10 — Completed 03-02-PLAN.md (SmsService sendSms orchestration + SmsResource endpoints)
 
-Progress: ████████░░ 80%
+Progress: █████████░ 90%
 
 ## Performance Metrics
 
@@ -29,10 +29,10 @@ Progress: ████████░░ 80%
 |-------|-------|-------|----------|
 | 01-client-api-key-auth | 3 | 15 min | 5 min |
 | 02-credit-ledger-topups | 2 | 16 min | 8 min |
-| 03-send-sms | 1 | 8 min | 8 min |
+| 03-send-sms | 2 | 14 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 4 min, 6 min, 8 min, 8 min, 8 min
+- Last 5 plans: 6 min, 8 min, 8 min, 8 min, 6 min
 - Trend: stable
 
 ## Accumulated Context
@@ -71,19 +71,22 @@ Recent decisions affecting current work:
 - Both jakarta.persistence.LockTimeoutException and Spring's CannotAcquireLockException handled in ApiAdvice → 503 (defensive: uncertain which variant Hibernate throws with JPA lock timeout hint)
 - SmsError does NOT duplicate INSUFFICIENT_CLIENT_BALANCE — ClientError.INSUFFICIENT_CLIENT_BALANCE is the canonical code; SmsError owns only SMS-specific codes
 - send_status column (not status) used for SMS lifecycle in send_request and send_request_recipient — avoids Hibernate mapping collision with inherited status from AbstractAuditingEntity
+- @RateLimited placed on SmsService.sendSms (service boundary) as well as SmsResource — authoritative enforcement regardless of caller
+- Recipient rate limit throws AuthorizationException(TOO_MANY_REQUESTS) → HTTP 401, matching existing RateLimitingAspect pattern; plan's "429" notation reflects intent, not a new exception type
+- BalanceResponse.availableBalance() is the correct record accessor (not .balance()) — maps to @JsonProperty("available_balance")
+- getStatus pageSize clamped to 200 — matches CreditService.getLedgerHistory convention
 
 ### Pending Todos
 
-- Phase 3 (03-02): Wire N-token tryConsume overload in SMS send endpoint for 1000 recipients/min AUTH-05 enforcement
 - LockTimeoutException handler now COMPLETE — added to ApiAdvice in 03-01 (LockTimeoutException + CannotAcquireLockException both handled)
+- AUTH-05 now COMPLETE — N-token tryConsume wired in SmsService.sendSms (03-02); @RateLimited(10/s) on both resource and service
 
 ### Blockers/Concerns
 
 - APIKEY_PEPPER env var must be set before application is used in production — the fallback default is documented as unsafe.
-- AUTH-05 (1000 recipients/min) is NOT complete — N-token bucket infrastructure in place, enforcement wiring deferred to Phase 3 SMS send endpoint.
 
 ## Session Continuity
 
-Last session: 2026-03-10T18:29:41Z
-Stopped at: Completed 03-01-PLAN.md (Phase 3 foundation — schema, entities, contracts, calculator, security fix)
+Last session: 2026-03-10T18:39:24Z
+Stopped at: Completed 03-02-PLAN.md (SmsService sendSms orchestration + SmsResource POST/GET endpoints)
 Resume file: None
