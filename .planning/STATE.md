@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Phase 2 — Credit Ledger & Top-Ups
+**Current focus:** Phase 3 — Send SMS & Credit Reservation (complete)
 
 ## Current Position
 

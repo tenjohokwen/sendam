@@ -27,12 +27,12 @@
 
 ### Send SMS (SMS)
 
-- [ ] **SMS-01**: Client can send SMS to one or more recipients in a single request
-- [ ] **SMS-02**: If any recipient is invalid or balance is insufficient, the entire request is rejected (no partial sends)
-- [ ] **SMS-03**: Credits are reserved atomically at request time before provider submission
-- [ ] **SMS-04**: Client can schedule an SMS for future delivery using a future UTC scheduleTime
-- [ ] **SMS-05**: Client can cancel a scheduled SMS before provider submission; reserved credits are released
-- [ ] **SMS-06**: Send requests are idempotent via sendRequestId — duplicate returns original response, no re-charge
+- [x] **SMS-01**: Client can send SMS to one or more recipients in a single request
+- [x] **SMS-02**: If any recipient is invalid or balance is insufficient, the entire request is rejected (no partial sends)
+- [x] **SMS-03**: Credits are reserved atomically at request time before provider submission
+- [x] **SMS-04**: Client can schedule an SMS for future delivery using a future UTC scheduleTime
+- [x] **SMS-05**: Client can cancel a scheduled SMS before provider submission; reserved credits are released
+- [x] **SMS-06**: Send requests are idempotent via sendRequestId — duplicate returns original response, no re-charge
 - [ ] **SMS-07**: Credits are debited using provider-reported segment count, not estimated count
 
 ### Message Status (STATUS)
@@ -100,12 +100,12 @@
 | TOPUP-03 | Phase 2 | Complete |
 | ADMIN-02 | Phase 2 | Complete |
 | ADMIN-03 | Phase 2 | Complete |
-| SMS-01 | Phase 3 | Pending |
-| SMS-02 | Phase 3 | Pending |
-| SMS-03 | Phase 3 | Pending |
-| SMS-04 | Phase 3 | Pending |
-| SMS-05 | Phase 3 | Pending |
-| SMS-06 | Phase 3 | Pending |
+| SMS-01 | Phase 3 | Complete |
+| SMS-02 | Phase 3 | Complete |
+| SMS-03 | Phase 3 | Complete |
+| SMS-04 | Phase 3 | Complete |
+| SMS-05 | Phase 3 | Complete |
+| SMS-06 | Phase 3 | Complete |
 | PROVIDER-01 | Phase 4 | Pending |
 | PROVIDER-02 | Phase 4 | Pending |
 | PROVIDER-03 | Phase 4 | Pending |
