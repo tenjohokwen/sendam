@@ -10,27 +10,28 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 ## Current Position
 
 Phase: 2 of 5 (Credit Ledger & Top-Ups)
-Plan: 01 of 3 (in progress)
-Status: In progress
-Last activity: 2026-03-10 — Completed 02-01-PLAN.md (ledger foundation, CreditService, balance + ledger endpoints)
+Plan: 03 of 3 (Phase 2 complete)
+Status: Phase complete
+Last activity: 2026-03-10 — Completed 02-03-PLAN.md (CreditReservationService + 7-test unit suite)
 
-Progress: ████████░░ 80%
+Progress: ██████████ 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 5 min
-- Total execution time: 15 min
+- Total plans completed: 5
+- Average duration: 6 min
+- Total execution time: 31 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-client-api-key-auth | 3 | 15 min | 5 min |
+| 02-credit-ledger-topups | 2 | 16 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 5 min, 4 min, 6 min
+- Last 5 plans: 5 min, 4 min, 6 min, 8 min, 8 min
 - Trend: stable
 
 ## Accumulated Context
@@ -60,10 +61,15 @@ Recent decisions affecting current work:
 - TOPUP_PENDING entries (amount=0) pass through applyLedgerEntry without modifying balance — audit trail only; balance update happens on TOPUP_APPROVED
 - size clamped to max 200 in CreditService.getLedgerHistory — prevents unbounded page size requests
 - CreditService.applyLedgerEntry is the single canonical write path for all credit mutations — TopupService and CreditReservationService must use this method, never write directly to ledger or balance tables
+- CreditReservationService manages its own lock acquisition independently — not delegating to CreditService.applyLedgerEntry() avoids implicit dependency on call ordering within a single transaction
+- reserve() returns the ledger entry id as reservationId — Phase 3 passes this back to debit()/release() to load the original reservation and derive the reserved amount
+- debit() does NOT subtract actualAmount from balance again — balance was already reduced by reserve(); debit only adjusts the balance upward for over-reservation
+- release() and debit() both re-acquire findByClientIdForUpdate — each method is independently correct, not relying on a prior lock still being held
 
 ### Pending Todos
 
 - Phase 3: Wire N-token tryConsume overload in SMS send endpoint for 1000 recipients/min AUTH-05 enforcement
+- Phase 3: Add @ExceptionHandler in ApiAdvice for LockTimeoutException → HTTP 503 (needed when SMS send endpoint exists)
 
 ### Blockers/Concerns
 
@@ -72,6 +78,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-10T14:12:00Z
-Stopped at: Completed 02-01-PLAN.md (credit ledger foundation + balance/ledger endpoints)
+Last session: 2026-03-10T15:46:55Z
+Stopped at: Completed 02-03-PLAN.md (CreditReservationService + unit tests — Phase 2 complete)
 Resume file: None
