@@ -1,8 +1,10 @@
 package com.softropic.sendam.client.service;
 
 import com.softropic.sendam.client.contract.ApiKeyCreationResult;
+import com.softropic.sendam.client.contract.ApiKeyDto;
 import com.softropic.sendam.client.repo.ClientApiKeyEntity;
 import com.softropic.sendam.client.repo.ClientApiKeyRepository;
+import com.softropic.sendam.common.exception.ResourceNotFoundException;
 import com.softropic.sendam.common.persistence.EntityStatus;
 import com.softropic.sendam.security.contract.exception.AuthorizationException;
 import com.softropic.sendam.security.contract.exception.SecurityError;
@@ -65,6 +67,38 @@ public class ApiKeyService {
         repository.save(entity);
 
         return new ApiKeyCreationResult(entity.getId(), rawKey);
+    }
+
+    /** Creates a new API key for the given client. */
+    @Transactional
+    public ApiKeyCreationResult createKey(Long clientId, String label) {
+        return generateAndPersist(clientId, label);
+    }
+
+    /** Lists all API keys for a client. Raw key values are never returned. */
+    @Transactional(readOnly = true)
+    public List<ApiKeyDto> listKeys(Long clientId) {
+        return repository.findAllByClientId(clientId).stream()
+            .map(k -> new ApiKeyDto(k.getId(), k.getLabel(),
+                                    k.getStatus().name(), k.getCreatedDate()))
+            .toList();
+    }
+
+    /**
+     * Revokes the API key. Throws ResourceNotFoundException if the key does not exist
+     * or does not belong to this client (prevents cross-client revocation).
+     * Revoked keys immediately fail auth on next request — no caching means
+     * the next DB read sees EntityStatus.INACTIVE (AUTH-04).
+     */
+    @Transactional
+    public void revokeKey(Long clientId, Long keyId) {
+        ClientApiKeyEntity key = repository.findById(keyId)
+            .orElseThrow(() -> new ResourceNotFoundException("API key not found", "api-key"));
+        if (!key.getClientId().equals(clientId)) {
+            throw new ResourceNotFoundException("API key not found", "api-key");  // obscure ownership
+        }
+        key.setStatus(EntityStatus.INACTIVE);
+        repository.save(key);
     }
 
     /**
