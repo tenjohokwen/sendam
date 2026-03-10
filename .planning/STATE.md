@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Phase 3 — Send SMS & Credit Reservation (complete)
+**Current focus:** Phase 4 — Provider Integration (complete)
 
 ## Current Position
 
 Phase: 4 of 5 (Provider Integration)
-Plan: 02 of 3
-Status: In progress
-Last activity: 2026-03-10 — Completed 04-02-PLAN.md (DR callback state machine, NexahDispatchService, stale recovery)
+Plan: 03 of 3
+Status: Phase complete
+Last activity: 2026-03-10 — Completed 04-03-PLAN.md (SmsPurgeService, 30-day retention purge, status query verification)
 
-Progress: ░░░░░░░░░░ (04-02 of 04 complete)
+Progress: ░░░░░░░░░░░ (04-03 of 04 complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 6 min
-- Total execution time: 41 min
+- Total plans completed: 8
+- Average duration: 5 min
+- Total execution time: 43 min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: ░░░░░░░░░░ (04-02 of 04 complete)
 | 01-client-api-key-auth | 3 | 15 min | 5 min |
 | 02-credit-ledger-topups | 2 | 16 min | 8 min |
 | 03-send-sms | 4 | 26 min | 7 min |
-| 04-provider-integration | 2 | 12 min | 6 min |
+| 04-provider-integration | 3 | 14 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 6 min, 8 min, 4 min, 6 min, 6 min
+- Last 5 plans: 8 min, 4 min, 6 min, 6 min, 2 min
 - Trend: stable
 
 ## Accumulated Context
@@ -93,12 +93,16 @@ Recent decisions affecting current work:
 - Debit cap: Math.min(totalActualSegments, reservedCredits) — prevents IllegalArgumentException when actual > reserved; zero fallback uses reservedCredits conservatively
 - DR idempotency: TERMINAL_STATUSES EnumSet guards duplicate DR processing — status=1 returned without re-calling debit()
 - SmsService checks CircuitBreaker OPEN || HALF_OPEN before reserve() — no ledger entry created during provider outage (in-memory check, no network call)
+- findFinalizedBefore returns List<Long> not List<SendRequest> — IDs sufficient for delete; avoids loading full entity graphs for large purge sets
+- Batch size 500 for SmsPurgeService — prevents unbounded IN-clause, acceptable trade-off for background job
+- SmsPurgeService does not add @EnableScheduling — already present in ClientConfig
 
 ### Pending Todos
 
 - LockTimeoutException handler now COMPLETE — added to ApiAdvice in 03-01 (LockTimeoutException + CannotAcquireLockException both handled)
 - AUTH-05 now COMPLETE — N-token tryConsume wired in SmsService.sendSms (03-02); @RateLimited(10/s) on both resource and service
 - Phase 3 (SMS-01 through SMS-06) now COMPLETE — all six requirements satisfied + all HTTP status code gaps closed (03-04)
+- Phase 4 (provider-integration) now COMPLETE — Nexah client, DR state machine, stale recovery, purge job all wired (04-01 through 04-03)
 
 ### Blockers/Concerns
 
@@ -106,6 +110,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-10T19:57:52Z
-Stopped at: Completed 04-02-PLAN.md (DR callback state machine + NexahDispatchService + stale recovery)
+Last session: 2026-03-10T20:02:37Z
+Stopped at: Completed 04-03-PLAN.md (SmsPurgeService, 30-day retention, status query verification)
 Resume file: None
