@@ -4,6 +4,7 @@ package com.softropic.sendam.security.api;
 import com.softropic.sendam.client.contract.exception.CancelNotAllowedException;
 import com.softropic.sendam.client.contract.exception.DuplicateTransactionIdException;
 import com.softropic.sendam.client.contract.exception.InsufficientBalanceException;
+import com.softropic.sendam.client.contract.exception.ProviderUnavailableException;
 import com.softropic.sendam.client.contract.exception.RateLimitExceededException;
 import com.softropic.sendam.client.contract.exception.SmsValidationException;
 import com.softropic.sendam.client.contract.exception.TopupAlreadyProcessedException;
@@ -463,6 +464,19 @@ public class ApiAdvice {
         return logErrorAndReturnDTO(exception, defaultMsg, "LOCK_TIMEOUT");
     }
 
+    /**
+     * Handles ProviderUnavailableException thrown by NexahClient when the 'nexah'
+     * circuit breaker is OPEN or the upstream call fails after the breaker trips.
+     *
+     * @param exception ProviderUnavailableException
+     * @return 503 Service Unavailable with error_code PROVIDER_UNAVAILABLE
+     */
+    @ExceptionHandler(ProviderUnavailableException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorDto providerUnavailableHandler(final ProviderUnavailableException exception) {
+        final String defaultMsg = "SMS provider is temporarily unavailable. Please retry shortly.";
+        return logErrorAndReturnDTO(exception, defaultMsg, "PROVIDER_UNAVAILABLE");
+    }
 
 
     private List<FieldError> deduplicate(List<FieldError> fieldErrors) {
