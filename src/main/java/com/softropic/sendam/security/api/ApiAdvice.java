@@ -1,6 +1,7 @@
 package com.softropic.sendam.security.api;
 
 
+import com.softropic.sendam.client.contract.exception.InsufficientBalanceException;
 import com.softropic.sendam.common.exception.ApplicationException;
 import com.softropic.sendam.common.exception.ResourceNotFoundException;
 import com.softropic.sendam.common.message.ErrorDto;
@@ -339,6 +340,19 @@ public class ApiAdvice {
         final String defaultMsg = "The resource cannot be found";
         final String resourceName = rnfe.getResourceName();
         return logErrorAndReturnDTO(rnfe, defaultMsg, rnfe.getErrorCode().getErrorCode(), resourceName);
+    }
+
+    /**
+     * Handles InsufficientBalanceException thrown when a debit would reduce a client's balance below zero.
+     *
+     * @param exception InsufficientBalanceException with clientId, currentBalance, requestedAmount
+     * @return 400 Bad Request with error_code INSUFFICIENT_CLIENT_BALANCE
+     */
+    @ExceptionHandler(InsufficientBalanceException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorDto insufficientBalanceHandler(final InsufficientBalanceException exception) {
+        final String defaultMsg = "Insufficient credit balance to complete the operation.";
+        return logErrorAndReturnDTO(exception, defaultMsg, "INSUFFICIENT_CLIENT_BALANCE");
     }
 
 
