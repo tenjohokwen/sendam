@@ -1,9 +1,8 @@
 package com.softropic.sendam.client.service;
 
+import com.softropic.sendam.client.contract.ApiKeyCreationResult;
 import com.softropic.sendam.client.contract.CreateClientRequest;
 import com.softropic.sendam.client.contract.CreateClientResponse;
-import com.softropic.sendam.client.repo.ClientApiKeyEntity;
-import com.softropic.sendam.client.repo.ClientApiKeyRepository;
 import com.softropic.sendam.client.repo.ClientEntity;
 import com.softropic.sendam.client.repo.ClientRepository;
 import com.softropic.sendam.common.persistence.EntityStatus;
@@ -16,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ClientService {
 
     private final ClientRepository clientRepository;
-    private final ClientApiKeyRepository apiKeyRepository;
+    private final ApiKeyService apiKeyService;
 
     public ClientService(final ClientRepository clientRepository,
-                         final ClientApiKeyRepository apiKeyRepository) {
+                         final ApiKeyService apiKeyService) {
         this.clientRepository = clientRepository;
-        this.apiKeyRepository = apiKeyRepository;
+        this.apiKeyService = apiKeyService;
     }
 
     public CreateClientResponse createClient(final CreateClientRequest request) {
@@ -31,17 +30,7 @@ public class ClientService {
             .build();
         clientRepository.save(client);
 
-        // Stub: Plan 02 replaces this with ApiKeyService.generateAndPersist(clientId, label)
-        String rawKey = "STUB_REPLACE_IN_PLAN_02";
-        ClientApiKeyEntity keyEntity = ClientApiKeyEntity.builder()
-            .clientId(client.getId())
-            .keyPrefix("snd_stub_prefix")
-            .keyHash("stub_hash")
-            .label(request.keyLabel())
-            .status(EntityStatus.ACTIVE)
-            .build();
-        apiKeyRepository.save(keyEntity);
-
-        return new CreateClientResponse(client.getId(), keyEntity.getId(), rawKey);
+        ApiKeyCreationResult keyResult = apiKeyService.generateAndPersist(client.getId(), request.keyLabel());
+        return new CreateClientResponse(client.getId(), keyResult.apiKeyId(), keyResult.rawKey());
     }
 }

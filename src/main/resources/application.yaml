@@ -87,6 +87,10 @@ custom:
     allowed-headers: '*'
     allow-credentials: true  #specifies if cookies and credentials are allowed.
     max-age: 1800
+# MUST be overridden via APIKEY_PEPPER env var in production. Do not use the default value.
+apikey:
+  pepper: ${APIKEY_PEPPER:change-me-in-production}
+
 email:
   providerConfigs:
     -
