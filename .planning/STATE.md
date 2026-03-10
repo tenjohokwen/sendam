@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 
 ## Current Position
 
-Phase: 2 of 5 (Credit Ledger & Top-Ups)
-Plan: 03 of 3 (Phase 2 complete)
-Status: Phase complete
-Last activity: 2026-03-10 — Completed 02-03-PLAN.md (CreditReservationService + 7-test unit suite)
+Phase: 3 of 5 (Send SMS)
+Plan: 01 of 3
+Status: In progress
+Last activity: 2026-03-10 — Completed 03-01-PLAN.md (Phase 3 foundation: schema, entities, contracts, calculator, security fix)
 
-Progress: ██████████ 100%
+Progress: ████████░░ 80%
 
 ## Performance Metrics
 
@@ -29,9 +29,10 @@ Progress: ██████████ 100%
 |-------|-------|-------|----------|
 | 01-client-api-key-auth | 3 | 15 min | 5 min |
 | 02-credit-ledger-topups | 2 | 16 min | 8 min |
+| 03-send-sms | 1 | 8 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 5 min, 4 min, 6 min, 8 min, 8 min
+- Last 5 plans: 4 min, 6 min, 8 min, 8 min, 8 min
 - Trend: stable
 
 ## Accumulated Context
@@ -65,11 +66,16 @@ Recent decisions affecting current work:
 - reserve() returns the ledger entry id as reservationId — Phase 3 passes this back to debit()/release() to load the original reservation and derive the reserved amount
 - debit() does NOT subtract actualAmount from balance again — balance was already reduced by reserve(); debit only adjusts the balance upward for over-reservation
 - release() and debit() both re-acquire findByClientIdForUpdate — each method is independently correct, not relying on a prior lock still being held
+- SmsSegmentCalculator is package-private within client.service — only SmsService needs it; prevents accidental misuse from external packages
+- AppEndpoints.CLIENT_API updated to /v1/** — ClientSecurityConfiguration uses the constant (not hardcoded string) as single source of truth for security matcher
+- Both jakarta.persistence.LockTimeoutException and Spring's CannotAcquireLockException handled in ApiAdvice → 503 (defensive: uncertain which variant Hibernate throws with JPA lock timeout hint)
+- SmsError does NOT duplicate INSUFFICIENT_CLIENT_BALANCE — ClientError.INSUFFICIENT_CLIENT_BALANCE is the canonical code; SmsError owns only SMS-specific codes
+- send_status column (not status) used for SMS lifecycle in send_request and send_request_recipient — avoids Hibernate mapping collision with inherited status from AbstractAuditingEntity
 
 ### Pending Todos
 
-- Phase 3: Wire N-token tryConsume overload in SMS send endpoint for 1000 recipients/min AUTH-05 enforcement
-- Phase 3: Add @ExceptionHandler in ApiAdvice for LockTimeoutException → HTTP 503 (needed when SMS send endpoint exists)
+- Phase 3 (03-02): Wire N-token tryConsume overload in SMS send endpoint for 1000 recipients/min AUTH-05 enforcement
+- LockTimeoutException handler now COMPLETE — added to ApiAdvice in 03-01 (LockTimeoutException + CannotAcquireLockException both handled)
 
 ### Blockers/Concerns
 
@@ -78,6 +84,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-10T15:46:55Z
-Stopped at: Completed 02-03-PLAN.md (CreditReservationService + unit tests — Phase 2 complete)
+Last session: 2026-03-10T18:29:41Z
+Stopped at: Completed 03-01-PLAN.md (Phase 3 foundation — schema, entities, contracts, calculator, security fix)
 Resume file: None
