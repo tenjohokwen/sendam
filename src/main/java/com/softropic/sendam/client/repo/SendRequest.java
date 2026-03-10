@@ -67,6 +67,9 @@ public class SendRequest extends AbstractAuditingEntity {
     @Column(name = "reservation_id", nullable = false)
     private Long reservationId;
 
+    @Column(name = "finalized_at")
+    private Instant finalizedAt;
+
     @Builder.Default
     protected EntityStatus status = EntityStatus.ACTIVE;
 }

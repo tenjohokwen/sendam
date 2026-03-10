@@ -15,4 +15,14 @@ public interface SendRequestRepository extends JpaRepository<SendRequest, Long> 
     @Query("SELECT s FROM SendRequest s WHERE s.sendStatus = com.softropic.sendam.client.contract.SendRequestStatus.ACCEPTED " +
            "AND s.scheduleTime IS NOT NULL AND s.scheduleTime <= :now")
     List<SendRequest> findDueScheduledRequests(@Param("now") Instant now);
+
+    @Query("SELECT s FROM SendRequest s WHERE s.sendStatus = com.softropic.sendam.client.contract.SendRequestStatus.ACCEPTED " +
+           "AND s.scheduleTime IS NULL")
+    List<SendRequest> findPendingImmediateRequests();
+
+    @Query("SELECT DISTINCT s FROM SendRequest s JOIN SendRequestRecipient r ON r.sendRequestIdFk = s.id " +
+           "WHERE s.sendStatus = com.softropic.sendam.client.contract.SendRequestStatus.SUBMITTED " +
+           "AND r.sendStatus = com.softropic.sendam.client.contract.SendRequestStatus.SUBMITTED " +
+           "AND s.lastModifiedDate < :cutoff")
+    List<SendRequest> findStaleSubmittedRequests(@Param("cutoff") Instant cutoff);
 }

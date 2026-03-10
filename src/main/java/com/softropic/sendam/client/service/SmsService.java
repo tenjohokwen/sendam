@@ -7,6 +7,7 @@ import com.softropic.sendam.client.contract.SendRequestStatus;
 import com.softropic.sendam.client.contract.SendSmsRequest;
 import com.softropic.sendam.client.contract.SendSmsResponse;
 import com.softropic.sendam.client.contract.exception.CancelNotAllowedException;
+import com.softropic.sendam.client.contract.exception.ProviderUnavailableException;
 import com.softropic.sendam.client.contract.exception.RateLimitExceededException;
 import com.softropic.sendam.client.contract.exception.SmsError;
 import com.softropic.sendam.client.contract.exception.SmsValidationException;
@@ -20,6 +21,8 @@ import com.softropic.sendam.common.validation.CamMobileValidator;
 import com.softropic.sendam.security.contract.util.RateLimited;
 import com.softropic.sendam.security.service.RateLimitingService;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +58,7 @@ public class SmsService {
     private final CreditReservationService creditReservationService;
     private final CreditService creditService;
     private final RateLimitingService rateLimitingService;
+    private final CircuitBreakerRegistry circuitBreakerRegistry;
 
     /**
      * Sends an SMS request for the given client, enforcing idempotency, rate limits,
@@ -119,6 +123,15 @@ public class SmsService {
             throw new SmsValidationException(
                     "scheduleTime must be in the future",
                     SmsError.INVALID_SCHEDULE_TIME);
+        }
+
+        // Step 6.5: Check provider availability before reserving credits (PROVIDER-01)
+        // Circuit breaker state check is in-memory — no network call.
+        // Reject both OPEN (fully tripped) and HALF_OPEN (probe in progress) to avoid
+        // reserving credits for requests that the dispatcher will likely fail.
+        CircuitBreaker cb = circuitBreakerRegistry.circuitBreaker("nexah");
+        if (cb.getState() == CircuitBreaker.State.OPEN || cb.getState() == CircuitBreaker.State.HALF_OPEN) {
+            throw new ProviderUnavailableException("SMS provider is currently unavailable");
         }
 
         // Step 7: Calculate segments and total credits to reserve
