@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 ## Current Position
 
 Phase: 3 of 5 (Send SMS)
-Plan: 02 of 3
-Status: In progress
-Last activity: 2026-03-10 — Completed 03-02-PLAN.md (SmsService sendSms orchestration + SmsResource endpoints)
+Plan: 03 of 3
+Status: Phase complete
+Last activity: 2026-03-10 — Completed 03-03-PLAN.md (SmsSchedulerService + cancelScheduled + DELETE /v1/sms/scheduled/{id})
 
-Progress: █████████░ 90%
+Progress: ██████████ 100%
 
 ## Performance Metrics
 
@@ -29,10 +29,10 @@ Progress: █████████░ 90%
 |-------|-------|-------|----------|
 | 01-client-api-key-auth | 3 | 15 min | 5 min |
 | 02-credit-ledger-topups | 2 | 16 min | 8 min |
-| 03-send-sms | 2 | 14 min | 7 min |
+| 03-send-sms | 3 | 22 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 6 min, 8 min, 8 min, 8 min, 6 min
+- Last 5 plans: 8 min, 8 min, 8 min, 6 min, 8 min
 - Trend: stable
 
 ## Accumulated Context
@@ -75,11 +75,16 @@ Recent decisions affecting current work:
 - Recipient rate limit throws AuthorizationException(TOO_MANY_REQUESTS) → HTTP 401, matching existing RateLimitingAspect pattern; plan's "429" notation reflects intent, not a new exception type
 - BalanceResponse.availableBalance() is the correct record accessor (not .balance()) — maps to @JsonProperty("available_balance")
 - getStatus pageSize clamped to 200 — matches CreditService.getLedgerHistory convention
+- fixedDelay (not fixedRate) on SmsSchedulerService — prevents overlapping scheduled dispatch runs
+- SmsSchedulerService does NOT call CreditReservationService — scheduler marks SUBMITTED only; Phase 4 wires actual debit after Nexah confirmation
+- Cancel guard requires status=ACCEPTED AND scheduleTime IS NOT NULL — immediate sends cannot be cancelled
+- DELETE /v1/sms/scheduled/{id} not rate-limited per v8 contract
 
 ### Pending Todos
 
 - LockTimeoutException handler now COMPLETE — added to ApiAdvice in 03-01 (LockTimeoutException + CannotAcquireLockException both handled)
 - AUTH-05 now COMPLETE — N-token tryConsume wired in SmsService.sendSms (03-02); @RateLimited(10/s) on both resource and service
+- Phase 3 (SMS-01 through SMS-06) now COMPLETE — all six requirements satisfied after 03-03
 
 ### Blockers/Concerns
 
@@ -87,6 +92,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-10T18:39:24Z
-Stopped at: Completed 03-02-PLAN.md (SmsService sendSms orchestration + SmsResource POST/GET endpoints)
+Last session: 2026-03-10T19:43:45Z
+Stopped at: Completed 03-03-PLAN.md (SmsSchedulerService + cancelScheduled + DELETE /v1/sms/scheduled/{id}) — Phase 3 complete
 Resume file: None
