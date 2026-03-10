@@ -6,17 +6,17 @@ import com.softropic.sendam.client.contract.MessageStatusResponse;
 import com.softropic.sendam.client.contract.SendRequestStatus;
 import com.softropic.sendam.client.contract.SendSmsRequest;
 import com.softropic.sendam.client.contract.SendSmsResponse;
+import com.softropic.sendam.client.contract.exception.CancelNotAllowedException;
+import com.softropic.sendam.client.contract.exception.RateLimitExceededException;
 import com.softropic.sendam.client.contract.exception.SmsError;
+import com.softropic.sendam.client.contract.exception.SmsValidationException;
 import com.softropic.sendam.client.repo.SendRequest;
 import com.softropic.sendam.client.repo.SendRequestRecipient;
 import com.softropic.sendam.client.repo.SendRequestRecipientRepository;
 import com.softropic.sendam.client.repo.SendRequestRepository;
-import com.softropic.sendam.common.exception.ApplicationException;
 import com.softropic.sendam.common.exception.ResourceNotFoundException;
 import com.softropic.sendam.common.persistence.EntityStatus;
 import com.softropic.sendam.common.validation.CamMobileValidator;
-import com.softropic.sendam.security.contract.exception.AuthorizationException;
-import com.softropic.sendam.security.contract.exception.SecurityError;
 import com.softropic.sendam.security.contract.util.RateLimited;
 import com.softropic.sendam.security.service.RateLimitingService;
 
@@ -87,14 +87,13 @@ public class SmsService {
         );
         if (!recipientsAllowed) {
             log.warn("Recipient rate limit exceeded for clientId={}, recipientCount={}", clientId, recipientCount);
-            throw new AuthorizationException(
-                    "Recipient rate limit exceeded: max 1000 recipients per minute",
-                    SecurityError.TOO_MANY_REQUESTS);
+            throw new RateLimitExceededException(
+                    "Recipient rate limit exceeded: max 1000 recipients per minute");
         }
 
         // Step 3: Validate sender ID
         if (!SENDER_ID_PATTERN.matcher(request.sender()).matches()) {
-            throw new ApplicationException(
+            throw new SmsValidationException(
                     "Invalid sender ID: must be 1-11 uppercase alphanumeric characters",
                     SmsError.INVALID_SENDER_ID);
         }
@@ -102,7 +101,7 @@ public class SmsService {
         // Step 4: Validate message (JSR-303 @NotBlank handles null/blank at DTO level,
         // but defend here as well per plan instruction)
         if (request.message() == null || request.message().isBlank()) {
-            throw new ApplicationException("Message must not be blank", SmsError.INVALID_SENDER_ID);
+            throw new SmsValidationException("Message must not be blank", SmsError.INVALID_SENDER_ID);
         }
 
         // Step 5: Validate all recipients — collect ALL failures before throwing
@@ -110,14 +109,14 @@ public class SmsService {
                 .filter(phone -> !isValidRecipient(phone))
                 .toList();
         if (!invalid.isEmpty()) {
-            throw new ApplicationException(
+            throw new SmsValidationException(
                     "Invalid recipient phone numbers: " + invalid,
                     SmsError.INVALID_PHONE_NUMBER);
         }
 
         // Step 6: Validate scheduleTime (only if present — must be in the future)
         if (request.scheduleTime() != null && !request.scheduleTime().isAfter(Instant.now())) {
-            throw new ApplicationException(
+            throw new SmsValidationException(
                     "scheduleTime must be in the future",
                     SmsError.INVALID_SCHEDULE_TIME);
         }
@@ -222,7 +221,7 @@ public class SmsService {
      * @param sendRequestId the caller-supplied send request identifier
      * @return a {@link CancelSmsResponse} with status CANCELLED
      * @throws ResourceNotFoundException if the send request does not exist for this client
-     * @throws ApplicationException      with CANCEL_NOT_ALLOWED if cancellation is not permitted
+     * @throws CancelNotAllowedException if cancellation is not permitted (status not ACCEPTED or not scheduled)
      */
     public CancelSmsResponse cancelScheduled(Long clientId, String sendRequestId) {
         SendRequest request = sendRequestRepo.findByClientIdAndSendRequestId(clientId, sendRequestId)
@@ -234,9 +233,8 @@ public class SmsService {
             String reason = request.getScheduleTime() == null
                     ? " and is not a scheduled request"
                     : "";
-            throw new ApplicationException(
-                    "Cannot cancel: request status is " + request.getSendStatus().name() + reason,
-                    SmsError.CANCEL_NOT_ALLOWED);
+            throw new CancelNotAllowedException(
+                    "Cannot cancel: request status is " + request.getSendStatus().name() + reason);
         }
 
         creditReservationService.release(clientId, request.getReservationId());
