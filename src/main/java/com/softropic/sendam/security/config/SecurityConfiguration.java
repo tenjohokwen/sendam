@@ -30,6 +30,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
@@ -143,6 +144,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    @Order(2)
     public SecurityFilterChain filterChain(final HttpSecurity http,
                                            AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler,
                                            SecurityAdviceFilter securityAdviceFilter,
