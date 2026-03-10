@@ -1,0 +1,129 @@
+# Requirements: Sendam
+
+**Defined:** 2026-03-10
+**Core Value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
+
+## v1 Requirements
+
+### Authentication (AUTH)
+
+- [ ] **AUTH-01**: Client can authenticate API requests using a Bearer API key
+- [ ] **AUTH-02**: Gateway derives client_id from the API key (clients must not send client_id)
+- [ ] **AUTH-03**: Every API response includes an X-Request-ID trace header
+- [ ] **AUTH-04**: API key authentication fails immediately when a key is revoked
+- [ ] **AUTH-05**: Requests exceeding 10/sec or 1000 recipients/min per client are rejected with HTTP 429
+
+### Credits (CREDIT)
+
+- [ ] **CREDIT-01**: Client can query current available credit balance (derived from ledger, p95 < 100ms)
+- [ ] **CREDIT-02**: Client can view full credit ledger history (paginated, all movement types)
+- [ ] **CREDIT-03**: Balance never goes negative — credit reservation is atomic and prevents overspend
+
+### Top-Ups (TOPUP)
+
+- [ ] **TOPUP-01**: Client can submit a top-up request (amount, transaction_id, payment_type); status is PENDING_APPROVAL
+- [ ] **TOPUP-02**: Client can query the status of a top-up request by topup_id
+- [ ] **TOPUP-03**: Top-up transaction_id must be unique per client
+
+### Send SMS (SMS)
+
+- [ ] **SMS-01**: Client can send SMS to one or more recipients in a single request
+- [ ] **SMS-02**: If any recipient is invalid or balance is insufficient, the entire request is rejected (no partial sends)
+- [ ] **SMS-03**: Credits are reserved atomically at request time before provider submission
+- [ ] **SMS-04**: Client can schedule an SMS for future delivery using a future UTC scheduleTime
+- [ ] **SMS-05**: Client can cancel a scheduled SMS before provider submission; reserved credits are released
+- [ ] **SMS-06**: Send requests are idempotent via sendRequestId — duplicate returns original response, no re-charge
+- [ ] **SMS-07**: Credits are debited using provider-reported segment count, not estimated count
+
+### Message Status (STATUS)
+
+- [ ] **STATUS-01**: Client can query delivery status for a send request by sendRequestId (paginated per-recipient)
+- [ ] **STATUS-02**: Messages progress through states: ACCEPTED → SUBMITTED → COMPLETED/FAILED → FINALIZED/FAIL_FINALIZED
+- [ ] **STATUS-03**: Message status data is purged 30 days after finalization; queries return 404 after window
+
+### Webhooks (WEBHOOK)
+
+- [ ] **WEBHOOK-01**: Client can register a webhook URL and event subscription
+- [ ] **WEBHOOK-02**: Gateway delivers sms.finalized events to registered webhooks on message finalization
+- [ ] **WEBHOOK-03**: Gateway retries webhook delivery when the client endpoint is unreachable
+
+### API Key Management (APIKEY)
+
+- [ ] **APIKEY-01**: Client can create a new API key; raw value is shown exactly once, stored hashed
+- [ ] **APIKEY-02**: Client can list all their API keys (id, created_at, status — no raw value)
+- [ ] **APIKEY-03**: Client can revoke an API key; revoked keys immediately lose access
+
+### Provider Integration (PROVIDER)
+
+- [ ] **PROVIDER-01**: Gateway forwards validated SMS requests to the Nexah upstream provider
+- [ ] **PROVIDER-02**: Gateway ingests Nexah delivery report callbacks and advances the message state machine
+- [ ] **PROVIDER-03**: When Nexah is unavailable, new send requests are rejected with PROVIDER_UNAVAILABLE; credits unchanged
+
+### Admin API (ADMIN)
+
+- [ ] **ADMIN-01**: Admin can create a new client account and issue the first API key
+- [ ] **ADMIN-02**: Admin can approve or reject pending top-up requests
+- [ ] **ADMIN-03**: Admin can view all clients and their current credit balance
+
+## v2 Requirements
+
+(None — full v8 contract is in scope for v1.0)
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Self-service client registration | Admin creates accounts; reduces fraud surface in v1 |
+| Multi-provider support | Nexah only; no abstraction until second provider needed |
+| Frontend / dashboard UI | API only in v1 |
+| International phone numbers | Cameroon only (CamMobileValidator) |
+| Webhook event types beyond sms.finalized | Only delivery events needed in v1 |
+
+## Traceability
+
+Which phases cover which requirements. Updated by create-roadmap.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| AUTH-01 | — | Pending |
+| AUTH-02 | — | Pending |
+| AUTH-03 | — | Pending |
+| AUTH-04 | — | Pending |
+| AUTH-05 | — | Pending |
+| CREDIT-01 | — | Pending |
+| CREDIT-02 | — | Pending |
+| CREDIT-03 | — | Pending |
+| TOPUP-01 | — | Pending |
+| TOPUP-02 | — | Pending |
+| TOPUP-03 | — | Pending |
+| SMS-01 | — | Pending |
+| SMS-02 | — | Pending |
+| SMS-03 | — | Pending |
+| SMS-04 | — | Pending |
+| SMS-05 | — | Pending |
+| SMS-06 | — | Pending |
+| SMS-07 | — | Pending |
+| STATUS-01 | — | Pending |
+| STATUS-02 | — | Pending |
+| STATUS-03 | — | Pending |
+| WEBHOOK-01 | — | Pending |
+| WEBHOOK-02 | — | Pending |
+| WEBHOOK-03 | — | Pending |
+| APIKEY-01 | — | Pending |
+| APIKEY-02 | — | Pending |
+| APIKEY-03 | — | Pending |
+| PROVIDER-01 | — | Pending |
+| PROVIDER-02 | — | Pending |
+| PROVIDER-03 | — | Pending |
+| ADMIN-01 | — | Pending |
+| ADMIN-02 | — | Pending |
+| ADMIN-03 | — | Pending |
+
+**Coverage:**
+- v1 requirements: 33 total
+- Mapped to phases: 0 (run /gsd:create-roadmap)
+- Unmapped: 33 ⚠️
+
+---
+*Requirements defined: 2026-03-10*
+*Last updated: 2026-03-10 after initial definition*
