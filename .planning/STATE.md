@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 ## Current Position
 
 Phase: 1 of 5 (Client & API Key Authentication)
-Plan: 01 of 3 (01-01 complete)
+Plan: 02 of 3 (01-02 complete)
 Status: In progress
-Last activity: 2026-03-10 — Completed 01-01-PLAN.md (data foundation: tables, entities, stub endpoint)
+Last activity: 2026-03-10 — Completed 01-02-PLAN.md (HMAC-SHA256 key generation, ApiKeyAuthenticationFilter, @Order(1) security chain)
 
-Progress: ███░░░░░░░ 33%
+Progress: ██████░░░░ 67%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 5 min
-- Total execution time: 5 min
+- Total plans completed: 2
+- Average duration: 4.5 min
+- Total execution time: 9 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-client-api-key-auth | 1 | 5 min | 5 min |
+| 01-client-api-key-auth | 2 | 9 min | 4.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 5 min
-- Trend: baseline
+- Last 5 plans: 5 min, 4 min
+- Trend: stable
 
 ## Accumulated Context
 
@@ -48,18 +48,21 @@ Recent decisions affecting current work:
 - ROLE_ADMIN only on /api/admin/clients/** — no LTD_ADMIN or USER access to client creation
 - `client` module is top-level sibling to security/common/email — owns api/service/repo/contract sub-packages
 - rawKey never stored anywhere — not in entity, not in DB; returned to caller once only
+- ApiKeyAuthenticationFilter not @Component — prevents Spring Boot global servlet filter registration; instantiated manually in ClientSecurityConfiguration
+- @Order(1)/@Order(2) on dual SecurityFilterChains — explicit ordering required; without it Integer.MAX_VALUE on both causes undefined behavior for /v1/api/**
+- HMAC-SHA256 (not BCrypt) for API key hashing — deterministic hash enables prefix lookup + constant-time comparison
+- APIKEY_PEPPER env var must be set in production; fallback 'change-me-in-production' is documented as unsafe
 
 ### Pending Todos
 
-- Plan 02: Implement ApiKeyService with HMAC-SHA256 key generation; replace stubs in ClientService
-- Plan 03: Add ApiKeyAuthenticationFilter and second SecurityFilterChain for API key auth
+- Plan 03: Add rate limiting and GET /v1/api/health endpoint (builds on /v1/api/** chain from Plan 02)
 
 ### Blockers/Concerns
 
-- DB state after running Plan 01 alone contains stub values (snd_stub_prefix / stub_hash) — not valid for authentication. Plans 01+02 must be run together before the system is usable.
+- APIKEY_PEPPER env var must be set before application is used in production — the fallback default is documented as unsafe.
 
 ## Session Continuity
 
-Last session: 2026-03-10T13:36:44Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-03-10T13:43:00Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
