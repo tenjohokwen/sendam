@@ -1,6 +1,7 @@
 package com.softropic.sendam.client.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -25,4 +26,13 @@ public interface SendRequestRepository extends JpaRepository<SendRequest, Long> 
            "AND r.sendStatus = com.softropic.sendam.client.contract.SendRequestStatus.SUBMITTED " +
            "AND s.lastModifiedDate < :cutoff")
     List<SendRequest> findStaleSubmittedRequests(@Param("cutoff") Instant cutoff);
+
+    @Query("SELECT s.id FROM SendRequest s WHERE s.finalizedAt < :cutoff " +
+           "AND s.sendStatus IN (com.softropic.sendam.client.contract.SendRequestStatus.FINALIZED, " +
+           "com.softropic.sendam.client.contract.SendRequestStatus.FAIL_FINALIZED)")
+    List<Long> findFinalizedBefore(@Param("cutoff") Instant cutoff);
+
+    @Modifying
+    @Query("DELETE FROM SendRequest s WHERE s.id IN :ids")
+    void deleteAllByIdIn(@Param("ids") List<Long> ids);
 }
