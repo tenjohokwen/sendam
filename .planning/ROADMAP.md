@@ -6,8 +6,8 @@ Build a production SMS Gateway from the existing security/email/common foundatio
 
 ## Phases
 
-- [ ] **Phase 1: Client & API Key Authentication** — Client domain, API key issuance/auth, admin client creation, rate limiting
-- [ ] **Phase 2: Credit Ledger & Top-Ups** — Ledger-first balance model, top-up workflow, admin approval, atomic reservation guarantee
+- [x] **Phase 1: Client & API Key Authentication** — Client domain, API key issuance/auth, admin client creation, rate limiting
+- [x] **Phase 2: Credit Ledger & Top-Ups** — Ledger-first balance model, top-up workflow, admin approval, atomic reservation guarantee
 - [ ] **Phase 3: Send SMS & Credit Reservation** — Single/bulk/scheduled send, all-or-nothing validation, idempotency, credit reservation
 - [ ] **Phase 4: Provider Integration & Message Status** — Nexah submission, DR callback ingestion, state machine, provider-confirmed billing, status query
 - [ ] **Phase 5: Webhooks** — Register URLs, deliver sms.finalized events, retry on failure
@@ -44,9 +44,9 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 02-01: Ledger entity/repo, balance query (ledger-derived), ledger history endpoint
-- [ ] 02-02: Top-up request/status endpoints, admin approve/reject endpoints, admin view-clients endpoint
-- [ ] 02-03: Atomic credit reservation implementation (pessimistic lock or optimistic with retry)
+- [x] 02-01: Ledger entity/repo, balance query (ledger-derived), ledger history endpoint
+- [x] 02-02: Top-up request/status endpoints, admin approve/reject endpoints, admin view-clients endpoint
+- [x] 02-03: Atomic credit reservation implementation (pessimistic lock or optimistic with retry)
 
 ### Phase 3: Send SMS & Credit Reservation
 **Goal**: Clients can send single, bulk, and scheduled SMS messages with atomic credit reservation, all-or-nothing validation, and idempotency.
@@ -102,8 +102,8 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Client & API Key Auth | 0/TBD | Not started | - |
-| 2. Credit Ledger & Top-Ups | 0/TBD | Not started | - |
+| 1. Client & API Key Auth | 3/3 | Complete | 2026-03-10 |
+| 2. Credit Ledger & Top-Ups | 3/3 | Complete | 2026-03-10 |
 | 3. Send SMS | 0/TBD | Not started | - |
 | 4. Provider Integration | 0/TBD | Not started | - |
 | 5. Webhooks | 0/TBD | Not started | - |

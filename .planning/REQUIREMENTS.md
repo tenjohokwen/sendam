@@ -15,15 +15,15 @@
 
 ### Credits (CREDIT)
 
-- [ ] **CREDIT-01**: Client can query current available credit balance (derived from ledger, p95 < 100ms)
-- [ ] **CREDIT-02**: Client can view full credit ledger history (paginated, all movement types)
-- [ ] **CREDIT-03**: Balance never goes negative — credit reservation is atomic and prevents overspend
+- [x] **CREDIT-01**: Client can query current available credit balance (derived from ledger, p95 < 100ms)
+- [x] **CREDIT-02**: Client can view full credit ledger history (paginated, all movement types)
+- [x] **CREDIT-03**: Balance never goes negative — credit reservation is atomic and prevents overspend
 
 ### Top-Ups (TOPUP)
 
-- [ ] **TOPUP-01**: Client can submit a top-up request (amount, transaction_id, payment_type); status is PENDING_APPROVAL
-- [ ] **TOPUP-02**: Client can query the status of a top-up request by topup_id
-- [ ] **TOPUP-03**: Top-up transaction_id must be unique per client
+- [x] **TOPUP-01**: Client can submit a top-up request (amount, transaction_id, payment_type); status is PENDING_APPROVAL
+- [x] **TOPUP-02**: Client can query the status of a top-up request by topup_id
+- [x] **TOPUP-03**: Top-up transaction_id must be unique per client
 
 ### Send SMS (SMS)
 
@@ -62,8 +62,8 @@
 ### Admin API (ADMIN)
 
 - [ ] **ADMIN-01**: Admin can create a new client account and issue the first API key
-- [ ] **ADMIN-02**: Admin can approve or reject pending top-up requests
-- [ ] **ADMIN-03**: Admin can view all clients and their current credit balance
+- [x] **ADMIN-02**: Admin can approve or reject pending top-up requests
+- [x] **ADMIN-03**: Admin can view all clients and their current credit balance
 
 ## v2 Requirements
 
@@ -92,14 +92,14 @@
 | APIKEY-02 | Phase 1 | Pending |
 | APIKEY-03 | Phase 1 | Pending |
 | ADMIN-01 | Phase 1 | Pending |
-| CREDIT-01 | Phase 2 | Pending |
-| CREDIT-02 | Phase 2 | Pending |
-| CREDIT-03 | Phase 2 | Pending |
-| TOPUP-01 | Phase 2 | Pending |
-| TOPUP-02 | Phase 2 | Pending |
-| TOPUP-03 | Phase 2 | Pending |
-| ADMIN-02 | Phase 2 | Pending |
-| ADMIN-03 | Phase 2 | Pending |
+| CREDIT-01 | Phase 2 | Complete |
+| CREDIT-02 | Phase 2 | Complete |
+| CREDIT-03 | Phase 2 | Complete |
+| TOPUP-01 | Phase 2 | Complete |
+| TOPUP-02 | Phase 2 | Complete |
+| TOPUP-03 | Phase 2 | Complete |
+| ADMIN-02 | Phase 2 | Complete |
+| ADMIN-03 | Phase 2 | Complete |
 | SMS-01 | Phase 3 | Pending |
 | SMS-02 | Phase 3 | Pending |
 | SMS-03 | Phase 3 | Pending |
