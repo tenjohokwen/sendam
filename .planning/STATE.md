@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 
 ## Current Position
 
-Phase: 3 of 5 (Send SMS)
-Plan: 04 of 4 (gap closure)
-Status: Phase complete (including gap closure)
-Last activity: 2026-03-10 — Completed 03-04-PLAN.md (typed exception classes, HTTP 400/409/429 gap closure)
+Phase: 4 of 5 (Provider Integration)
+Plan: 01 of 3
+Status: In progress
+Last activity: 2026-03-10 — Completed 04-01-PLAN.md (Nexah HTTP client, DTOs, circuit breaker, DR callback skeleton)
 
-Progress: ██████████ 100%
+Progress: ░░░░░░░░░░ (04-01 of 04 complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 6 min
-- Total execution time: 35 min
+- Total execution time: 41 min
 
 **By Phase:**
 
@@ -30,9 +30,10 @@ Progress: ██████████ 100%
 | 01-client-api-key-auth | 3 | 15 min | 5 min |
 | 02-credit-ledger-topups | 2 | 16 min | 8 min |
 | 03-send-sms | 4 | 26 min | 7 min |
+| 04-provider-integration | 1 | 6 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 8 min, 8 min, 6 min, 8 min, 4 min
+- Last 5 plans: 8 min, 6 min, 8 min, 4 min, 6 min
 - Trend: stable
 
 ## Accumulated Context
@@ -82,6 +83,11 @@ Recent decisions affecting current work:
 - SmsSchedulerService does NOT call CreditReservationService — scheduler marks SUBMITTED only; Phase 4 wires actual debit after Nexah confirmation
 - Cancel guard requires status=ACCEPTED AND scheduleTime IS NOT NULL — immediate sends cannot be cancelled
 - DELETE /v1/sms/scheduled/{id} not rate-limited per v8 contract
+- NexahClient does NOT extend AbstractClient — AbstractClient requires RestRequestInterceptor for MoMo auth; Nexah uses credential-in-body POST auth, incompatible with interceptor model
+- ProviderError enum created for PROVIDER_UNAVAILABLE — consistent with SmsError/ClientError pattern (each domain defines its own ErrorCode enum)
+- NexahSecurityConfiguration @Order(0) with securityMatcher('/v1/provider/**') — scoped narrowly so @Order(1) API key chain still guards /v1/sms/**, /v1/credits/**
+- DrCallbackResource is a deliberate stub in Plan 04-01 — Plan 04-02 wires DrCallbackService
+- checkAvailability() in NexahClient not wrapped by circuit breaker — it IS the probe, not the guarded operation
 
 ### Pending Todos
 
@@ -95,6 +101,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-10T19:13:30Z
-Stopped at: Completed 03-04-PLAN.md (typed exceptions + HTTP 400/409/429 gap closure) — Phase 3 complete including gap closure
+Last session: 2026-03-10T19:48:31Z
+Stopped at: Completed 04-01-PLAN.md (Nexah client infra + DR callback skeleton)
 Resume file: None
