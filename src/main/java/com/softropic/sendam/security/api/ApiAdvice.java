@@ -4,6 +4,8 @@ package com.softropic.sendam.security.api;
 import com.softropic.sendam.client.contract.exception.DuplicateTransactionIdException;
 import com.softropic.sendam.client.contract.exception.InsufficientBalanceException;
 import com.softropic.sendam.client.contract.exception.TopupAlreadyProcessedException;
+import jakarta.persistence.LockTimeoutException;
+import org.springframework.dao.CannotAcquireLockException;
 import com.softropic.sendam.common.exception.ApplicationException;
 import com.softropic.sendam.common.exception.ResourceNotFoundException;
 import com.softropic.sendam.common.message.ErrorDto;
@@ -383,6 +385,35 @@ public class ApiAdvice {
     public ErrorDto topupAlreadyProcessedHandler(final TopupAlreadyProcessedException exception) {
         final String defaultMsg = "This top-up has already been processed and cannot be modified.";
         return logErrorAndReturnDTO(exception, defaultMsg, "TOPUP_ALREADY_PROCESSED");
+    }
+
+    /**
+     * Handles jakarta.persistence.LockTimeoutException thrown when CreditReservationService
+     * cannot acquire the SELECT FOR UPDATE lock within the timeout window (2000ms).
+     * Clients should retry the request after a short delay.
+     *
+     * @param exception LockTimeoutException
+     * @return 503 Service Unavailable with error_code LOCK_TIMEOUT
+     */
+    @ExceptionHandler(LockTimeoutException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorDto lockTimeoutHandler(final LockTimeoutException exception) {
+        final String defaultMsg = "Server temporarily busy, please retry.";
+        return logErrorAndReturnDTO(exception, defaultMsg, "LOCK_TIMEOUT");
+    }
+
+    /**
+     * Handles org.springframework.dao.CannotAcquireLockException, which Spring's exception
+     * translation layer may wrap around LockTimeoutException from Hibernate.
+     *
+     * @param exception CannotAcquireLockException
+     * @return 503 Service Unavailable with error_code LOCK_TIMEOUT
+     */
+    @ExceptionHandler(CannotAcquireLockException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorDto cannotAcquireLockHandler(final CannotAcquireLockException exception) {
+        final String defaultMsg = "Server temporarily busy, please retry.";
+        return logErrorAndReturnDTO(exception, defaultMsg, "LOCK_TIMEOUT");
     }
 
 

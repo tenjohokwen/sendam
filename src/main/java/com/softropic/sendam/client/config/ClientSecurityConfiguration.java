@@ -2,6 +2,7 @@ package com.softropic.sendam.client.config;
 
 import com.softropic.sendam.client.infrastructure.filter.ApiKeyAuthenticationFilter;
 import com.softropic.sendam.client.service.ApiKeyService;
+import com.softropic.sendam.security.config.AppEndpoints;
 import com.softropic.sendam.security.infrastructure.ApplicationAccessDeniedHandler;
 import com.softropic.sendam.security.infrastructure.AuthenticationExceptionHandler;
 
@@ -18,9 +19,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 /**
- * Second SecurityFilterChain scoped to /v1/api/**.
+ * Second SecurityFilterChain scoped to /v1/**.
  * Runs at @Order(1) so it claims these paths before the JWT chain (@Order(2)).
  * Authenticates requests using Bearer API keys via ApiKeyAuthenticationFilter.
+ * // Covers all client-facing endpoints: /v1/api/**, /v1/credits/**, /v1/sms/**
+ * The @Order(2) JWT chain uses /api/** and other admin paths — it will not interfere with /v1/** paths.
  */
 @Configuration
 @Order(1)
@@ -37,7 +40,7 @@ public class ClientSecurityConfiguration {
             new ApiKeyAuthenticationFilter(apiKeyService, handlerExceptionResolver);
 
         http
-            .securityMatcher("/v1/api/**")
+            .securityMatcher(AppEndpoints.CLIENT_API) // Covers all client-facing endpoints: /v1/api/**, /v1/credits/**, /v1/sms/**
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())

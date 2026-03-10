@@ -15,7 +15,8 @@ public final class AppEndpoints {
     public static final String                    SECURED           = "/v1/**";
     public static final String                    SECURED_API           = "/api/**";
     // Client-facing API path prefix — controlled by ClientSecurityConfiguration chain (not the JWT chain)
-    public static final String                    CLIENT_API        = "/v1/api/**";
+    // Covers all client-facing endpoints: /v1/api/**, /v1/credits/**, /v1/sms/**
+    public static final String                    CLIENT_API        = "/v1/**";
     public static final String                    ACTUATOR           = "/manage/**";
     public static final String                    REFRESH           = "/refresh";
     public static final String                    ADMIN_CLIENTS     = "/api/admin/clients/**";
