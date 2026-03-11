@@ -12,7 +12,7 @@ Build a production SMS Gateway from the existing security/email/common foundatio
 - [x] **Phase 4: Provider Integration & Message Status** — Nexah submission, DR callback ingestion, state machine, provider-confirmed billing, status query
 - [x] **Phase 5: Webhooks** — Register URLs, deliver sms.finalized events, retry on failure
 - [ ] **Phase 6: Fix API Key Security Chain** — Unblock APIKEY-01/02/03 by adding /v1/api/** to ClientSecurityConfiguration, remove dead TOPUPS_API constant
-- [ ] **Phase 7: Fix Sender ID Forwarding** — Pass client-specified sender ID to Nexah instead of hardcoded global account sender
+- [x] **Phase 7: Fix Sender ID Forwarding** — Pass client-specified sender ID to Nexah instead of hardcoded global account sender
 
 ## Phase Details
 
@@ -135,5 +135,5 @@ Plans:
 | 3. Send SMS | 4/4 | Complete | 2026-03-10 |
 | 4. Provider Integration | 3/3 | Complete | 2026-03-10 |
 | 5. Webhooks | 2/2 | Complete | 2026-03-11 |
-| 6. Fix API Key Security Chain | 0/1 | Not started | - |
-| 7. Fix Sender ID Forwarding | 0/1 | Not started | - |
+| 6. Fix API Key Security Chain | 2/2 | Complete | 2026-03-11 |
+| 7. Fix Sender ID Forwarding | 1/1 | Complete | 2026-03-11 |
