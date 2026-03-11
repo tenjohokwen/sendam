@@ -10,7 +10,9 @@ Build a production SMS Gateway from the existing security/email/common foundatio
 - [x] **Phase 2: Credit Ledger & Top-Ups** — Ledger-first balance model, top-up workflow, admin approval, atomic reservation guarantee
 - [x] **Phase 3: Send SMS & Credit Reservation** — Single/bulk/scheduled send, all-or-nothing validation, idempotency, credit reservation
 - [x] **Phase 4: Provider Integration & Message Status** — Nexah submission, DR callback ingestion, state machine, provider-confirmed billing, status query
-- [ ] **Phase 5: Webhooks** — Register URLs, deliver sms.finalized events, retry on failure
+- [x] **Phase 5: Webhooks** — Register URLs, deliver sms.finalized events, retry on failure
+- [ ] **Phase 6: Fix API Key Security Chain** — Unblock APIKEY-01/02/03 by adding /v1/api/** to ClientSecurityConfiguration, remove dead TOPUPS_API constant
+- [ ] **Phase 7: Fix Sender ID Forwarding** — Pass client-specified sender ID to Nexah instead of hardcoded global account sender
 
 ## Phase Details
 
@@ -95,8 +97,34 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 05-01: Webhook registration endpoint, Webhook entity/repo
-- [ ] 05-02: Webhook delivery on message finalization, retry-with-backoff mechanism
+- [x] 05-01: Webhook registration endpoint, Webhook entity/repo
+- [x] 05-02: Webhook delivery on message finalization, retry-with-backoff mechanism
+
+### Phase 6: Fix API Key Security Chain
+**Goal**: Unblock APIKEY-01, APIKEY-02, APIKEY-03 — the three API key self-service endpoints are unreachable because `/v1/api/**` is missing from the API key security filter chain.
+**Depends on**: Phase 1 (gap closure)
+**Requirements**: APIKEY-01, APIKEY-02, APIKEY-03
+**Gap Closure**: Closes CRITICAL-1 and CRITICAL-2 from v1.0 milestone audit
+**Success Criteria** (what must be TRUE):
+  1. `GET /v1/api/keys` returns the client's API keys when authenticated with a valid API key
+  2. `POST /v1/api/keys` creates a new API key and shows raw value once
+  3. `DELETE /v1/api/keys/{id}` revokes a key; revoked key immediately loses access
+  4. Dead `TOPUPS_API` constant removed from `AppEndpoints` and `ClientSecurityConfiguration`
+
+Plans:
+- [ ] 06-01: Add CLIENT_API_KEYS constant to AppEndpoints, include in ClientSecurityConfiguration matcher, remove dead TOPUPS_API
+
+### Phase 7: Fix Sender ID Forwarding
+**Goal**: Pass the client-specified sender ID to Nexah instead of the hardcoded global account sender.
+**Depends on**: Phase 4 (gap closure)
+**Requirements**: SMS-01 (correctness gap — sender field accepted but ignored)
+**Gap Closure**: Closes WIRING-1 from v1.0 milestone audit
+**Success Criteria** (what must be TRUE):
+  1. When a client sends SMS with `"sender": "MYAPP"`, Nexah receives `"from": "MYAPP"` (not the global account sender)
+  2. Existing behavior is preserved when sender equals the global default
+
+Plans:
+- [ ] 07-01: Replace nexahProperties.senderid() with request.getSender() in NexahDispatchService.dispatch()
 
 ## Progress
 
@@ -106,4 +134,6 @@ Plans:
 | 2. Credit Ledger & Top-Ups | 3/3 | Complete | 2026-03-10 |
 | 3. Send SMS | 4/4 | Complete | 2026-03-10 |
 | 4. Provider Integration | 3/3 | Complete | 2026-03-10 |
-| 5. Webhooks | 0/TBD | Not started | - |
+| 5. Webhooks | 2/2 | Complete | 2026-03-11 |
+| 6. Fix API Key Security Chain | 0/1 | Not started | - |
+| 7. Fix Sender ID Forwarding | 0/1 | Not started | - |
