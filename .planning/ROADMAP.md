@@ -77,7 +77,7 @@ Plans:
 
 Plans:
 - [x] 11-01: Audit data layer — completed 2026-03-11
-- [ ] 11-02: Write pipeline (AuditEventService, AuditEventListener, service hooks)
+- [x] 11-02: Write pipeline (AuditEventService, AuditEventListener, service hooks) — completed 2026-03-11
 - [ ] 11-03: Admin query API (AdminAuditResource, AuditEventResponse)
 
 #### Phase 12: Client Analytics
@@ -107,5 +107,5 @@ Plans:
 | 8. Delivery Analytics (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
 | 9. Spend Reporting (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
 | 10. System Health (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
-| 11. Audit Log | v1.1 | 1/3 | In progress | - |
+| 11. Audit Log | v1.1 | 2/3 | In progress | - |
 | 12. Client Analytics | v1.1 | 0/? | Not started | - |

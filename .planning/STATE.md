@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 ## Current Position
 
 Phase: 11 of 12 (Audit Log)
-Plan: 1 of 3 — COMPLETE
+Plan: 2 of 3 — COMPLETE
 Status: In progress
-Last activity: 2026-03-11 — Completed 11-01-PLAN.md (audit data layer, 2/2 tasks, V10 migration + gateway/audit module)
+Last activity: 2026-03-11 — Completed 11-02-PLAN.md (audit write pipeline, 2/2 tasks, AuditEventService + AuditEventListener + 5 service hooks)
 
-Progress: v1.0 COMPLETE | v1.1 ████░ 80% (4/5 phases complete, 1/3 plans in phase 11)
+Progress: v1.0 COMPLETE | v1.1 ████░ 80% (4/5 phases complete, 2/3 plans in phase 11)
 
 ## Accumulated Context
 
@@ -40,6 +40,12 @@ Phase 10 decisions:
 - Provider stats SQL: FAIL_FINALIZED excluded from recipient-level query — FAIL_FINALIZED is only set on parent send_request; recipients reach FAILED (not FAIL_FINALIZED) after bad DR
 - All-time totals for HLTH-02/HLTH-03 (no date filters) — requirement does not specify filters; can add in a future phase
 - Map.ofEntries() MANDATORY from phase 10 onward — SECURED_MAPPINGS must use Map.ofEntries(); future phases must NOT revert to Map.of()
+
+Phase 11 decisions (plan 02):
+- AuditEventType passed as param to ApiKeyService.createKey/revokeKey — single service serves both admin and client paths; resource layer passes the correct type
+- SMS audit detail contains recipientCount only (not phone numbers) — minimizes PII in audit log per AUDT-03
+- WEBHOOK_DELETED left unwired — no delete endpoint in v8 contract; enum exists for future use
+- @EventListener (synchronous) + REQUIRES_NEW — mirrors AccountChangeEventListener + TrailService; no need for AFTER_COMMIT delay when REQUIRES_NEW suspends outer TX immediately
 
 Phase 11 decisions (plan 01):
 - AuditEventEntity extends BaseEntity only (not AbstractAuditingEntity) — audit_event is append-only; AbstractAuditingEntity adds status + auditing columns that are unwanted for an immutable audit table
@@ -72,6 +78,6 @@ Key architectural invariants for future milestones:
 
 ## Session Continuity
 
-Last session: 2026-03-11T21:18:57Z
-Stopped at: Completed 11-01-PLAN.md (audit data layer — phase 11, plan 1 of 3)
+Last session: 2026-03-11T22:43:17Z
+Stopped at: Completed 11-02-PLAN.md (audit write pipeline — phase 11, plan 2 of 3)
 Resume file: None
