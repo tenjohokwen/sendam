@@ -1,13 +1,11 @@
 package com.softropic.sendam.gateway.auth.repo;
 
 import com.softropic.sendam.common.persistence.AbstractAuditingEntity;
-import com.softropic.sendam.common.persistence.EntityStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -29,9 +27,6 @@ public class ClientApiKeyEntity extends AbstractAuditingEntity {
 
     @Column(name = "label", length = 100)
     private String label;
-
-    @Builder.Default
-    protected EntityStatus status = EntityStatus.ACTIVE;
 
     public Long getClientId() {
         return clientId;
