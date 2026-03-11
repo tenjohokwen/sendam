@@ -1,6 +1,7 @@
 package com.softropic.sendam.client.service;
 
 import com.softropic.sendam.client.contract.SendRequestStatus;
+import com.softropic.sendam.client.contract.event.SmsFinalisedEvent;
 import com.softropic.sendam.client.contract.nexah.NexahDrAck;
 import com.softropic.sendam.client.contract.nexah.NexahDrEntry;
 import com.softropic.sendam.client.contract.nexah.NexahDrPayload;
@@ -13,6 +14,7 @@ import com.softropic.sendam.common.exception.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +56,7 @@ public class DrCallbackService {
     private final SendRequestRecipientRepository recipientRepository;
     private final SendRequestRepository sendRequestRepository;
     private final CreditReservationService creditReservationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * Processes a DR callback payload from Nexah.
@@ -201,6 +204,18 @@ public class DrCallbackService {
 
         log.info("SendRequest {} finalized as {} — debited {} segments (reserved={})",
                 parent.getSendRequestId(), parentStatus, debitable, parent.getReservedCredits());
+
+        // Publish SmsFinalisedEvent so SmsFinalisedListener can create webhook delivery rows.
+        // @TransactionalEventListener(AFTER_COMMIT) ensures delivery rows are only written
+        // after this outer transaction commits successfully.
+        List<SmsFinalisedEvent.RecipientSummary> summaries = recipients.stream()
+                .map(r -> new SmsFinalisedEvent.RecipientSummary(
+                        r.getRecipient(),
+                        r.getGatewayMessageId(),
+                        r.getSendStatus()
+                ))
+                .toList();
+        eventPublisher.publishEvent(new SmsFinalisedEvent(parent.getClientId(), parent.getSendRequestId(), summaries));
     }
 
     private int parseSegmentsConsumed(NexahDrEntry dlr) {
