@@ -20,6 +20,7 @@ public final class AppEndpoints {
     public static final String                    CREDITS_API       = "/v1/credits/**";
     public static final String                    CLIENT_API_KEYS   = "/v1/api/**";
     public static final String                    WEBHOOKS_API      = "/v1/webhooks/**";
+    public static final String                    CLIENT_ANALYTICS  = "/v1/analytics/**";
     public static final String                    ACTUATOR           = "/manage/**";
     public static final String                    REFRESH           = "/refresh";
     public static final String                    ADMIN_CLIENTS     = "/api/admin/clients/**";
