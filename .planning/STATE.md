@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 
 ## Current Position
 
-Phase: 5 of 5 (Webhooks)
-Plan: 02 of 2
-Status: COMPLETE — all phases done
-Last activity: 2026-03-11 — Completed 05-02-PLAN.md (webhook delivery: SmsFinalisedEvent, SmsFinalisedListener, dispatchPendingDeliveries, exponential backoff)
+Phase: 6 of 6 (Fix API Key Security Chain)
+Plan: 01 of 1
+Status: Phase 6 complete — CRITICAL-1 and CRITICAL-2 from v1.0 milestone audit closed
+Last activity: 2026-03-11 — Completed 06-01-PLAN.md (CLIENT_API_KEYS constant, ClientSecurityConfiguration matcher fix, ClientApiKeySecurityIT)
 
-Progress: █████████████████████ (10 of ~14 plans complete, Phase 5 complete, v1.0 milestone DONE)
+Progress: ██████████████████████ (11 of ~15 plans complete, Phase 6 complete)
 
 ## Performance Metrics
 
@@ -32,6 +32,7 @@ Progress: █████████████████████ (10 of
 | 03-send-sms | 4 | 26 min | 7 min |
 | 04-provider-integration | 3 | 14 min | 5 min |
 | 05-webhooks | 2 | 15 min | 7.5 min |
+| 06-fix-api-key-security-chain | 1 | 8 min | 8 min |
 
 **Recent Trend:**
 - Last 5 plans: 4 min, 6 min, 6 min, 2 min, 7 min
@@ -105,6 +106,8 @@ Recent decisions affecting current work:
 - Explicit constructor over @RequiredArgsConstructor when @Qualifier needed — Lombok cannot propagate @Qualifier to generated constructor parameters
 - SmsFinalisedListener uses EntityStatus.ACTIVE not WebhookStatus.ACTIVE — WebhookEndpointRepository.findByClientIdAndStatus takes EntityStatus (inherited lifecycle column)
 - postWebhook() is public on WebhookService — required for Spring AOP proxy to intercept @Retryable; private methods bypass AOP proxy
+- TOPUPS_API (/v1/topups/**) removed from AppEndpoints — no controller owns that path; CLIENT_API_KEYS (/v1/api/**) added in its place
+- CLIENT_API_KEYS added to ClientSecurityConfiguration.securityMatcher varargs — /v1/api/keys now claimed by @Order(1) API key chain, not falling through to JWT chain; SECURED_MAPPINGS not touched (JWT chain only)
 
 ### Pending Todos
 
@@ -114,6 +117,7 @@ Recent decisions affecting current work:
 - Phase 4 (provider-integration) now COMPLETE — Nexah client, DR state machine, stale recovery, purge job all wired (04-01 through 04-03)
 - Phase 5 (webhooks) now COMPLETE — WEBHOOK-01, WEBHOOK-02, WEBHOOK-03 all satisfied (05-01 through 05-02)
 - v1.0 milestone COMPLETE — all phases done
+- Phase 6 (fix-api-key-security-chain) now COMPLETE — CRITICAL-1 and CRITICAL-2 closed (CLIENT_API_KEYS added, TOPUPS_API removed, ClientApiKeySecurityIT passing)
 
 ### Blockers/Concerns
 
@@ -121,6 +125,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-11T02:27:59Z
-Stopped at: Completed 05-02-PLAN.md (webhook delivery: SmsFinalisedEvent published, SmsFinalisedListener, WebhookService poller + backoff)
+Last session: 2026-03-11T12:38:54Z
+Stopped at: Completed 06-01-PLAN.md (CLIENT_API_KEYS constant, ClientSecurityConfiguration matcher, ClientApiKeySecurityIT)
 Resume file: None
