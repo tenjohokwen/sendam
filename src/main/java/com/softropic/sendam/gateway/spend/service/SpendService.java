@@ -1,5 +1,6 @@
 package com.softropic.sendam.gateway.spend.service;
 
+import com.softropic.sendam.gateway.analytics.contract.ClientCreditConsumptionResponse;
 import com.softropic.sendam.gateway.spend.contract.SpendSummaryResponse;
 import com.softropic.sendam.gateway.spend.contract.SpendSummaryRow;
 import com.softropic.sendam.gateway.spend.contract.TopupHistoryItem;
@@ -29,6 +30,11 @@ public class SpendService {
             row.getSmsReservation(),
             row.getNetCreditsConsumed()
         );
+    }
+
+    public ClientCreditConsumptionResponse getClientNetCreditsConsumed(Long clientId, Instant from, Instant to) {
+        SpendSummaryRow row = repository.findSpendSummary(clientId, from, to);
+        return new ClientCreditConsumptionResponse(row.getNetCreditsConsumed(), from, to);
     }
 
     public TopupHistoryResponse getTopupHistory(Long clientId, String topupStatus, Instant from, Instant to) {

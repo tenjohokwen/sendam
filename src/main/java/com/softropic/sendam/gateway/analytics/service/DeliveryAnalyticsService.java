@@ -1,5 +1,7 @@
 package com.softropic.sendam.gateway.analytics.service;
 
+import com.softropic.sendam.gateway.analytics.contract.ClientDeliveryStatsResponse;
+import com.softropic.sendam.gateway.analytics.contract.ClientSegmentTotalsResponse;
 import com.softropic.sendam.gateway.analytics.contract.DeliveryDailyStat;
 import com.softropic.sendam.gateway.analytics.contract.DeliveryDailyStatRow;
 import com.softropic.sendam.gateway.analytics.contract.DeliveryStatRow;
@@ -44,5 +46,19 @@ public class DeliveryAnalyticsService {
     public SegmentTotalsResponse getSegmentTotals(Long clientId, Instant from, Instant to) {
         DeliveryStatRow summary = repository.findDeliveryStats(clientId, from, to);
         return new SegmentTotalsResponse(summary.getTotalSegments(), clientId, from, to);
+    }
+
+    public ClientDeliveryStatsResponse getClientDeliveryStats(Long clientId, Instant from, Instant to) {
+        DeliveryStatRow summary = repository.findDeliveryStats(clientId, from, to);
+        long totalSent  = summary.getTotalSent();
+        long delivered  = summary.getDelivered();
+        long failed     = summary.getFailed();
+        double rate     = totalSent == 0 ? 0.0 : (double) delivered / totalSent * 100.0;
+        return new ClientDeliveryStatsResponse(totalSent, delivered, failed, rate, summary.getTotalSegments());
+    }
+
+    public ClientSegmentTotalsResponse getClientSegmentTotals(Long clientId, Instant from, Instant to) {
+        DeliveryStatRow summary = repository.findDeliveryStats(clientId, from, to);
+        return new ClientSegmentTotalsResponse(summary.getTotalSegments(), from, to);
     }
 }
