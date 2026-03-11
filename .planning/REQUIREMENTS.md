@@ -13,9 +13,9 @@
 
 ### Spend Reporting (Admin)
 
-- [ ] **SPEN-01**: Admin can query net credits consumed (debits minus refunds) per client per time period
-- [ ] **SPEN-02**: Spend response includes breakdown by ledger entry type (SMS_DEBIT, SMS_REFUND, TOPUP_APPROVED, etc.)
-- [ ] **SPEN-03**: Admin can query top-up history (pending / approved / rejected) per client per time period
+- [x] **SPEN-01**: Admin can query net credits consumed (debits minus refunds) per client per time period
+- [x] **SPEN-02**: Spend response includes breakdown by ledger entry type (SMS_DEBIT, SMS_REFUND, TOPUP_APPROVED, etc.)
+- [x] **SPEN-03**: Admin can query top-up history (pending / approved / rejected) per client per time period
 
 ### System Health (Admin)
 
@@ -60,9 +60,9 @@ Which phases cover which requirements. Updated by `/gsd:create-roadmap`.
 | DANL-01 | Phase 8 | Complete |
 | DANL-02 | Phase 8 | Complete |
 | DANL-03 | Phase 8 | Complete |
-| SPEN-01 | Phase 9 | Pending |
-| SPEN-02 | Phase 9 | Pending |
-| SPEN-03 | Phase 9 | Pending |
+| SPEN-01 | Phase 9 | Complete |
+| SPEN-02 | Phase 9 | Complete |
+| SPEN-03 | Phase 9 | Complete |
 | HLTH-01 | Phase 10 | Pending |
 | HLTH-02 | Phase 10 | Pending |
 | HLTH-03 | Phase 10 | Pending |

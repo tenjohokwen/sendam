@@ -45,10 +45,10 @@ Plans:
   1. Admin can query net credits consumed (debits minus refunds) per client for a given period
   2. Response includes breakdown by ledger entry type (SMS_DEBIT, SMS_REFUND, TOPUP_APPROVED, etc.)
   3. Admin can view top-up history (pending / approved / rejected) per client per period
-**Plans**: TBD
+**Plans**: 1/1 complete
 
 Plans:
-- [ ] 09-01: TBD
+- [x] 09-01: Spend reporting data layer + admin REST endpoint — completed 2026-03-11
 
 #### Phase 10: System Health (Admin)
 **Goal**: Admin can query real-time health metrics for the platform's critical subsystems
@@ -103,7 +103,7 @@ Plans:
 | 6. Fix API Key Security Chain | v1.0 | 2/2 | Complete | 2026-03-11 |
 | 7. Fix Sender ID Forwarding | v1.0 | 1/1 | Complete | 2026-03-11 |
 | 8. Delivery Analytics (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
-| 9. Spend Reporting (Admin) | v1.1 | 0/? | Not started | - |
+| 9. Spend Reporting (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
 | 10. System Health (Admin) | v1.1 | 0/? | Not started | - |
 | 11. Audit Log | v1.1 | 0/? | Not started | - |
 | 12. Client Analytics | v1.1 | 0/? | Not started | - |
