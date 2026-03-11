@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Phase 10 — System Health (Admin)
+**Current focus:** Phase 11 — Audit Log
 
 ## Current Position
 
-Phase: 10 of 12 (System Health — Admin)
-Plan: 1 of 1 — COMPLETE
-Status: Phase complete
-Last activity: 2026-03-11 — Completed 10-01-PLAN.md (system health admin, 2/2 tasks, HLTH-01/02/03 satisfied)
+Phase: 11 of 12 (Audit Log)
+Plan: 1 of 3 — COMPLETE
+Status: In progress
+Last activity: 2026-03-11 — Completed 11-01-PLAN.md (audit data layer, 2/2 tasks, V10 migration + gateway/audit module)
 
-Progress: v1.0 COMPLETE | v1.1 ███░░ 60% (3/5 phases complete)
+Progress: v1.0 COMPLETE | v1.1 ████░ 80% (4/5 phases complete, 1/3 plans in phase 11)
 
 ## Accumulated Context
 
@@ -41,6 +41,12 @@ Phase 10 decisions:
 - All-time totals for HLTH-02/HLTH-03 (no date filters) — requirement does not specify filters; can add in a future phase
 - Map.ofEntries() MANDATORY from phase 10 onward — SECURED_MAPPINGS must use Map.ofEntries(); future phases must NOT revert to Map.of()
 
+Phase 11 decisions (plan 01):
+- AuditEventEntity extends BaseEntity only (not AbstractAuditingEntity) — audit_event is append-only; AbstractAuditingEntity adds status + auditing columns that are unwanted for an immutable audit table
+- client_id is nullable FK on audit_event — admin events have a client target but future event types must not be constrained to require one
+- DomainAuditEvent is a plain record (not ApplicationEvent subclass) — published via ApplicationEventPublisher; simpler, no framework coupling
+- findEvents nativeQuery=true requires explicit countQuery — Spring cannot derive count from native SQL with conditional WHERE; omitting throws at runtime
+
 Key architectural invariants for future milestones:
 
 - Ledger-first balance: balance derived from ledger entries, never a mutable column
@@ -66,6 +72,6 @@ Key architectural invariants for future milestones:
 
 ## Session Continuity
 
-Last session: 2026-03-11T19:49:12Z
-Stopped at: Completed 10-01-PLAN.md (system health admin — phase 10 complete)
+Last session: 2026-03-11T21:18:57Z
+Stopped at: Completed 11-01-PLAN.md (audit data layer — phase 11, plan 1 of 3)
 Resume file: None
