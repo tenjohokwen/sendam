@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Phase 4 — Provider Integration (complete)
+**Current focus:** Phase 5 — Webhooks (in progress)
 
 ## Current Position
 
-Phase: 4 of 5 (Provider Integration)
-Plan: 03 of 3
-Status: Phase complete
-Last activity: 2026-03-10 — Completed 04-03-PLAN.md (SmsPurgeService, 30-day retention purge, status query verification)
+Phase: 5 of 5 (Webhooks)
+Plan: 01 of 2
+Status: In progress
+Last activity: 2026-03-11 — Completed 05-01-PLAN.md (webhook infrastructure, POST /v1/webhooks, entities, config)
 
-Progress: ░░░░░░░░░░░ (04-03 of 04 complete)
+Progress: ████████████░░░░░░░░░ (09 of ~14 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 5 min
-- Total execution time: 43 min
+- Total plans completed: 9
+- Average duration: 6 min
+- Total execution time: 50 min
 
 **By Phase:**
 
@@ -31,9 +31,10 @@ Progress: ░░░░░░░░░░░ (04-03 of 04 complete)
 | 02-credit-ledger-topups | 2 | 16 min | 8 min |
 | 03-send-sms | 4 | 26 min | 7 min |
 | 04-provider-integration | 3 | 14 min | 5 min |
+| 05-webhooks | 1 | 7 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 8 min, 4 min, 6 min, 6 min, 2 min
+- Last 5 plans: 4 min, 6 min, 6 min, 2 min, 7 min
 - Trend: stable
 
 ## Accumulated Context
@@ -96,6 +97,10 @@ Recent decisions affecting current work:
 - findFinalizedBefore returns List<Long> not List<SendRequest> — IDs sufficient for delete; avoids loading full entity graphs for large purge sets
 - Batch size 500 for SmsPurgeService — prevents unbounded IN-clause, acceptable trade-off for background job
 - SmsPurgeService does not add @EnableScheduling — already present in ClientConfig
+- attempt_status column (PENDING/DELIVERED/FAILED/EXHAUSTED) used in webhook_delivery instead of status — avoids collision with AbstractAuditingEntity inherited status column (EntityStatus); matches send_status convention from Phase 3
+- @EnableRetry placed in WebhookConfig, not ClientConfig — retry infrastructure co-located with webhookRestTemplate
+- WebhookEndpointRepository.findByClientIdAndStatus uses EntityStatus not WebhookStatus — inherited status column carries entity lifecycle; WebhookStatus is contract-layer only
+- wh_ prefix + UUID substring for public webhook IDs — avoids exposing BIGINT TSID as webhook_id
 
 ### Pending Todos
 
@@ -110,6 +115,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-10T20:02:37Z
-Stopped at: Completed 04-03-PLAN.md (SmsPurgeService, 30-day retention, status query verification)
+Last session: 2026-03-11T02:17:34Z
+Stopped at: Completed 05-01-PLAN.md (webhook infrastructure: V7 migration, entities, repos, WebhookConfig, WebhookService.register, POST /v1/webhooks)
 Resume file: None
