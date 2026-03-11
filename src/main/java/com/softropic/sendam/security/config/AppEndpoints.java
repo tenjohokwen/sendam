@@ -28,6 +28,7 @@ public final class AppEndpoints {
     public static final String                    ADMIN_ANALYTICS   = "/api/admin/analytics/**";
     public static final String                    ADMIN_SPEND       = "/api/admin/spend/**";
     public static final String                    ADMIN_HEALTH      = "/api/admin/health/**";
+    public static final String                    ADMIN_AUDIT       = "/api/admin/audit/**";
     public static final Map<String, String[]> SECURED_MAPPINGS;
     public static final List<String>          SECURED_ENDPOINTS; //"/api/register"
     public static final String FROM_CHROME = "/.well-known/appspecific/com.chrome.devtools.json"; //TODO investigate how to handle this
@@ -52,7 +53,8 @@ public final class AppEndpoints {
             Map.entry(ADMIN_API_KEYS,  new String[]{AuthoritiesConstants.ADMIN}),
             Map.entry(ADMIN_ANALYTICS, new String[]{AuthoritiesConstants.ADMIN}),
             Map.entry(ADMIN_SPEND,     new String[]{AuthoritiesConstants.ADMIN}),
-            Map.entry(ADMIN_HEALTH,    new String[]{AuthoritiesConstants.ADMIN})
+            Map.entry(ADMIN_HEALTH,    new String[]{AuthoritiesConstants.ADMIN}),
+            Map.entry(ADMIN_AUDIT,     new String[]{AuthoritiesConstants.ADMIN})
         );
         SECURED_ENDPOINTS = List.copyOf(SECURED_MAPPINGS.keySet());
         ALL_UNRESTRICTED = new ArrayList<>(PUBLIC_STATIC_RESOURCES);
