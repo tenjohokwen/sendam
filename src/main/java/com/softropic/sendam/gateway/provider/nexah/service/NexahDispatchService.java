@@ -60,7 +60,7 @@ public class NexahDispatchService {
         NexahSendRequest nexahRequest = new NexahSendRequest(
                 nexahProperties.user(),
                 nexahProperties.password(),
-                nexahProperties.senderid(),
+                request.getSender(),
                 request.getMessage(),
                 mobilesString
         );
