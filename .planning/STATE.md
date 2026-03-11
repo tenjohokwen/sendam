@@ -10,17 +10,23 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 ## Current Position
 
 Phase: 8 of 12 (Delivery Analytics — Admin)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-03-11 — v1.1 roadmap created (5 phases, 17 requirements)
+Plan: 01 of 01 complete
+Status: Phase complete
+Last activity: 2026-03-11 — Completed 08-01-PLAN.md (delivery analytics admin)
 
-Progress: v1.0 COMPLETE | v1.1 ░░░░░ 0% (0/5 phases)
+Progress: v1.0 COMPLETE | v1.1 █░░░░ 20% (1/5 phases)
 
 ## Accumulated Context
 
 ### Decisions
 
 All v1.0 decisions are logged in PROJECT.md Key Decisions table.
+
+Phase 8 decisions:
+- Repository<Object, Long> (not JpaRepository) for pure-aggregation repositories — no entity binding needed
+- getSegmentTotals reuses findDeliveryStats — same aggregate row covers both endpoints, no duplicate method
+- java.sql.Date return type on projection getDay() for DATE_TRUNC results — convert to LocalDate in service layer
+- delivery_rate guard at total_sent==0 — explicit guard, returns 0.0 (no division-by-zero)
 
 Key architectural invariants for future milestones:
 
@@ -47,6 +53,6 @@ Key architectural invariants for future milestones:
 
 ## Session Continuity
 
-Last session: 2026-03-11
-Stopped at: v1.0 milestone archived
+Last session: 2026-03-11T18:38:19Z
+Stopped at: Completed 08-01-PLAN.md (delivery analytics admin — phase 8 complete)
 Resume file: None
