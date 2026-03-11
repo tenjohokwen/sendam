@@ -40,7 +40,7 @@ public class ClientSecurityConfiguration {
             new ApiKeyAuthenticationFilter(apiKeyService, handlerExceptionResolver);
 
         http
-            .securityMatcher(AppEndpoints.SMS_API, AppEndpoints.CREDITS_API, AppEndpoints.TOPUPS_API, AppEndpoints.WEBHOOKS_API)
+            .securityMatcher(AppEndpoints.SMS_API, AppEndpoints.CREDITS_API, AppEndpoints.CLIENT_API_KEYS, AppEndpoints.WEBHOOKS_API)
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())

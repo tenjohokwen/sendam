@@ -18,7 +18,7 @@ public final class AppEndpoints {
     // Covers all client-facing endpoints: /v1/api/**, /v1/credits/**, /v1/sms/**
     public static final String                    SMS_API           = "/v1/sms/**";
     public static final String                    CREDITS_API       = "/v1/credits/**";
-    public static final String                    TOPUPS_API        = "/v1/topups/**";
+    public static final String                    CLIENT_API_KEYS   = "/v1/api/**";
     public static final String                    WEBHOOKS_API      = "/v1/webhooks/**";
     public static final String                    ACTUATOR           = "/manage/**";
     public static final String                    REFRESH           = "/refresh";
