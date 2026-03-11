@@ -1,6 +1,6 @@
 package com.softropic.sendam.security.infrastructure;
 
-import com.softropic.sendam.security.contract.exception.AuthorizationException;
+import com.softropic.sendam.client.contract.exception.RateLimitExceededException;
 import com.softropic.sendam.security.contract.util.RateLimited;
 import com.softropic.sendam.security.service.RateLimitingService;
 import com.softropic.sendam.security.common.util.RequestMetadataProvider;
@@ -14,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import static com.softropic.sendam.security.contract.exception.SecurityError.TOO_MANY_REQUESTS;
 
 /**
  * Aspect for enforcing rate limits on methods annotated with {@link RateLimited}.
@@ -55,9 +54,7 @@ public class RateLimitingAspect {
 
         if (!allowed) {
             LOGGER.warn("Rate limit exceeded for client: {}, key: {}", identifier, rateLimited.key());
-            // Using a generic exception or creating a specific one.
-            // Based on SecurityError, we might want to throw something that results in 429.
-            throw new AuthorizationException("Too many requests. Please try again later.", TOO_MANY_REQUESTS);
+            throw new RateLimitExceededException("Too many requests. Please try again later.");
         }
     }
 
