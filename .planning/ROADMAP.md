@@ -32,10 +32,10 @@
   1. Admin can query sent / delivered / failed counts and delivery rate, with optional filter by client and time period
   2. Segment totals are included alongside message counts
   3. Response includes a daily breakdown (counts per day) within the filtered window
-**Plans**: TBD
+**Plans**: 1/1 complete
 
 Plans:
-- [ ] 08-01: TBD
+- [x] 08-01: Delivery analytics data layer + admin REST endpoint — completed 2026-03-11
 
 #### Phase 9: Spend Reporting (Admin)
 **Goal**: Admin can query credit consumption and top-up history per client
@@ -102,7 +102,7 @@ Plans:
 | 5. Webhooks | v1.0 | 2/2 | Complete | 2026-03-11 |
 | 6. Fix API Key Security Chain | v1.0 | 2/2 | Complete | 2026-03-11 |
 | 7. Fix Sender ID Forwarding | v1.0 | 1/1 | Complete | 2026-03-11 |
-| 8. Delivery Analytics (Admin) | v1.1 | 0/? | Not started | - |
+| 8. Delivery Analytics (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
 | 9. Spend Reporting (Admin) | v1.1 | 0/? | Not started | - |
 | 10. System Health (Admin) | v1.1 | 0/? | Not started | - |
 | 11. Audit Log | v1.1 | 0/? | Not started | - |

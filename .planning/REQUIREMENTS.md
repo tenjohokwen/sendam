@@ -7,9 +7,9 @@
 
 ### Delivery Analytics (Admin)
 
-- [ ] **DANL-01**: Admin can query delivery stats (sent / delivered / failed counts + delivery rate) with optional filter by client and optional filter by time period
-- [ ] **DANL-02**: Admin can query billed segment totals with optional filter by client and time period
-- [ ] **DANL-03**: Delivery stats response includes both overall summary totals and a time-bucketed daily breakdown
+- [x] **DANL-01**: Admin can query delivery stats (sent / delivered / failed counts + delivery rate) with optional filter by client and optional filter by time period
+- [x] **DANL-02**: Admin can query billed segment totals with optional filter by client and time period
+- [x] **DANL-03**: Delivery stats response includes both overall summary totals and a time-bucketed daily breakdown
 
 ### Spend Reporting (Admin)
 
@@ -57,9 +57,9 @@ Which phases cover which requirements. Updated by `/gsd:create-roadmap`.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DANL-01 | Phase 8 | Pending |
-| DANL-02 | Phase 8 | Pending |
-| DANL-03 | Phase 8 | Pending |
+| DANL-01 | Phase 8 | Complete |
+| DANL-02 | Phase 8 | Complete |
+| DANL-03 | Phase 8 | Complete |
 | SPEN-01 | Phase 9 | Pending |
 | SPEN-02 | Phase 9 | Pending |
 | SPEN-03 | Phase 9 | Pending |
