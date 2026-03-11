@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 ## Current Position
 
 Phase: 5 of 5 (Webhooks)
-Plan: 01 of 2
-Status: In progress
-Last activity: 2026-03-11 — Completed 05-01-PLAN.md (webhook infrastructure, POST /v1/webhooks, entities, config)
+Plan: 02 of 2
+Status: COMPLETE — all phases done
+Last activity: 2026-03-11 — Completed 05-02-PLAN.md (webhook delivery: SmsFinalisedEvent, SmsFinalisedListener, dispatchPendingDeliveries, exponential backoff)
 
-Progress: ████████████░░░░░░░░░ (09 of ~14 plans complete)
+Progress: █████████████████████ (10 of ~14 plans complete, Phase 5 complete, v1.0 milestone DONE)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 6 min
-- Total execution time: 50 min
+- Total execution time: 58 min
 
 **By Phase:**
 
@@ -31,7 +31,7 @@ Progress: ████████████░░░░░░░░░ (09 of
 | 02-credit-ledger-topups | 2 | 16 min | 8 min |
 | 03-send-sms | 4 | 26 min | 7 min |
 | 04-provider-integration | 3 | 14 min | 5 min |
-| 05-webhooks | 1 | 7 min | 7 min |
+| 05-webhooks | 2 | 15 min | 7.5 min |
 
 **Recent Trend:**
 - Last 5 plans: 4 min, 6 min, 6 min, 2 min, 7 min
@@ -101,6 +101,10 @@ Recent decisions affecting current work:
 - @EnableRetry placed in WebhookConfig, not ClientConfig — retry infrastructure co-located with webhookRestTemplate
 - WebhookEndpointRepository.findByClientIdAndStatus uses EntityStatus not WebhookStatus — inherited status column carries entity lifecycle; WebhookStatus is contract-layer only
 - wh_ prefix + UUID substring for public webhook IDs — avoids exposing BIGINT TSID as webhook_id
+- @TransactionalEventListener(AFTER_COMMIT) + @Transactional(REQUIRES_NEW) always paired — AFTER_COMMIT leaves no ambient TX; REQUIRES_NEW opens a fresh one for listener writes
+- Explicit constructor over @RequiredArgsConstructor when @Qualifier needed — Lombok cannot propagate @Qualifier to generated constructor parameters
+- SmsFinalisedListener uses EntityStatus.ACTIVE not WebhookStatus.ACTIVE — WebhookEndpointRepository.findByClientIdAndStatus takes EntityStatus (inherited lifecycle column)
+- postWebhook() is public on WebhookService — required for Spring AOP proxy to intercept @Retryable; private methods bypass AOP proxy
 
 ### Pending Todos
 
@@ -108,6 +112,8 @@ Recent decisions affecting current work:
 - AUTH-05 now COMPLETE — N-token tryConsume wired in SmsService.sendSms (03-02); @RateLimited(10/s) on both resource and service
 - Phase 3 (SMS-01 through SMS-06) now COMPLETE — all six requirements satisfied + all HTTP status code gaps closed (03-04)
 - Phase 4 (provider-integration) now COMPLETE — Nexah client, DR state machine, stale recovery, purge job all wired (04-01 through 04-03)
+- Phase 5 (webhooks) now COMPLETE — WEBHOOK-01, WEBHOOK-02, WEBHOOK-03 all satisfied (05-01 through 05-02)
+- v1.0 milestone COMPLETE — all phases done
 
 ### Blockers/Concerns
 
@@ -115,6 +121,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-11T02:17:34Z
-Stopped at: Completed 05-01-PLAN.md (webhook infrastructure: V7 migration, entities, repos, WebhookConfig, WebhookService.register, POST /v1/webhooks)
+Last session: 2026-03-11T02:27:59Z
+Stopped at: Completed 05-02-PLAN.md (webhook delivery: SmsFinalisedEvent published, SmsFinalisedListener, WebhookService poller + backoff)
 Resume file: None
