@@ -57,29 +57,29 @@ Which phases cover which requirements. Updated by `/gsd:create-roadmap`.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DANL-01 | — | Pending |
-| DANL-02 | — | Pending |
-| DANL-03 | — | Pending |
-| SPEN-01 | — | Pending |
-| SPEN-02 | — | Pending |
-| SPEN-03 | — | Pending |
-| HLTH-01 | — | Pending |
-| HLTH-02 | — | Pending |
-| HLTH-03 | — | Pending |
-| AUDT-01 | — | Pending |
-| AUDT-02 | — | Pending |
-| AUDT-03 | — | Pending |
-| AUDT-04 | — | Pending |
-| AUDT-05 | — | Pending |
-| CANL-01 | — | Pending |
-| CANL-02 | — | Pending |
-| CANL-03 | — | Pending |
+| DANL-01 | Phase 8 | Pending |
+| DANL-02 | Phase 8 | Pending |
+| DANL-03 | Phase 8 | Pending |
+| SPEN-01 | Phase 9 | Pending |
+| SPEN-02 | Phase 9 | Pending |
+| SPEN-03 | Phase 9 | Pending |
+| HLTH-01 | Phase 10 | Pending |
+| HLTH-02 | Phase 10 | Pending |
+| HLTH-03 | Phase 10 | Pending |
+| AUDT-01 | Phase 11 | Pending |
+| AUDT-02 | Phase 11 | Pending |
+| AUDT-03 | Phase 11 | Pending |
+| AUDT-04 | Phase 11 | Pending |
+| AUDT-05 | Phase 11 | Pending |
+| CANL-01 | Phase 12 | Pending |
+| CANL-02 | Phase 12 | Pending |
+| CANL-03 | Phase 12 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 17 total
-- Mapped to phases: 0 (run /gsd:create-roadmap)
-- Unmapped: 17 ⚠️
+- Mapped to phases: 17
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-11*
-*Last updated: 2026-03-11 after initial definition*
+*Last updated: 2026-03-11 after roadmap creation*
