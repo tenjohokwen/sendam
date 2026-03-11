@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 
 ## Current Position
 
-Phase: 11 of 12 (Audit Log) — COMPLETE
-Plan: 3 of 3 — COMPLETE
-Status: Phase complete
-Last activity: 2026-03-11 — Completed 11-03-PLAN.md (admin audit query endpoint, 1/1 task, AdminAuditResource + AppEndpoints ADMIN_AUDIT)
+Phase: 12 of 12 (Client Analytics) — In progress
+Plan: 1 of 1 — COMPLETE
+Status: In progress
+Last activity: 2026-03-11 — Completed 12-01-PLAN.md (client analytics endpoints: CANL-01/02/03 — ClientAnalyticsResource, 3 response DTOs, 3 service methods, AppEndpoints.CLIENT_ANALYTICS)
 
-Progress: v1.0 COMPLETE | v1.1 ████░ 91% (5/5 phases complete, phase 12 not started)
+Progress: v1.0 COMPLETE | v1.1 █████ 100% (all 6 phases complete)
 
 ## Accumulated Context
 
@@ -54,6 +54,13 @@ Phase 11 decisions (plan 02):
 - WEBHOOK_DELETED left unwired — no delete endpoint in v8 contract; enum exists for future use
 - @EventListener (synchronous) + REQUIRES_NEW — mirrors AccountChangeEventListener + TrailService; no need for AFTER_COMMIT delay when REQUIRES_NEW suspends outer TX immediately
 
+Phase 12 decisions (plan 01):
+- CLIENT_ANALYTICS not in SECURED_MAPPINGS — /v1/** catch-all covers it in JWT chain; constant exists only for securityMatcher reference in ClientSecurityConfiguration
+- No @PreAuthorize on ClientAnalyticsResource — @Order(1) API-key chain enforces auth; mirrors SmsResource pattern
+- clientId logged at DEBUG only — PII guard; INFO/WARN logs must not expose client identity
+- getClientSegmentTotals reuses repository.findDeliveryStats — same aggregate row provides total_segments; no duplicate query needed
+- getClientNetCreditsConsumed reads getNetCreditsConsumed() only from SpendSummaryRow — per-type breakdown intentionally excluded per CANL-03 scope
+
 Phase 11 decisions (plan 01):
 - AuditEventEntity extends BaseEntity only (not AbstractAuditingEntity) — audit_event is append-only; AbstractAuditingEntity adds status + auditing columns that are unwanted for an immutable audit table
 - client_id is nullable FK on audit_event — admin events have a client target but future event types must not be constrained to require one
@@ -85,6 +92,6 @@ Key architectural invariants for future milestones:
 
 ## Session Continuity
 
-Last session: 2026-03-11T22:50:00Z
-Stopped at: Completed 11-03-PLAN.md (admin audit query endpoint — phase 11, plan 3 of 3, phase COMPLETE)
+Last session: 2026-03-11T23:15:00Z
+Stopped at: Completed 12-01-PLAN.md (client analytics endpoints — CANL-01/02/03, phase 12, plan 1 of 1)
 Resume file: None
