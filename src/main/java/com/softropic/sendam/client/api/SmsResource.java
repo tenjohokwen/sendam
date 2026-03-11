@@ -5,8 +5,6 @@ import com.softropic.sendam.client.contract.MessageStatusResponse;
 import com.softropic.sendam.client.contract.SendSmsRequest;
 import com.softropic.sendam.client.contract.SendSmsResponse;
 import com.softropic.sendam.client.service.SmsService;
-import com.softropic.sendam.security.contract.util.RateLimited;
-
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.concurrent.TimeUnit;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,11 +36,10 @@ public class SmsResource {
      * Accepts an SMS send request from the authenticated client.
      * POST /v1/sms/send
      *
-     * <p>The @RateLimited aspect enforces 10 req/s per client (AUTH-05 first half).
-     * N-token recipient rate limit (AUTH-05 second half) is enforced inside SmsService.
+     * <p>Rate limiting (10 req/s and 1000 recipients/min per AUTH-05) is enforced
+     * inside SmsService — the authoritative boundary regardless of caller.
      */
     @PostMapping("/send")
-    @RateLimited(key = "sms_send", capacity = 10, duration = 1, unit = TimeUnit.SECONDS)
     public ResponseEntity<SendSmsResponse> sendSms(@RequestBody @Valid SendSmsRequest request) {
         Long clientId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         SendSmsResponse response = smsService.sendSms(clientId, request);

@@ -105,7 +105,7 @@ public class SmsService {
         // Step 4: Validate message (JSR-303 @NotBlank handles null/blank at DTO level,
         // but defend here as well per plan instruction)
         if (request.message() == null || request.message().isBlank()) {
-            throw new SmsValidationException("Message must not be blank", SmsError.INVALID_SENDER_ID);
+            throw new SmsValidationException("Message must not be blank", SmsError.INVALID_MESSAGE);
         }
 
         // Step 5: Validate all recipients — collect ALL failures before throwing
