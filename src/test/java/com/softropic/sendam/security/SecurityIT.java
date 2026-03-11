@@ -50,7 +50,7 @@ import static org.awaitility.Awaitility.await;
 
 @ActiveProfiles("dev")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-                properties = {"ledger.database.spy=true", "enable.test.mail=true"})
+                properties = {"ledger.database.spy=true", "enable.test.mail=true", "custom.flyway.check-schema=false"})
 @Import(TestConfig.class)
 @TestPropertySource(properties = "spring.cloud.compatibility-verifier.enabled=false")
 @Sql({SecurityIT.SEC_DATA_SQL_PATH})

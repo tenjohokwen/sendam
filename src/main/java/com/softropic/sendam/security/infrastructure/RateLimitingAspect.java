@@ -1,6 +1,6 @@
 package com.softropic.sendam.security.infrastructure;
 
-import com.softropic.sendam.client.contract.exception.RateLimitExceededException;
+import com.softropic.sendam.gateway.account.contract.RateLimitExceededException;
 import com.softropic.sendam.security.contract.util.RateLimited;
 import com.softropic.sendam.security.service.RateLimitingService;
 import com.softropic.sendam.security.common.util.RequestMetadataProvider;

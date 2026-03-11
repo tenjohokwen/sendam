@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.softropic.sendam.common.client.Client;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,6 +25,7 @@ import jakarta.validation.constraints.NotNull;
 public class HttpTestClient {
 
     @Autowired
+    @Qualifier("restTemplate")
     private RestTemplate testRestTemplate;
 
     private Client client;

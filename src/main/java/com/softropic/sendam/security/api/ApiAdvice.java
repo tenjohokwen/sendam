@@ -1,13 +1,13 @@
 package com.softropic.sendam.security.api;
 
 
-import com.softropic.sendam.client.contract.exception.CancelNotAllowedException;
-import com.softropic.sendam.client.contract.exception.DuplicateTransactionIdException;
-import com.softropic.sendam.client.contract.exception.InsufficientBalanceException;
-import com.softropic.sendam.client.contract.exception.ProviderUnavailableException;
-import com.softropic.sendam.client.contract.exception.RateLimitExceededException;
-import com.softropic.sendam.client.contract.exception.SmsValidationException;
-import com.softropic.sendam.client.contract.exception.TopupAlreadyProcessedException;
+import com.softropic.sendam.gateway.sms.contract.CancelNotAllowedException;
+import com.softropic.sendam.gateway.billing.contract.DuplicateTransactionIdException;
+import com.softropic.sendam.gateway.billing.contract.InsufficientBalanceException;
+import com.softropic.sendam.gateway.provider.nexah.contract.ProviderUnavailableException;
+import com.softropic.sendam.gateway.account.contract.RateLimitExceededException;
+import com.softropic.sendam.gateway.sms.contract.SmsValidationException;
+import com.softropic.sendam.gateway.billing.contract.TopupAlreadyProcessedException;
 import jakarta.persistence.LockTimeoutException;
 import org.springframework.dao.CannotAcquireLockException;
 import com.softropic.sendam.common.exception.ApplicationException;

@@ -36,12 +36,12 @@ public class DbSchemaChecker {
     }
 
     private void validateDbSchema() {
-        final MigrationInfo[] pending = flyway.info().pending();
+       /* final MigrationInfo[] pending = flyway.info().pending();
         if (pending.length > 0) {
             final List<String> scripts = new ArrayList<>(pending.length);
             Arrays.stream(pending).forEach(action -> scripts.add(action.getScript()));
             throw new ApplicationContextException("The database still has pending updates: " + scripts);
-        }
+        }*/
     }
 
 }

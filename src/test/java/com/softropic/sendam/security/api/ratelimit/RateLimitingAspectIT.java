@@ -1,5 +1,6 @@
 package com.softropic.sendam.security.api.ratelimit;
 
+import com.softropic.sendam.gateway.account.contract.RateLimitExceededException;
 import com.softropic.sendam.security.contract.exception.AuthorizationException;
 import com.softropic.sendam.security.common.util.RequestMetadata;
 import com.softropic.sendam.security.common.util.RequestMetadataProvider;
@@ -69,8 +70,8 @@ public class RateLimitingAspectIT {
 
             // Third call should fail
             assertThatThrownBy(() -> testService.limitedMethod())
-                    .isInstanceOf(AuthorizationException.class)
-                    .extracting(e -> ((AuthorizationException) e).getErrorCode())
+                    .isInstanceOf(RateLimitExceededException.class)
+                    .extracting(e -> ((RateLimitExceededException) e).getErrorCode())
                     .isEqualTo(TOO_MANY_REQUESTS);
         }
     }
@@ -90,7 +91,7 @@ public class RateLimitingAspectIT {
             testService.limitedMethod();
             
             assertThatThrownBy(() -> testService.limitedMethod())
-                    .isInstanceOf(AuthorizationException.class);
+                    .isInstanceOf(RateLimitExceededException.class);
 
             // Switch to IP 2 - should be allowed
             mockedStatic.when(RequestMetadataProvider::getClientInfo).thenReturn(metadataIp2);
