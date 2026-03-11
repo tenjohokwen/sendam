@@ -88,10 +88,10 @@ Plans:
   1. Client can query their own delivery stats (sent / delivered / failed + delivery rate) filtered by time period
   2. Client can query their own billed segment totals for a time period
   3. Client can query their own net credit consumption for a time period
-**Plans**: TBD
+**Plans**: 1/1 complete
 
 Plans:
-- [ ] 12-01: TBD
+- [x] 12-01: Client analytics endpoints (delivery stats, segment totals, credit consumption) — completed 2026-03-11
 
 ## Progress
 
@@ -108,4 +108,4 @@ Plans:
 | 9. Spend Reporting (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
 | 10. System Health (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
 | 11. Audit Log | v1.1 | 3/3 | Complete | 2026-03-11 |
-| 12. Client Analytics | v1.1 | 0/? | Not started | - |
+| 12. Client Analytics | v1.1 | 1/1 | Complete | 2026-03-11 |

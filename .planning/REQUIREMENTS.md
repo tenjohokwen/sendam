@@ -33,9 +33,9 @@
 
 ### Client Analytics
 
-- [ ] **CANL-01**: Client can query their own delivery stats (sent / delivered / failed + delivery rate) filterable by time period
-- [ ] **CANL-02**: Client can query their own billed segment totals for a time period
-- [ ] **CANL-03**: Client can query their own net credit consumption for a time period
+- [x] **CANL-01**: Client can query their own delivery stats (sent / delivered / failed + delivery rate) filterable by time period
+- [x] **CANL-02**: Client can query their own billed segment totals for a time period
+- [x] **CANL-03**: Client can query their own net credit consumption for a time period
 
 ## v2 Requirements
 
@@ -71,9 +71,9 @@ Which phases cover which requirements. Updated by `/gsd:create-roadmap`.
 | AUDT-03 | Phase 11 | Complete |
 | AUDT-04 | Phase 11 | Complete |
 | AUDT-05 | Phase 11 | Complete |
-| CANL-01 | Phase 12 | Pending |
-| CANL-02 | Phase 12 | Pending |
-| CANL-03 | Phase 12 | Pending |
+| CANL-01 | Phase 12 | Complete |
+| CANL-02 | Phase 12 | Complete |
+| CANL-03 | Phase 12 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 17 total
