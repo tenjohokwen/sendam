@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Phase 5 — Webhooks (in progress)
+**Current focus:** v1.0 milestone — fully complete, all verification gaps closed
 
 ## Current Position
 
 Phase: 6 of 6 (Fix API Key Security Chain)
-Plan: 01 of 1
-Status: Phase 6 complete — CRITICAL-1 and CRITICAL-2 from v1.0 milestone audit closed
-Last activity: 2026-03-11 — Completed 06-01-PLAN.md (CLIENT_API_KEYS constant, ClientSecurityConfiguration matcher fix, ClientApiKeySecurityIT)
+Plan: 02 of 2
+Status: Phase 6 complete — all verification gaps closed; v1.0 milestone fully verified
+Last activity: 2026-03-11 — Completed 06-02-PLAN.md (clientApiKeysWithValidTokenReturns200 positive-path IT, ClientApiKeyEntity status field-shadowing bug fix)
 
-Progress: ██████████████████████ (11 of ~15 plans complete, Phase 6 complete)
+Progress: ████████████████████████ (12 of ~15 plans complete, Phase 6 complete)
 
 ## Performance Metrics
 
@@ -32,11 +32,11 @@ Progress: ██████████████████████ (11
 | 03-send-sms | 4 | 26 min | 7 min |
 | 04-provider-integration | 3 | 14 min | 5 min |
 | 05-webhooks | 2 | 15 min | 7.5 min |
-| 06-fix-api-key-security-chain | 1 | 8 min | 8 min |
+| 06-fix-api-key-security-chain | 2 | 34 min | 17 min |
 
 **Recent Trend:**
-- Last 5 plans: 4 min, 6 min, 6 min, 2 min, 7 min
-- Trend: stable
+- Last 5 plans: 6 min, 6 min, 2 min, 7 min, 26 min
+- Trend: last plan longer due to diagnosing two non-obvious bugs (entity field-shadowing + SecurityAdviceFilter JWT secret dependency)
 
 ## Accumulated Context
 
@@ -108,6 +108,9 @@ Recent decisions affecting current work:
 - postWebhook() is public on WebhookService — required for Spring AOP proxy to intercept @Retryable; private methods bypass AOP proxy
 - TOPUPS_API (/v1/topups/**) removed from AppEndpoints — no controller owns that path; CLIENT_API_KEYS (/v1/api/**) added in its place
 - CLIENT_API_KEYS added to ClientSecurityConfiguration.securityMatcher varargs — /v1/api/keys now claimed by @Order(1) API key chain, not falling through to JWT chain; SECURED_MAPPINGS not touched (JWT chain only)
+- Child entities extending AbstractAuditingEntity must NOT re-declare 'status' field — Hibernate field-access maps the parent's @Column-annotated field; shadowing it in a child breaks hydration silently (getStatus() returns INACTIVE for all DB-loaded entities)
+- ITs making HTTP requests through SecurityAdviceFilter (global @Component filter) must seed main.sec JWT secret before any HTTP call — use ON CONFLICT (version, bus_id) DO NOTHING for idempotent seeding
+- Positive-path IT fixtures use ApiKeyService.createKey() (not raw JDBC) to ensure key hash is computed with the same injected pepper value as authenticate() — round-trip is self-consistent without manual hash computation
 
 ### Pending Todos
 
@@ -118,6 +121,7 @@ Recent decisions affecting current work:
 - Phase 5 (webhooks) now COMPLETE — WEBHOOK-01, WEBHOOK-02, WEBHOOK-03 all satisfied (05-01 through 05-02)
 - v1.0 milestone COMPLETE — all phases done
 - Phase 6 (fix-api-key-security-chain) now COMPLETE — CRITICAL-1 and CRITICAL-2 closed (CLIENT_API_KEYS added, TOPUPS_API removed, ClientApiKeySecurityIT passing)
+- 06-VERIFICATION.md gap now CLOSED — clientApiKeysWithValidTokenReturns200 exists and asserts HTTP 200; all 5 truths from verification report are fully verified by automation
 
 ### Blockers/Concerns
 
@@ -125,6 +129,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-11T12:38:54Z
-Stopped at: Completed 06-01-PLAN.md (CLIENT_API_KEYS constant, ClientSecurityConfiguration matcher, ClientApiKeySecurityIT)
+Last session: 2026-03-11T15:47:00Z
+Stopped at: Completed 06-02-PLAN.md (clientApiKeysWithValidTokenReturns200 IT, ClientApiKeyEntity bug fix)
 Resume file: None
