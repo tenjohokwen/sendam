@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 
 ## Current Position
 
-Phase: 6 of 6 (Fix API Key Security Chain)
-Plan: 02 of 2
-Status: Phase 6 complete — all verification gaps closed; v1.0 milestone fully verified
-Last activity: 2026-03-11 — Completed 06-02-PLAN.md (clientApiKeysWithValidTokenReturns200 positive-path IT, ClientApiKeyEntity status field-shadowing bug fix)
+Phase: 7 of 7 (Fix Sender ID Forwarding)
+Plan: 01 of 1
+Status: Phase 7 complete — WIRING-1 correctness gap closed; sender ID forwarding fixed
+Last activity: 2026-03-11 — Completed 07-01-PLAN.md (NexahDispatchService sender ID fix, NexahDispatchServiceTest updated with ArgumentCaptor assertion)
 
-Progress: ████████████████████████ (12 of ~15 plans complete, Phase 6 complete)
+Progress: █████████████████████████ (13 of ~16 plans complete, Phase 7 complete)
 
 ## Performance Metrics
 
@@ -33,6 +33,7 @@ Progress: ███████████████████████�
 | 04-provider-integration | 3 | 14 min | 5 min |
 | 05-webhooks | 2 | 15 min | 7.5 min |
 | 06-fix-api-key-security-chain | 2 | 34 min | 17 min |
+| 07-fix-sender-id-forwarding | 1 | 5 min | 5 min |
 
 **Recent Trend:**
 - Last 5 plans: 6 min, 6 min, 2 min, 7 min, 26 min
@@ -111,6 +112,7 @@ Recent decisions affecting current work:
 - Child entities extending AbstractAuditingEntity must NOT re-declare 'status' field — Hibernate field-access maps the parent's @Column-annotated field; shadowing it in a child breaks hydration silently (getStatus() returns INACTIVE for all DB-loaded entities)
 - ITs making HTTP requests through SecurityAdviceFilter (global @Component filter) must seed main.sec JWT secret before any HTTP call — use ON CONFLICT (version, bus_id) DO NOTHING for idempotent seeding
 - Positive-path IT fixtures use ApiKeyService.createKey() (not raw JDBC) to ensure key hash is computed with the same injected pepper value as authenticate() — round-trip is self-consistent without manual hash computation
+- nexahProperties.senderid() removed from NexahDispatchService.dispatch() — client-supplied sender field on SendRequest is the only authoritative source; global account config must not override client intent
 
 ### Pending Todos
 
@@ -122,6 +124,7 @@ Recent decisions affecting current work:
 - v1.0 milestone COMPLETE — all phases done
 - Phase 6 (fix-api-key-security-chain) now COMPLETE — CRITICAL-1 and CRITICAL-2 closed (CLIENT_API_KEYS added, TOPUPS_API removed, ClientApiKeySecurityIT passing)
 - 06-VERIFICATION.md gap now CLOSED — clientApiKeysWithValidTokenReturns200 exists and asserts HTTP 200; all 5 truths from verification report are fully verified by automation
+- Phase 7 (fix-sender-id-forwarding) now COMPLETE — WIRING-1 closed (nexahProperties.senderid() replaced with request.getSender() in NexahDispatchService.dispatch())
 
 ### Blockers/Concerns
 
@@ -129,6 +132,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-11T15:47:00Z
-Stopped at: Completed 06-02-PLAN.md (clientApiKeysWithValidTokenReturns200 IT, ClientApiKeyEntity bug fix)
+Last session: 2026-03-11T17:35:00Z
+Stopped at: Completed 07-01-PLAN.md (NexahDispatchService sender ID fix, NexahDispatchServiceTest ArgumentCaptor assertion)
 Resume file: None
