@@ -19,9 +19,9 @@
 
 ### System Health (Admin)
 
-- [ ] **HLTH-01**: Admin can query the current Nexah circuit breaker state (CLOSED / OPEN / HALF_OPEN)
-- [ ] **HLTH-02**: Admin can query webhook delivery stats (total attempts, failure count, EXHAUSTED count)
-- [ ] **HLTH-03**: Admin can query provider stats (SMS submissions sent to Nexah, DR callbacks received, failure rate)
+- [x] **HLTH-01**: Admin can query the current Nexah circuit breaker state (CLOSED / OPEN / HALF_OPEN)
+- [x] **HLTH-02**: Admin can query webhook delivery stats (total attempts, failure count, EXHAUSTED count)
+- [x] **HLTH-03**: Admin can query provider stats (SMS submissions sent to Nexah, DR callbacks received, failure rate)
 
 ### Audit Log (Admin)
 
@@ -63,9 +63,9 @@ Which phases cover which requirements. Updated by `/gsd:create-roadmap`.
 | SPEN-01 | Phase 9 | Complete |
 | SPEN-02 | Phase 9 | Complete |
 | SPEN-03 | Phase 9 | Complete |
-| HLTH-01 | Phase 10 | Pending |
-| HLTH-02 | Phase 10 | Pending |
-| HLTH-03 | Phase 10 | Pending |
+| HLTH-01 | Phase 10 | Complete |
+| HLTH-02 | Phase 10 | Complete |
+| HLTH-03 | Phase 10 | Complete |
 | AUDT-01 | Phase 11 | Pending |
 | AUDT-02 | Phase 11 | Pending |
 | AUDT-03 | Phase 11 | Pending |

@@ -58,10 +58,10 @@ Plans:
   1. Admin can query the current Nexah circuit breaker state (CLOSED / OPEN / HALF_OPEN)
   2. Admin can query webhook delivery stats — total attempts, failure count, EXHAUSTED count
   3. Admin can query provider send stats — SMS submissions to Nexah, DR callbacks received, failure rate
-**Plans**: TBD
+**Plans**: 1/1 complete
 
 Plans:
-- [ ] 10-01: TBD
+- [x] 10-01: System health data layer + admin REST endpoint — completed 2026-03-11
 
 #### Phase 11: Audit Log
 **Goal**: All significant platform events are recorded and queryable by admin
@@ -104,6 +104,6 @@ Plans:
 | 7. Fix Sender ID Forwarding | v1.0 | 1/1 | Complete | 2026-03-11 |
 | 8. Delivery Analytics (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
 | 9. Spend Reporting (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
-| 10. System Health (Admin) | v1.1 | 0/? | Not started | - |
+| 10. System Health (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
 | 11. Audit Log | v1.1 | 0/? | Not started | - |
 | 12. Client Analytics | v1.1 | 0/? | Not started | - |

@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Phase 9 — Spend Reporting (Admin)
+**Current focus:** Phase 10 — System Health (Admin)
 
 ## Current Position
 
-Phase: 9 of 12 (Spend Reporting — Admin)
+Phase: 10 of 12 (System Health — Admin)
 Plan: 1 of 1 — COMPLETE
 Status: Phase complete
-Last activity: 2026-03-11 — Completed 09-01-PLAN.md (spend reporting admin, 2/2 tasks, SPEN-01/02/03 satisfied)
+Last activity: 2026-03-11 — Completed 10-01-PLAN.md (system health admin, 2/2 tasks, HLTH-01/02/03 satisfied)
 
-Progress: v1.0 COMPLETE | v1.1 ██░░░ 40% (2/5 phases complete)
+Progress: v1.0 COMPLETE | v1.1 ███░░ 60% (3/5 phases complete)
 
 ## Accumulated Context
 
@@ -34,6 +34,12 @@ Phase 9 decisions:
 - String topupStatus param (not enum) in native query — avoids Hibernate enum-binding issues with nativeQuery=true
 - java.sql.Timestamp (nullable) for approved_at/rejected_at in TopupHistoryRow — null-guarded in service before .toInstant()
 - AppEndpoints.SECURED_MAPPINGS now at 9/10 Map.of() pairs — NEXT admin endpoint must switch to Map.ofEntries()
+
+Phase 10 decisions:
+- failureRatePct passes -1.0f through (not converted to 0.0) — Resilience4j returns -1.0 when sliding window not yet full; -1.0 is meaningful to the caller as "insufficient data"
+- Provider stats SQL: FAIL_FINALIZED excluded from recipient-level query — FAIL_FINALIZED is only set on parent send_request; recipients reach FAILED (not FAIL_FINALIZED) after bad DR
+- All-time totals for HLTH-02/HLTH-03 (no date filters) — requirement does not specify filters; can add in a future phase
+- Map.ofEntries() MANDATORY from phase 10 onward — SECURED_MAPPINGS must use Map.ofEntries(); future phases must NOT revert to Map.of()
 
 Key architectural invariants for future milestones:
 
@@ -60,6 +66,6 @@ Key architectural invariants for future milestones:
 
 ## Session Continuity
 
-Last session: 2026-03-11T19:07:29Z
-Stopped at: Completed 09-01-PLAN.md (spend reporting admin — phase 9 complete)
+Last session: 2026-03-11T19:49:12Z
+Stopped at: Completed 10-01-PLAN.md (system health admin — phase 10 complete)
 Resume file: None
