@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Planning next milestone (v1.1)
+**Current focus:** v1.1 — Operations & Observability
 
 ## Current Position
 
-Phase: Not started (v1.1 not yet planned)
-Plan: Not started
-Status: v1.0 milestone complete and archived — ready to plan next milestone
-Last activity: 2026-03-11 — v1.0 milestone archived; all 33 requirements shipped
+Phase: Not started (run /gsd:create-roadmap)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-11 — Milestone v1.1 started
 
-Progress: v1.0 COMPLETE (16/16 plans, 7/7 phases)
+Progress: v1.0 COMPLETE (16/16 plans, 7/7 phases) | v1.1 NOT STARTED
 
 ## Accumulated Context
 

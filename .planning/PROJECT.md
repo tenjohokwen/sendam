@@ -43,9 +43,12 @@ Clients can send SMS messages and trust that billing is exact, idempotent, and a
 
 ### Active
 
-<!-- Current scope for next milestone. Building toward these. -->
+<!-- Current scope for v1.1. Building toward these. -->
 
-(None defined yet — run `/gsd:define-requirements` to scope next milestone)
+- [ ] Delivery analytics — admin API endpoints for sent/delivered/failed counts, delivery rates, segment totals; filterable per client and time period
+- [ ] Usage/spend reporting — credit consumption aggregated from ledger_entry; per client, per period
+- [ ] System health / monitoring — circuit breaker state, webhook attempt/failure rates, provider stats
+- [ ] Audit log — new audit_event table capturing admin actions (client creation, top-up approval/rejection, API key ops), client API key revocations, send request submissions, webhook config changes
 
 ### Out of Scope
 
@@ -89,5 +92,15 @@ Clients can send SMS messages and trust that billing is exact, idempotent, and a
 | send_status column (not status) for SMS lifecycle | Avoids Hibernate mapping collision with AbstractAuditingEntity.status | ✓ Good — prevents field-access ambiguity; reused convention for attempt_status in webhooks |
 | Child entities must NOT re-declare 'status' field | Hibernate field-access maps parent @Column; shadowing it breaks hydration silently | ✓ Good — caught and fixed as Phase 6 bug (ClientApiKeyEntity) |
 
+## Current Milestone: v1.1 — Operations & Observability
+
+**Goal:** Add admin-facing operational visibility — what was sent, what was spent, what happened, and how the system is behaving.
+
+**Constraints:**
+- Admin API only — no client-facing analytics endpoints in v1.1
+- Live aggregation queries on existing tables — no pre-aggregation/materialized tables unless query performance requires it
+- Must not touch existing domain logic — read-only analytics layer (except audit_event table)
+- Spring Boot + PostgreSQL only — no new frameworks or time-series DBs
+
 ---
-*Last updated: 2026-03-11 after v1.0 milestone*
+*Last updated: 2026-03-11 after v1.1 milestone start*
