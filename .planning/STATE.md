@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 ## Current Position
 
 Phase: 9 of 12 (Spend Reporting — Admin)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-03-11 — Phase 8 complete (delivery analytics admin, 1/1 plans, 3/3 DANL requirements)
+Plan: 1 of 1 — COMPLETE
+Status: Phase complete
+Last activity: 2026-03-11 — Completed 09-01-PLAN.md (spend reporting admin, 2/2 tasks, SPEN-01/02/03 satisfied)
 
-Progress: v1.0 COMPLETE | v1.1 █░░░░ 20% (1/5 phases complete)
+Progress: v1.0 COMPLETE | v1.1 ██░░░ 40% (2/5 phases complete)
 
 ## Accumulated Context
 
@@ -27,6 +27,13 @@ Phase 8 decisions:
 - getSegmentTotals reuses findDeliveryStats — same aggregate row covers both endpoints, no duplicate method
 - java.sql.Date return type on projection getDay() for DATE_TRUNC results — convert to LocalDate in service layer
 - delivery_rate guard at total_sent==0 — explicit guard, returns 0.0 (no division-by-zero)
+
+Phase 9 decisions:
+- ABS() in SQL for SMS_DEBIT and SMS_RESERVATION — response reports positive absolute values (sign convention documented)
+- TOPUP_PENDING excluded from credit ledger aggregate query (always amount=0, adds no information)
+- String topupStatus param (not enum) in native query — avoids Hibernate enum-binding issues with nativeQuery=true
+- java.sql.Timestamp (nullable) for approved_at/rejected_at in TopupHistoryRow — null-guarded in service before .toInstant()
+- AppEndpoints.SECURED_MAPPINGS now at 9/10 Map.of() pairs — NEXT admin endpoint must switch to Map.ofEntries()
 
 Key architectural invariants for future milestones:
 
@@ -53,6 +60,6 @@ Key architectural invariants for future milestones:
 
 ## Session Continuity
 
-Last session: 2026-03-11T18:38:19Z
-Stopped at: Completed 08-01-PLAN.md (delivery analytics admin — phase 8 complete)
+Last session: 2026-03-11T19:07:29Z
+Stopped at: Completed 09-01-PLAN.md (spend reporting admin — phase 9 complete)
 Resume file: None
