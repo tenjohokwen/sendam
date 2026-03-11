@@ -25,11 +25,11 @@
 
 ### Audit Log (Admin)
 
-- [ ] **AUDT-01**: System records admin actions on clients: client creation, top-up approval/rejection, API key ops performed by admin
-- [ ] **AUDT-02**: System records client API key ops: client creating or revoking their own API keys
-- [ ] **AUDT-03**: System records every SMS send request submission (client, recipient count, timestamp)
-- [ ] **AUDT-04**: System records webhook config changes: registration, update, deletion
-- [ ] **AUDT-05**: Admin can query audit log, paginated, with optional filter by client and time period
+- [x] **AUDT-01**: System records admin actions on clients: client creation, top-up approval/rejection, API key ops performed by admin
+- [x] **AUDT-02**: System records client API key ops: client creating or revoking their own API keys
+- [x] **AUDT-03**: System records every SMS send request submission (client, recipient count, timestamp)
+- [x] **AUDT-04**: System records webhook config changes: registration, update, deletion
+- [x] **AUDT-05**: Admin can query audit log, paginated, with optional filter by client and time period
 
 ### Client Analytics
 
@@ -66,11 +66,11 @@ Which phases cover which requirements. Updated by `/gsd:create-roadmap`.
 | HLTH-01 | Phase 10 | Complete |
 | HLTH-02 | Phase 10 | Complete |
 | HLTH-03 | Phase 10 | Complete |
-| AUDT-01 | Phase 11 | Pending |
-| AUDT-02 | Phase 11 | Pending |
-| AUDT-03 | Phase 11 | Pending |
-| AUDT-04 | Phase 11 | Pending |
-| AUDT-05 | Phase 11 | Pending |
+| AUDT-01 | Phase 11 | Complete |
+| AUDT-02 | Phase 11 | Complete |
+| AUDT-03 | Phase 11 | Complete |
+| AUDT-04 | Phase 11 | Complete |
+| AUDT-05 | Phase 11 | Complete |
 | CANL-01 | Phase 12 | Pending |
 | CANL-02 | Phase 12 | Pending |
 | CANL-03 | Phase 12 | Pending |

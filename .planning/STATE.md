@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Phase 11 — Audit Log
+**Current focus:** Phase 12 — Client Analytics
 
 ## Current Position
 
-Phase: 11 of 12 (Audit Log)
-Plan: 2 of 3 — COMPLETE
-Status: In progress
-Last activity: 2026-03-11 — Completed 11-02-PLAN.md (audit write pipeline, 2/2 tasks, AuditEventService + AuditEventListener + 5 service hooks)
+Phase: 11 of 12 (Audit Log) — COMPLETE
+Plan: 3 of 3 — COMPLETE
+Status: Phase complete
+Last activity: 2026-03-11 — Completed 11-03-PLAN.md (admin audit query endpoint, 1/1 task, AdminAuditResource + AppEndpoints ADMIN_AUDIT)
 
-Progress: v1.0 COMPLETE | v1.1 ████░ 80% (4/5 phases complete, 2/3 plans in phase 11)
+Progress: v1.0 COMPLETE | v1.1 ████░ 91% (5/5 phases complete, phase 12 not started)
 
 ## Accumulated Context
 
@@ -40,6 +40,13 @@ Phase 10 decisions:
 - Provider stats SQL: FAIL_FINALIZED excluded from recipient-level query — FAIL_FINALIZED is only set on parent send_request; recipients reach FAILED (not FAIL_FINALIZED) after bad DR
 - All-time totals for HLTH-02/HLTH-03 (no date filters) — requirement does not specify filters; can add in a future phase
 - Map.ofEntries() MANDATORY from phase 10 onward — SECURED_MAPPINGS must use Map.ofEntries(); future phases must NOT revert to Map.of()
+
+Phase 11 decisions (plan 03):
+- ADMIN_AUDIT is the 11th Map.ofEntries() entry — Map.of() is capped at 10 pairs; Map.ofEntries() mandatory from phase 10 onward
+- @PreAuthorize at class level on AdminAuditResource — mirrors AdminHealthResource; cleaner than per-method for single-role controllers
+- AdminAuditResource delegates entirely to AuditEventService.findEvents() — zero business logic in resource layer; resource layer only maps HTTP params to service call
+- SMS_SEND_SUBMITTED fires on first-submission path only — idempotent early-return path is NOT audited (established in plan 02, confirmed in plan 03)
+- WEBHOOK_DELETED defined in enum but unused — no delete endpoint in v8 contract; emit only when delete is implemented
 
 Phase 11 decisions (plan 02):
 - AuditEventType passed as param to ApiKeyService.createKey/revokeKey — single service serves both admin and client paths; resource layer passes the correct type
@@ -78,6 +85,6 @@ Key architectural invariants for future milestones:
 
 ## Session Continuity
 
-Last session: 2026-03-11T22:43:17Z
-Stopped at: Completed 11-02-PLAN.md (audit write pipeline — phase 11, plan 2 of 3)
+Last session: 2026-03-11T22:50:00Z
+Stopped at: Completed 11-03-PLAN.md (admin audit query endpoint — phase 11, plan 3 of 3, phase COMPLETE)
 Resume file: None
