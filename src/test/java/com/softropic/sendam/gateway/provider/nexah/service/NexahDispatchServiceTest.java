@@ -11,6 +11,7 @@ import com.softropic.sendam.gateway.sms.repo.SendRequestRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -40,23 +41,25 @@ class NexahDispatchServiceTest {
     @Test
     @DisplayName("dispatch: success - moves recipients to SUBMITTED when provider returns IDs")
     void dispatch_success() {
-        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").build();
+        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").sender("MYAPP").build();
         SendRequestRecipient r1 = SendRequestRecipient.builder().recipient("237671234567").build();
-        
+
         when(recipientRepository.findBySendRequestIdFk(1L)).thenReturn(List.of(r1));
         when(nexahProperties.user()).thenReturn("user");
         when(nexahProperties.password()).thenReturn("pass");
-        when(nexahProperties.senderid()).thenReturn("sender");
-        
+
         NexahSmsEntry entry = new NexahSmsEntry("Success", "sms-1", "gw-123", "237671234567", 0, "OK", 1, 100);
+        ArgumentCaptor<NexahSendRequest> captor = ArgumentCaptor.forClass(NexahSendRequest.class);
         when(nexahClient.sendSms(any())).thenReturn(new NexahSendResponse(1, "OK", "Sent", List.of(entry)));
 
         nexahDispatchService.dispatch(request);
 
+        verify(nexahClient).sendSms(captor.capture());
+        assertThat(captor.getValue().senderid()).isEqualTo("MYAPP");
         assertThat(r1.getSendStatus()).isEqualTo(SendRequestStatus.SUBMITTED);
         assertThat(r1.getGatewayMessageId()).isEqualTo("gw-123");
         assertThat(request.getSendStatus()).isEqualTo(SendRequestStatus.SUBMITTED);
-        
+
         verify(recipientRepository).save(r1);
         verify(sendRequestRepository).save(request);
     }
@@ -64,7 +67,7 @@ class NexahDispatchServiceTest {
     @Test
     @DisplayName("dispatch: partial success - only matched recipients move to SUBMITTED")
     void dispatch_partialSuccess() {
-        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").build();
+        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").sender("MYAPP").build();
         SendRequestRecipient r1 = SendRequestRecipient.builder().recipient("237671234567").build();
         SendRequestRecipient r2 = SendRequestRecipient.builder().recipient("237671234568").build();
         
@@ -86,7 +89,7 @@ class NexahDispatchServiceTest {
     @Test
     @DisplayName("dispatch: failure - rethrows ProviderUnavailableException from client")
     void dispatch_providerUnavailable() {
-        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").build();
+        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").sender("MYAPP").build();
         when(recipientRepository.findBySendRequestIdFk(1L)).thenReturn(List.of());
         
         when(nexahClient.sendSms(any())).thenThrow(new ProviderUnavailableException("down"));
@@ -100,7 +103,7 @@ class NexahDispatchServiceTest {
     @Test
     @DisplayName("dispatch: edge case - nexah returns empty sms list")
     void dispatch_emptyResponse() {
-        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").sendStatus(SendRequestStatus.ACCEPTED).build();
+        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").sender("MYAPP").sendStatus(SendRequestStatus.ACCEPTED).build();
         when(recipientRepository.findBySendRequestIdFk(1L)).thenReturn(List.of());
         when(nexahClient.sendSms(any())).thenReturn(new NexahSendResponse(1, "OK", "Empty", List.of()));
 
