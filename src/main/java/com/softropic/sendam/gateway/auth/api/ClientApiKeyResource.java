@@ -1,5 +1,6 @@
 package com.softropic.sendam.gateway.auth.api;
 
+import com.softropic.sendam.gateway.audit.contract.AuditEventType;
 import com.softropic.sendam.gateway.auth.contract.ApiKeyCreationResult;
 import com.softropic.sendam.gateway.auth.contract.ApiKeyDto;
 import com.softropic.sendam.gateway.auth.contract.CreateKeyRequest;
@@ -47,7 +48,7 @@ public class ClientApiKeyResource {
     @RateLimited(key = "api_req", capacity = 10, duration = 1, unit = TimeUnit.SECONDS)
     public ApiKeyCreationResult createKey(@RequestBody(required = false) CreateKeyRequest request) {
         String label = request != null ? request.label() : null;
-        return apiKeyService.createKey(getClientId(), label);
+        return apiKeyService.createKey(getClientId(), label, AuditEventType.CLIENT_API_KEY_CREATED);
     }
 
     /** APIKEY-02: List keys (no raw values). */
@@ -62,6 +63,6 @@ public class ClientApiKeyResource {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RateLimited(key = "api_req", capacity = 10, duration = 1, unit = TimeUnit.SECONDS)
     public void revokeKey(@PathVariable Long keyId) {
-        apiKeyService.revokeKey(getClientId(), keyId);
+        apiKeyService.revokeKey(getClientId(), keyId, AuditEventType.CLIENT_API_KEY_REVOKED);
     }
 }

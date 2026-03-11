@@ -9,6 +9,8 @@ import com.softropic.sendam.gateway.provider.nexah.contract.ProviderUnavailableE
 import com.softropic.sendam.security.service.RateLimitingService;
 import com.softropic.sendam.gateway.account.contract.RateLimitExceededException;
 
+import org.springframework.context.ApplicationEventPublisher;
+
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +48,8 @@ class SmsServiceTest {
     private CircuitBreakerRegistry circuitBreakerRegistry;
     @Mock
     private CircuitBreaker circuitBreaker;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private SmsService smsService;

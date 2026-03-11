@@ -1,5 +1,7 @@
 package com.softropic.sendam.gateway.webhook.service;
 
+import com.softropic.sendam.gateway.audit.contract.AuditEventType;
+import com.softropic.sendam.gateway.audit.contract.DomainAuditEvent;
 import com.softropic.sendam.gateway.webhook.contract.RegisterWebhookRequest;
 import com.softropic.sendam.gateway.webhook.contract.RegisterWebhookResponse;
 import com.softropic.sendam.gateway.webhook.contract.WebhookDeliveryStatus;
@@ -238,6 +240,12 @@ public class WebhookService {
         existing.setStatus(EntityStatus.ACTIVE);
         WebhookEndpoint saved = webhookEndpointRepository.save(existing);
         log.debug("Updated webhook endpoint id={} publicId={}", saved.getId(), saved.getPublicId());
+        applicationEventPublisher.publishEvent(new DomainAuditEvent(
+            AuditEventType.WEBHOOK_UPDATED,
+            existing.getClientId(),
+            "client:" + existing.getClientId(),
+            "Webhook updated: publicId=" + saved.getPublicId()
+        ));
         return new RegisterWebhookResponse(
                 saved.getPublicId(),
                 EntityStatus.ACTIVE.name(),
@@ -259,6 +267,12 @@ public class WebhookService {
         WebhookEndpoint saved = webhookEndpointRepository.save(endpoint);
         log.debug("Created webhook endpoint id={} publicId={} for clientId={}",
                 saved.getId(), saved.getPublicId(), clientId);
+        applicationEventPublisher.publishEvent(new DomainAuditEvent(
+            AuditEventType.WEBHOOK_REGISTERED,
+            clientId,
+            "client:" + clientId,
+            "Webhook registered: publicId=" + saved.getPublicId()
+        ));
         return new RegisterWebhookResponse(
                 saved.getPublicId(),
                 EntityStatus.ACTIVE.name(),

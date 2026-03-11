@@ -1,5 +1,6 @@
 package com.softropic.sendam.gateway.auth.api;
 
+import com.softropic.sendam.gateway.audit.contract.AuditEventType;
 import com.softropic.sendam.gateway.auth.contract.ApiKeyCreationResult;
 import com.softropic.sendam.gateway.auth.contract.ApiKeyDto;
 import com.softropic.sendam.gateway.auth.contract.CreateKeyRequest;
@@ -34,12 +35,12 @@ class AdminApiKeyResourceTest {
     @DisplayName("createKey: admin can create key for any client")
     void createKey_success() {
         CreateKeyRequest request = new CreateKeyRequest("Admin Created");
-        when(apiKeyService.createKey(100L, "Admin Created")).thenReturn(new ApiKeyCreationResult(1L, "snd_raw"));
+        when(apiKeyService.createKey(100L, "Admin Created", AuditEventType.ADMIN_API_KEY_CREATED)).thenReturn(new ApiKeyCreationResult(1L, "snd_raw"));
 
         ApiKeyCreationResult result = adminApiKeyResource.createKey(100L, request);
 
         assertThat(result.rawKey()).isEqualTo("snd_raw");
-        verify(apiKeyService).createKey(100L, "Admin Created");
+        verify(apiKeyService).createKey(100L, "Admin Created", AuditEventType.ADMIN_API_KEY_CREATED);
     }
 
     @Test
@@ -58,6 +59,6 @@ class AdminApiKeyResourceTest {
     @DisplayName("revokeKey: admin can revoke key for any client")
     void revokeKey_success() {
         adminApiKeyResource.revokeKey(100L, 1L);
-        verify(apiKeyService).revokeKey(100L, 1L);
+        verify(apiKeyService).revokeKey(100L, 1L, AuditEventType.ADMIN_API_KEY_REVOKED);
     }
 }

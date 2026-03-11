@@ -1,5 +1,7 @@
 package com.softropic.sendam.gateway.sms.service;
 
+import com.softropic.sendam.gateway.audit.contract.AuditEventType;
+import com.softropic.sendam.gateway.audit.contract.DomainAuditEvent;
 import com.softropic.sendam.gateway.sms.contract.CancelSmsResponse;
 import com.softropic.sendam.gateway.sms.contract.MessageStatusEntry;
 import com.softropic.sendam.gateway.sms.contract.MessageStatusResponse;
@@ -22,6 +24,8 @@ import com.softropic.sendam.common.persistence.EntityStatus;
 import com.softropic.sendam.common.validation.CamMobileValidator;
 import com.softropic.sendam.security.contract.util.RateLimited;
 import com.softropic.sendam.security.service.RateLimitingService;
+
+import org.springframework.context.ApplicationEventPublisher;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
@@ -61,6 +65,7 @@ public class SmsService {
     private final CreditService creditService;
     private final RateLimitingService rateLimitingService;
     private final CircuitBreakerRegistry circuitBreakerRegistry;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * Sends an SMS request for the given client, enforcing idempotency, rate limits,
@@ -160,6 +165,14 @@ public class SmsService {
                 .status(EntityStatus.ACTIVE)
                 .build();
         sendRequestRepo.save(sendRequest);
+
+        // Audit: record submission on the first-submission path only (not the idempotent early-return above)
+        eventPublisher.publishEvent(new DomainAuditEvent(
+            AuditEventType.SMS_SEND_SUBMITTED,
+            clientId,
+            "client:" + clientId,
+            "SMS submitted: sendRequestId=" + request.sendRequestId() + ", recipients=" + recipientCount
+        ));
 
         // Step 10: Persist one SendRequestRecipient row per recipient
         request.recipients().forEach(phone ->

@@ -2,6 +2,7 @@ package com.softropic.sendam.gateway.auth.api;
 
 import com.softropic.sendam.common.HttpTestClient;
 import com.softropic.sendam.config.TestConfig;
+import com.softropic.sendam.gateway.audit.contract.AuditEventType;
 import com.softropic.sendam.gateway.auth.contract.ApiKeyCreationResult;
 import com.softropic.sendam.gateway.auth.service.ApiKeyService;
 
@@ -85,7 +86,7 @@ public class ClientApiKeySecurityIT {
             return null;
         });
         // ApiKeyService.createKey() runs in its own @Transactional — client_account row must exist first.
-        ApiKeyCreationResult result = apiKeyService.createKey(TEST_CLIENT_ID, "it-test-key");
+        ApiKeyCreationResult result = apiKeyService.createKey(TEST_CLIENT_ID, "it-test-key", AuditEventType.ADMIN_API_KEY_CREATED);
         rawKey = result.rawKey();
     }
 

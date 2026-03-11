@@ -1,5 +1,7 @@
 package com.softropic.sendam.gateway.auth.service;
 
+import com.softropic.sendam.gateway.audit.contract.AuditEventType;
+import com.softropic.sendam.gateway.audit.contract.DomainAuditEvent;
 import com.softropic.sendam.gateway.auth.contract.ApiKeyCreationResult;
 import com.softropic.sendam.gateway.auth.contract.ApiKeyDto;
 import com.softropic.sendam.gateway.auth.repo.ClientApiKeyEntity;
@@ -11,6 +13,7 @@ import com.softropic.sendam.security.contract.exception.SecurityError;
 
 import org.apache.commons.codec.digest.HmacUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,12 +31,15 @@ import java.util.List;
 public class ApiKeyService {
 
     private final ClientApiKeyRepository repository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Value("${apikey.pepper}")
     private String serverPepper;
 
-    public ApiKeyService(final ClientApiKeyRepository repository) {
+    public ApiKeyService(final ClientApiKeyRepository repository,
+                         final ApplicationEventPublisher eventPublisher) {
         this.repository = repository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -69,10 +75,17 @@ public class ApiKeyService {
         return new ApiKeyCreationResult(entity.getId(), rawKey);
     }
 
-    /** Creates a new API key for the given client. */
+    /** Creates a new API key for the given client and publishes an audit event. */
     @Transactional
-    public ApiKeyCreationResult createKey(Long clientId, String label) {
-        return generateAndPersist(clientId, label);
+    public ApiKeyCreationResult createKey(Long clientId, String label, AuditEventType auditEventType) {
+        ApiKeyCreationResult result = generateAndPersist(clientId, label);
+        eventPublisher.publishEvent(new DomainAuditEvent(
+            auditEventType,
+            clientId,
+            resolveActor(clientId, auditEventType),
+            "API key created: label=" + label
+        ));
+        return result;
     }
 
     /** Lists all API keys for a client. Raw key values are never returned. */
@@ -85,13 +98,14 @@ public class ApiKeyService {
     }
 
     /**
-     * Revokes the API key. Throws ResourceNotFoundException if the key does not exist
+     * Revokes the API key and publishes an audit event.
+     * Throws ResourceNotFoundException if the key does not exist
      * or does not belong to this client (prevents cross-client revocation).
      * Revoked keys immediately fail auth on next request — no caching means
      * the next DB read sees EntityStatus.INACTIVE (AUTH-04).
      */
     @Transactional
-    public void revokeKey(Long clientId, Long keyId) {
+    public void revokeKey(Long clientId, Long keyId, AuditEventType auditEventType) {
         ClientApiKeyEntity key = repository.findById(keyId)
             .orElseThrow(() -> new ResourceNotFoundException("API key not found", "api-key"));
         if (!key.getClientId().equals(clientId)) {
@@ -99,6 +113,12 @@ public class ApiKeyService {
         }
         key.setStatus(EntityStatus.INACTIVE);
         repository.save(key);
+        eventPublisher.publishEvent(new DomainAuditEvent(
+            auditEventType,
+            clientId,
+            resolveActor(clientId, auditEventType),
+            "API key revoked: keyId=" + keyId
+        ));
     }
 
     /**
@@ -133,5 +153,20 @@ public class ApiKeyService {
             null,
             List.of(new SimpleGrantedAuthority("ROLE_API_CLIENT"))
         );
+    }
+
+    private String resolveActor(Long clientId, AuditEventType type) {
+        // Admin types: resolve from security context; client types: use client ID
+        if (type == AuditEventType.CLIENT_API_KEY_CREATED || type == AuditEventType.CLIENT_API_KEY_REVOKED) {
+            return "client:" + clientId;
+        }
+        try {
+            org.springframework.security.core.Authentication auth =
+                org.springframework.security.core.context.SecurityContextHolder
+                    .getContext().getAuthentication();
+            return auth != null && auth.getName() != null ? auth.getName() : "admin";
+        } catch (Exception e) {
+            return "admin";
+        }
     }
 }

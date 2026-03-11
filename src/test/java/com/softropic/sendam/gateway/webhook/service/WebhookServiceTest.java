@@ -9,6 +9,8 @@ import com.softropic.sendam.gateway.webhook.repo.WebhookEndpoint;
 import com.softropic.sendam.gateway.webhook.repo.WebhookEndpointRepository;
 import com.softropic.sendam.common.persistence.EntityStatus;
 
+import org.springframework.context.ApplicationEventPublisher;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +36,8 @@ class WebhookServiceTest {
     private WebhookEndpointRepository webhookEndpointRepository;
     @Mock
     private WebhookDeliveryRepository webhookDeliveryRepository;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
     @Mock
     private RestTemplate webhookRestTemplate;
 

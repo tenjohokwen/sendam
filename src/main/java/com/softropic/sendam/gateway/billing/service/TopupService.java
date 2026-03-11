@@ -1,5 +1,7 @@
 package com.softropic.sendam.gateway.billing.service;
 
+import com.softropic.sendam.gateway.audit.contract.AuditEventType;
+import com.softropic.sendam.gateway.audit.contract.DomainAuditEvent;
 import com.softropic.sendam.gateway.billing.contract.CreateTopupRequest;
 import com.softropic.sendam.gateway.billing.contract.CreateTopupResponse;
 import com.softropic.sendam.gateway.billing.contract.LedgerEntryType;
@@ -12,6 +14,7 @@ import com.softropic.sendam.gateway.billing.repo.TopupRequestRepository;
 import com.softropic.sendam.common.exception.ResourceNotFoundException;
 import com.softropic.sendam.common.persistence.EntityStatus;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +38,7 @@ public class TopupService {
 
     private final TopupRequestRepository topupRepository;
     private final CreditService creditService;
+    private final ApplicationEventPublisher eventPublisher;
 
     // ---- helpers ----
 
@@ -125,6 +129,13 @@ public class TopupService {
         entity.setApprovedAt(Instant.now());
         topupRepository.save(entity);
 
+        eventPublisher.publishEvent(new DomainAuditEvent(
+            AuditEventType.TOPUP_APPROVED,
+            entity.getClientId(),
+            resolveAdminActor(),
+            "Topup approved: " + topupId + ", amount=" + entity.getAmount()
+        ));
+
         log.info("Top-up approved: topup_id={}, clientId={}, amount={}", topupId, entity.getClientId(), entity.getAmount());
         return new TopupStatusResponse(topupId, entity.getAmount(), TopupStatus.APPROVED, entity.getApprovedAt());
     }
@@ -150,7 +161,25 @@ public class TopupService {
         entity.setRejectedAt(Instant.now());
         topupRepository.save(entity);
 
+        eventPublisher.publishEvent(new DomainAuditEvent(
+            AuditEventType.TOPUP_REJECTED,
+            entity.getClientId(),
+            resolveAdminActor(),
+            "Topup rejected: " + topupId
+        ));
+
         log.info("Top-up rejected: topup_id={}, clientId={}", topupId, entity.getClientId());
         return new TopupStatusResponse(topupId, entity.getAmount(), TopupStatus.REJECTED, null);
+    }
+
+    private String resolveAdminActor() {
+        try {
+            org.springframework.security.core.Authentication auth =
+                org.springframework.security.core.context.SecurityContextHolder
+                    .getContext().getAuthentication();
+            return auth != null && auth.getName() != null ? auth.getName() : "admin";
+        } catch (Exception e) {
+            return "admin";
+        }
     }
 }

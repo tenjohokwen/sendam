@@ -1,10 +1,13 @@
 package com.softropic.sendam.gateway.auth.service;
 
+import com.softropic.sendam.gateway.audit.contract.AuditEventType;
 import com.softropic.sendam.gateway.auth.contract.ApiKeyCreationResult;
 import com.softropic.sendam.gateway.auth.repo.ClientApiKeyEntity;
 import com.softropic.sendam.gateway.auth.repo.ClientApiKeyRepository;
 import com.softropic.sendam.common.persistence.EntityStatus;
 import com.softropic.sendam.security.contract.exception.AuthorizationException;
+
+import org.springframework.context.ApplicationEventPublisher;
 
 import org.apache.commons.codec.digest.HmacUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +33,9 @@ class ApiKeyServiceTest {
     @Mock
     private ClientApiKeyRepository repository;
 
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+
     @InjectMocks
     private ApiKeyService apiKeyService;
 
@@ -45,7 +51,7 @@ class ApiKeyServiceTest {
     void createKey_success() {
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        ApiKeyCreationResult result = apiKeyService.createKey(1L, "Test Key");
+        ApiKeyCreationResult result = apiKeyService.createKey(1L, "Test Key", AuditEventType.ADMIN_API_KEY_CREATED);
 
         assertThat(result.rawKey()).startsWith("snd_");
         verify(repository).save(any());
