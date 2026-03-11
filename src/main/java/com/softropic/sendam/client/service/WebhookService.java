@@ -2,40 +2,69 @@ package com.softropic.sendam.client.service;
 
 import com.softropic.sendam.client.contract.RegisterWebhookRequest;
 import com.softropic.sendam.client.contract.RegisterWebhookResponse;
+import com.softropic.sendam.client.contract.WebhookDeliveryStatus;
+import com.softropic.sendam.client.repo.WebhookDelivery;
+import com.softropic.sendam.client.repo.WebhookDeliveryRepository;
 import com.softropic.sendam.client.repo.WebhookEndpoint;
 import com.softropic.sendam.client.repo.WebhookEndpointRepository;
 import com.softropic.sendam.common.persistence.EntityStatus;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 /**
- * Service for webhook registration and (in Plan 05-02) delivery dispatch.
+ * Service for webhook registration and delivery dispatch.
  *
  * <p>{@link #register(Long, RegisterWebhookRequest)} upserts a webhook endpoint:
  * if the client already has a registered endpoint the URL is updated and the existing
  * {@code public_id} is returned; otherwise a new endpoint is created.
  *
- * <p>{@code applicationEventPublisher} is declared here now so the constructor is
- * complete for Plan 05-02, which will add the scheduled delivery poller and the
- * per-attempt dispatch logic that publishes no events itself (events flow in from
- * {@code DrCallbackService} via {@code SmsFinalisedEvent}).
+ * <p>{@link #dispatchPendingDeliveries()} is a {@code @Scheduled} poller (fixedDelay=30s)
+ * that dispatches PENDING {@link WebhookDelivery} rows whose {@code next_attempt_at} is due.
+ * Success advances status to DELIVERED. Failure applies exponential backoff (1min/5min/30min/2h)
+ * up to 5 attempts, then EXHAUSTED.
+ *
+ * <p>{@link #postWebhook(String, String)} is a {@code @Retryable} public method so that
+ * Spring's AOP proxy can intercept it for transient inner retries before the outer DB-backed
+ * backoff takes effect.
  */
 @Service
 @Transactional
-@RequiredArgsConstructor
 @Slf4j
 public class WebhookService {
 
     private final WebhookEndpointRepository webhookEndpointRepository;
+    private final WebhookDeliveryRepository webhookDeliveryRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final RestTemplate webhookRestTemplate;
+
+    public WebhookService(WebhookEndpointRepository webhookEndpointRepository,
+                          WebhookDeliveryRepository webhookDeliveryRepository,
+                          ApplicationEventPublisher applicationEventPublisher,
+                          @Qualifier("webhookRestTemplate") RestTemplate webhookRestTemplate) {
+        this.webhookEndpointRepository = webhookEndpointRepository;
+        this.webhookDeliveryRepository = webhookDeliveryRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
+        this.webhookRestTemplate = webhookRestTemplate;
+    }
 
     /**
      * Registers or updates a client webhook endpoint (upsert semantics).
@@ -54,6 +83,149 @@ public class WebhookService {
         return webhookEndpointRepository.findByClientId(clientId)
                 .map(existing -> updateExisting(existing, request))
                 .orElseGet(() -> createNew(clientId, request));
+    }
+
+    // -------------------------------------------------------------------------
+    // Delivery dispatch — scheduled poller
+    // -------------------------------------------------------------------------
+
+    /**
+     * Polls for PENDING webhook delivery rows whose {@code next_attempt_at} is due and
+     * dispatches each via HTTP POST to the registered client URL.
+     *
+     * <p>Uses {@code fixedDelay} (not fixedRate) so the next run only starts after the
+     * current run finishes, preventing overlapping executions (same decision as SmsSchedulerService).
+     */
+    @Scheduled(fixedDelay = 30_000)
+    @Transactional
+    public void dispatchPendingDeliveries() {
+        Instant now = Instant.now();
+        List<WebhookDelivery> due = webhookDeliveryRepository
+                .findByAttemptStatusAndNextAttemptAtBefore(WebhookDeliveryStatus.PENDING, now);
+
+        for (WebhookDelivery delivery : due) {
+            try {
+                dispatchOne(delivery);
+            } catch (Exception e) {
+                log.error("Unexpected error dispatching webhook delivery id={}", delivery.getId(), e);
+                // Advance to next backoff without crashing the entire poller
+                applyFailure(delivery, null);
+            }
+        }
+    }
+
+    /**
+     * Dispatches a single delivery row: loads its endpoint, increments attempt count,
+     * calls {@link #postWebhook(String, String)} (which is @Retryable for transient errors),
+     * then advances status based on HTTP outcome.
+     */
+    private void dispatchOne(WebhookDelivery delivery) {
+        WebhookEndpoint endpoint = webhookEndpointRepository.findById(delivery.getWebhookEndpointId())
+                .orElse(null);
+        if (endpoint == null || endpoint.getStatus() != EntityStatus.ACTIVE) {
+            // Endpoint deleted or deactivated — mark exhausted; no point retrying
+            delivery.setAttemptStatus(WebhookDeliveryStatus.EXHAUSTED);
+            webhookDeliveryRepository.save(delivery);
+            log.info("Webhook delivery id={} EXHAUSTED — endpoint {} no longer active",
+                    delivery.getId(), delivery.getWebhookEndpointId());
+            return;
+        }
+
+        delivery.setAttemptCount(delivery.getAttemptCount() + 1);
+        delivery.setLastAttemptAt(Instant.now());
+
+        try {
+            ResponseEntity<String> response = postWebhook(endpoint.getUrl(), delivery.getPayload());
+            if (response.getStatusCode().is2xxSuccessful()) {
+                delivery.setAttemptStatus(WebhookDeliveryStatus.DELIVERED);
+                delivery.setHttpStatus(response.getStatusCode().value());
+                webhookDeliveryRepository.save(delivery);
+                log.info("Webhook delivery id={} DELIVERED to {} (attempt {})",
+                        delivery.getId(), endpoint.getUrl(), delivery.getAttemptCount());
+            } else {
+                delivery.setHttpStatus(response.getStatusCode().value());
+                applyFailure(delivery, response.getStatusCode().value());
+            }
+        } catch (RestClientException e) {
+            log.warn("Webhook delivery id={} HTTP error on attempt {}: {}",
+                    delivery.getId(), delivery.getAttemptCount(), e.getMessage());
+            applyFailure(delivery, null);
+        }
+    }
+
+    /**
+     * Applies the exponential backoff schedule after a failed delivery attempt.
+     *
+     * <p>Backoff schedule (based on the NEXT attempt number):
+     * <ul>
+     *   <li>Attempt 2: +1 min</li>
+     *   <li>Attempt 3: +5 min</li>
+     *   <li>Attempt 4: +30 min</li>
+     *   <li>Attempt 5: +2 hours</li>
+     *   <li>Attempt 6+: EXHAUSTED (no further retries)</li>
+     * </ul>
+     */
+    private void applyFailure(WebhookDelivery delivery, Integer httpStatus) {
+        if (httpStatus != null) {
+            delivery.setHttpStatus(httpStatus);
+        }
+        int nextAttemptNumber = delivery.getAttemptCount() + 1;
+        Instant next = nextAttemptAt(nextAttemptNumber);
+        if (next == null) {
+            delivery.setAttemptStatus(WebhookDeliveryStatus.EXHAUSTED);
+            log.warn("Webhook delivery id={} EXHAUSTED after {} attempts",
+                    delivery.getId(), delivery.getAttemptCount());
+        } else {
+            // status stays PENDING — poller picks it up again after the backoff window
+            delivery.setNextAttemptAt(next);
+        }
+        webhookDeliveryRepository.save(delivery);
+    }
+
+    /**
+     * Computes the absolute timestamp for the next attempt, or {@code null} if the
+     * delivery should be marked EXHAUSTED (no further attempts).
+     */
+    private static Instant nextAttemptAt(int nextAttemptNumber) {
+        return switch (nextAttemptNumber) {
+            case 2 -> Instant.now().plusSeconds(60);        // +1 min
+            case 3 -> Instant.now().plusSeconds(300);       // +5 min
+            case 4 -> Instant.now().plusSeconds(1_800);     // +30 min
+            case 5 -> Instant.now().plusSeconds(7_200);     // +2 hours
+            default -> null;                                // EXHAUSTED
+        };
+    }
+
+    /**
+     * Performs the single HTTP POST to the client webhook URL.
+     *
+     * <p>Annotated {@code @Retryable} for fast inner retries on transient network errors
+     * (e.g. connection reset, 500) before the outer DB-backed backoff machinery handles
+     * longer waits. Must be {@code public} so the Spring AOP proxy can intercept it.
+     *
+     * <p>{@code @EnableRetry} is declared on {@link com.softropic.sendam.client.config.WebhookConfig}.
+     */
+    @Retryable(
+            retryFor = {RestClientException.class},
+            maxAttempts = 2,
+            backoff = @Backoff(delay = 500, multiplier = 2.0)
+    )
+    public ResponseEntity<String> postWebhook(String url, String payload) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>(payload, headers);
+        return webhookRestTemplate.postForEntity(url, entity, String.class);
+    }
+
+    /**
+     * Recovery method for {@link #postWebhook(String, String)} — called when all inner
+     * retry attempts are exhausted. Re-throws as a {@link RestClientException} so
+     * {@code dispatchOne()} catches it and applies the outer backoff.
+     */
+    @Recover
+    public ResponseEntity<String> postWebhookFallback(RestClientException e, String url, String payload) {
+        log.warn("postWebhook inner retries exhausted for url={}: {}", url, e.getMessage());
+        throw new RestClientException("Webhook HTTP call failed after inner retries: " + e.getMessage()) {};
     }
 
     // -------------------------------------------------------------------------
