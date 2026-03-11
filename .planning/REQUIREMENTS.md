@@ -43,9 +43,9 @@
 
 ### Webhooks (WEBHOOK)
 
-- [ ] **WEBHOOK-01**: Client can register a webhook URL and event subscription
-- [ ] **WEBHOOK-02**: Gateway delivers sms.finalized events to registered webhooks on message finalization
-- [ ] **WEBHOOK-03**: Gateway retries webhook delivery when the client endpoint is unreachable
+- [x] **WEBHOOK-01**: Client can register a webhook URL and event subscription
+- [x] **WEBHOOK-02**: Gateway delivers sms.finalized events to registered webhooks on message finalization
+- [x] **WEBHOOK-03**: Gateway retries webhook delivery when the client endpoint is unreachable
 
 ### API Key Management (APIKEY)
 
@@ -113,9 +113,9 @@
 | STATUS-01 | Phase 4 | Pending |
 | STATUS-02 | Phase 4 | Pending |
 | STATUS-03 | Phase 4 | Pending |
-| WEBHOOK-01 | Phase 5 | Pending |
-| WEBHOOK-02 | Phase 5 | Pending |
-| WEBHOOK-03 | Phase 5 | Pending |
+| WEBHOOK-01 | Phase 5 | Complete |
+| WEBHOOK-02 | Phase 5 | Complete |
+| WEBHOOK-03 | Phase 5 | Complete |
 
 **Coverage:**
 - v1 requirements: 33 total
