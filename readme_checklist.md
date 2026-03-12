@@ -17,6 +17,7 @@
     4 export MAIL_DE_PASSWORD="your_actual_mail_de_password"
     5 export MOMO_SUBSCRIPTION_KEY="your_actual_momo_subscription_key"
     6 export LOKI_API_KEY=="loki key"
+    7 export APIKEY_PEPPER
 
 
 ISSUES

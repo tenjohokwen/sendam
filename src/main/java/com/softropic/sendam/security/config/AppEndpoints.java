@@ -27,7 +27,7 @@ public final class AppEndpoints {
     public static final String                    ADMIN_TOPUPS      = "/api/admin/topups/**";
     public static final String                    ADMIN_API_KEYS    = "/api/admin/clients/*/keys/**";
     public static final String                    ADMIN_ANALYTICS   = "/api/admin/analytics/**";
-    public static final String                    ADMIN_SPEND       = "/api/admin/spend/**";
+    public static final String                    ADMIN_CREDITS     = "/api/admin/credits/**";
     public static final String                    ADMIN_HEALTH      = "/api/admin/health/**";
     public static final String                    ADMIN_AUDIT       = "/api/admin/audit/**";
     public static final Map<String, String[]> SECURED_MAPPINGS;
@@ -53,7 +53,7 @@ public final class AppEndpoints {
             Map.entry(ADMIN_TOPUPS,    new String[]{AuthoritiesConstants.ADMIN}),
             Map.entry(ADMIN_API_KEYS,  new String[]{AuthoritiesConstants.ADMIN}),
             Map.entry(ADMIN_ANALYTICS, new String[]{AuthoritiesConstants.ADMIN}),
-            Map.entry(ADMIN_SPEND,     new String[]{AuthoritiesConstants.ADMIN}),
+            Map.entry(ADMIN_CREDITS,   new String[]{AuthoritiesConstants.ADMIN}),
             Map.entry(ADMIN_HEALTH,    new String[]{AuthoritiesConstants.ADMIN}),
             Map.entry(ADMIN_AUDIT,     new String[]{AuthoritiesConstants.ADMIN})
         );

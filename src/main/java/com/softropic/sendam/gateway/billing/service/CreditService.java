@@ -1,9 +1,12 @@
 package com.softropic.sendam.gateway.billing.service;
 
+import com.softropic.sendam.gateway.analytics.contract.ClientCreditConsumptionResponse;
 import com.softropic.sendam.gateway.billing.contract.BalanceResponse;
 import com.softropic.sendam.gateway.billing.contract.LedgerEntryDto;
 import com.softropic.sendam.gateway.billing.contract.LedgerEntryType;
 import com.softropic.sendam.gateway.billing.contract.LedgerHistoryResponse;
+import com.softropic.sendam.gateway.billing.contract.SpendSummaryResponse;
+import com.softropic.sendam.gateway.billing.contract.SpendSummaryRow;
 import com.softropic.sendam.gateway.billing.contract.InsufficientBalanceException;
 import com.softropic.sendam.gateway.billing.repo.ClientCreditBalance;
 import com.softropic.sendam.gateway.billing.repo.ClientCreditBalanceRepository;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +35,24 @@ public class CreditService {
 
     private final ClientCreditBalanceRepository balanceRepository;
     private final CreditLedgerRepository ledgerRepository;
+
+    @Transactional(readOnly = true)
+    public SpendSummaryResponse getSpendSummary(Long clientId, Instant from, Instant to) {
+        SpendSummaryRow row = ledgerRepository.findSpendSummary(clientId, from, to);
+        return new SpendSummaryResponse(
+            row.getSmsDebit(),
+            row.getSmsRefund(),
+            row.getTopupApproved(),
+            row.getSmsReservation(),
+            row.getNetCreditsConsumed()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public ClientCreditConsumptionResponse getNetCreditsConsumed(Long clientId, Instant from, Instant to) {
+        SpendSummaryRow row = ledgerRepository.findSpendSummary(clientId, from, to);
+        return new ClientCreditConsumptionResponse(row.getNetCreditsConsumed(), from, to);
+    }
 
     @Transactional(readOnly = true)
     public BalanceResponse getBalance(Long clientId) {

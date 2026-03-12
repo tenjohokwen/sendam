@@ -2,13 +2,7 @@ package com.softropic.sendam.gateway.billing.service;
 
 import com.softropic.sendam.gateway.audit.contract.AuditEventType;
 import com.softropic.sendam.gateway.audit.contract.DomainAuditEvent;
-import com.softropic.sendam.gateway.billing.contract.CreateTopupRequest;
-import com.softropic.sendam.gateway.billing.contract.CreateTopupResponse;
-import com.softropic.sendam.gateway.billing.contract.LedgerEntryType;
-import com.softropic.sendam.gateway.billing.contract.TopupStatus;
-import com.softropic.sendam.gateway.billing.contract.TopupStatusResponse;
-import com.softropic.sendam.gateway.billing.contract.DuplicateTransactionIdException;
-import com.softropic.sendam.gateway.billing.contract.TopupAlreadyProcessedException;
+import com.softropic.sendam.gateway.billing.contract.*;
 import com.softropic.sendam.gateway.billing.repo.TopupRequestEntity;
 import com.softropic.sendam.gateway.billing.repo.TopupRequestRepository;
 import com.softropic.sendam.common.exception.ResourceNotFoundException;
@@ -20,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +53,26 @@ public class TopupService {
     }
 
     // ---- public API ----
+
+    @Transactional(readOnly = true)
+    public TopupHistoryResponse getTopupHistory(Long clientId, String topupStatus, Instant from, Instant to) {
+        List<TopupHistoryRow> rows = topupRepository.findTopupHistory(clientId, topupStatus, from, to);
+        List<TopupHistoryItem> items = rows.stream()
+            .map(r -> new TopupHistoryItem(
+                r.getId(),
+                r.getClientId(),
+                r.getAmount(),
+                r.getTransactionId(),
+                r.getPaymentType(),
+                r.getAccountNumber(),
+                r.getTopupStatus(),
+                r.getCreatedDate().toInstant(),     // java.sql.Timestamp -> Instant
+                r.getApprovedAt()  != null ? r.getApprovedAt().toInstant()  : null,
+                r.getRejectedAt()  != null ? r.getRejectedAt().toInstant()  : null
+            ))
+            .toList();
+        return new TopupHistoryResponse(items);
+    }
 
     /**
      * Creates a new top-up request for the given client.

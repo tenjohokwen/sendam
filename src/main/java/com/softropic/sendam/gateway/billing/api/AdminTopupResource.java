@@ -1,14 +1,15 @@
 package com.softropic.sendam.gateway.billing.api;
 
+import com.softropic.sendam.gateway.billing.contract.TopupHistoryResponse;
 import com.softropic.sendam.gateway.billing.contract.TopupStatusResponse;
 import com.softropic.sendam.gateway.billing.service.TopupService;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,21 @@ import lombok.extern.slf4j.Slf4j;
 public class AdminTopupResource {
 
     private final TopupService topupService;
+
+    /**
+     * List top-up history with optional filters.
+     * GET /api/admin/topups/history
+     */
+    @GetMapping("/history")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<TopupHistoryResponse> getTopupHistory(
+            @RequestParam(required = false) Long    clientId,
+            @RequestParam(required = false) String  topupStatus,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to) {
+        log.debug("Admin topup history query: clientId={}, topupStatus={}, from={}, to={}", clientId, topupStatus, from, to);
+        return ResponseEntity.ok(topupService.getTopupHistory(clientId, topupStatus, from, to));
+    }
 
     /**
      * Approve a PENDING_APPROVAL top-up.

@@ -1,4 +1,4 @@
-package com.softropic.sendam.gateway.spend.contract;
+package com.softropic.sendam.gateway.billing.contract;
 
 public interface SpendSummaryRow {
     long getSmsDebit();

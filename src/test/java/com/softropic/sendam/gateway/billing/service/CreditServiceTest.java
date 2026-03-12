@@ -1,8 +1,11 @@
 package com.softropic.sendam.gateway.billing.service;
 
+import com.softropic.sendam.gateway.analytics.contract.ClientCreditConsumptionResponse;
 import com.softropic.sendam.gateway.billing.contract.BalanceResponse;
 import com.softropic.sendam.gateway.billing.contract.LedgerEntryType;
 import com.softropic.sendam.gateway.billing.contract.InsufficientBalanceException;
+import com.softropic.sendam.gateway.billing.contract.SpendSummaryResponse;
+import com.softropic.sendam.gateway.billing.contract.SpendSummaryRow;
 import com.softropic.sendam.gateway.billing.repo.ClientCreditBalance;
 import com.softropic.sendam.gateway.billing.repo.ClientCreditBalanceRepository;
 import com.softropic.sendam.gateway.billing.repo.CreditLedgerEntry;
@@ -15,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +36,37 @@ class CreditServiceTest {
 
     @InjectMocks
     private CreditService creditService;
+
+    @Test
+    @DisplayName("getSpendSummary: success - returns spend summary from repository")
+    void getSpendSummary_success() {
+        Instant now = Instant.now();
+        SpendSummaryRow row = mock(SpendSummaryRow.class);
+        when(row.getSmsDebit()).thenReturn(100L);
+        when(row.getSmsRefund()).thenReturn(10L);
+        when(row.getTopupApproved()).thenReturn(500L);
+        when(row.getSmsReservation()).thenReturn(50L);
+        when(row.getNetCreditsConsumed()).thenReturn(140L);
+
+        when(ledgerRepository.findSpendSummary(eq(1L), any(), any())).thenReturn(row);
+
+        SpendSummaryResponse response = creditService.getSpendSummary(1L, now, now);
+
+        assertThat(response.smsDebit()).isEqualTo(100L);
+        assertThat(response.netCreditsConsumed()).isEqualTo(140L);
+    }
+
+    @Test
+    @DisplayName("getNetCreditsConsumed: success - returns net consumption from repository")
+    void getNetCreditsConsumed_success() {
+        SpendSummaryRow row = mock(SpendSummaryRow.class);
+        when(row.getNetCreditsConsumed()).thenReturn(140L);
+        when(ledgerRepository.findSpendSummary(eq(1L), any(), any())).thenReturn(row);
+
+        ClientCreditConsumptionResponse response = creditService.getNetCreditsConsumed(1L, null, null);
+
+        assertThat(response.netCreditsConsumed()).isEqualTo(140L);
+    }
 
     @Test
     @DisplayName("getBalance: success - returns current balance for client")

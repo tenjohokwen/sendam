@@ -4,7 +4,7 @@ import com.softropic.sendam.gateway.analytics.contract.ClientCreditConsumptionRe
 import com.softropic.sendam.gateway.analytics.contract.ClientDeliveryStatsResponse;
 import com.softropic.sendam.gateway.analytics.contract.ClientSegmentTotalsResponse;
 import com.softropic.sendam.gateway.analytics.service.DeliveryAnalyticsService;
-import com.softropic.sendam.gateway.spend.service.SpendService;
+import com.softropic.sendam.gateway.billing.service.CreditService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,7 +24,7 @@ import java.time.Instant;
 public class ClientAnalyticsResource {
 
     private final DeliveryAnalyticsService analyticsService;
-    private final SpendService spendService;
+    private final CreditService creditService;
 
     @GetMapping("/delivery-stats")
     public ResponseEntity<ClientDeliveryStatsResponse> getDeliveryStats(
@@ -50,6 +50,6 @@ public class ClientAnalyticsResource {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to) {
         Long clientId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.debug("Client credits consumed: clientId={}, from={}, to={}", clientId, from, to);
-        return ResponseEntity.ok(spendService.getClientNetCreditsConsumed(clientId, from, to));
+        return ResponseEntity.ok(creditService.getNetCreditsConsumed(clientId, from, to));
     }
 }

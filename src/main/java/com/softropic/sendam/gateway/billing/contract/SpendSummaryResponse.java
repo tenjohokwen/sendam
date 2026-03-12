@@ -1,4 +1,4 @@
-package com.softropic.sendam.gateway.spend.contract;
+package com.softropic.sendam.gateway.billing.contract;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

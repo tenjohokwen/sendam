@@ -13,6 +13,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +35,23 @@ class TopupServiceTest {
 
     @InjectMocks
     private TopupService topupService;
+
+    @Test
+    @DisplayName("getTopupHistory: success - returns mapped history items from repository")
+    void getTopupHistory_success() {
+        TopupHistoryRow row = mock(TopupHistoryRow.class);
+        when(row.getId()).thenReturn(1L);
+        when(row.getAmount()).thenReturn(500L);
+        when(row.getCreatedDate()).thenReturn(Timestamp.from(Instant.now()));
+        when(row.getTopupStatus()).thenReturn("APPROVED");
+
+        when(topupRepository.findTopupHistory(any(), any(), any(), any())).thenReturn(List.of(row));
+
+        TopupHistoryResponse response = topupService.getTopupHistory(100L, "APPROVED", null, null);
+
+        assertThat(response.topups()).hasSize(1);
+        assertThat(response.topups().get(0).amount()).isEqualTo(500L);
+    }
 
     @Test
     @DisplayName("createTopup: success - persists request and writes informational ledger entry")
