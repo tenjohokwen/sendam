@@ -202,6 +202,30 @@ export default {
       keyLabelOptional: 'Key Label (optional)',
       statusActive: 'Active',
       statusRevoked: 'Revoked'
+    },
+    topups: {
+      title: 'Top-up Requests',
+      tabPending: 'Pending',
+      tabHistory: 'History',
+      id: 'Topup ID',
+      clientId: 'Client ID',
+      amount: 'Amount (XAF)',
+      transactionId: 'Transaction ID',
+      paymentType: 'Payment Type',
+      accountNumber: 'Account Number',
+      requestDate: 'Requested',
+      processedDate: 'Processed',
+      status: 'Status',
+      statusPending: 'Pending',
+      statusApproved: 'Approved',
+      statusRejected: 'Rejected',
+      approve: 'Approve',
+      reject: 'Reject',
+      approved: 'Top-up approved — client balance updated',
+      rejected: 'Top-up rejected',
+      noPending: 'No pending top-up requests',
+      noHistory: 'No top-up history found',
+      topupAlreadyProcessed: 'This top-up has already been processed'
     }
   },
   pagination: {

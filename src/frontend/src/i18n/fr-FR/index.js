@@ -202,6 +202,30 @@ export default {
       keyLabelOptional: 'Libelle de la cle (optionnel)',
       statusActive: 'Active',
       statusRevoked: 'Revoquee'
+    },
+    topups: {
+      title: 'Demandes de recharge',
+      tabPending: 'En attente',
+      tabHistory: 'Historique',
+      id: 'ID recharge',
+      clientId: 'ID client',
+      amount: 'Montant (XAF)',
+      transactionId: 'ID transaction',
+      paymentType: 'Mode de paiement',
+      accountNumber: 'Numero de compte',
+      requestDate: 'Demandee le',
+      processedDate: 'Traitee le',
+      status: 'Statut',
+      statusPending: 'En attente',
+      statusApproved: 'Approuvee',
+      statusRejected: 'Rejetee',
+      approve: 'Approuver',
+      reject: 'Rejeter',
+      approved: 'Recharge approuvee — solde client mis a jour',
+      rejected: 'Recharge rejetee',
+      noPending: 'Aucune demande de recharge en attente',
+      noHistory: 'Aucun historique de recharge',
+      topupAlreadyProcessed: 'Cette recharge a deja ete traitee'
     }
   },
   pagination: {
