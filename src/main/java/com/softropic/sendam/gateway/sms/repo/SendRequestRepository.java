@@ -1,5 +1,7 @@
 package com.softropic.sendam.gateway.sms.repo;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +14,14 @@ import java.util.Optional;
 public interface SendRequestRepository extends JpaRepository<SendRequest, Long> {
 
     Optional<SendRequest> findByClientIdAndSendRequestId(Long clientId, String sendRequestId);
+
+    Optional<SendRequest> findBySendRequestId(String sendRequestId);
+
+    @Query("SELECT s FROM SendRequest s " +
+           "WHERE s.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.ACCEPTED " +
+           "AND s.scheduleTime IS NOT NULL " +
+           "ORDER BY s.scheduleTime ASC")
+    Page<SendRequest> findScheduledAccepted(Pageable pageable);
 
     @Query("SELECT s FROM SendRequest s WHERE s.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.ACCEPTED " +
            "AND s.scheduleTime IS NOT NULL AND s.scheduleTime <= :now")

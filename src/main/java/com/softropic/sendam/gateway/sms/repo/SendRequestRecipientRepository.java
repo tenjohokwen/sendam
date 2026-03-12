@@ -1,6 +1,8 @@
 package com.softropic.sendam.gateway.sms.repo;
 
 import com.softropic.sendam.gateway.provider.nexah.contract.ProviderStatsRow;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +14,8 @@ import java.util.Optional;
 public interface SendRequestRecipientRepository extends JpaRepository<SendRequestRecipient, Long> {
 
     List<SendRequestRecipient> findBySendRequestIdFk(Long sendRequestIdFk);
+
+    Page<SendRequestRecipient> findBySendRequestIdFk(Long sendRequestIdFk, Pageable pageable);
 
     List<SendRequestRecipient> findBySendRequestIdFkAndClientId(Long sendRequestIdFk, Long clientId);
 
