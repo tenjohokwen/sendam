@@ -92,10 +92,13 @@ Plans:
   2. Admin can drill into a sendRequestId and see per-recipient delivery reports
   3. Admin can view registered webhook URLs per client
   4. Admin can monitor outgoing webhook delivery statuses (PENDING/DELIVERED/FAILED)
-**Plans**: TBD
+**Plans**: 4/4 complete
 
 Plans:
-- [ ] 16-01: TBD
+- [x] 16-01: Backend monitor endpoints (SMS monitor + webhook monitor REST controllers)
+- [x] 16-02: Frontend API methods + i18n (admin.sms + admin.webhooks sections)
+- [x] 16-03: SmsMonitorPage.vue + DlrDialog.vue
+- [x] 16-04: WebhooksPage.vue (two-tab: Registrations + Deliveries)
 
 #### Phase 17: Dashboard
 **Goal**: Admin has a single overview page showing aggregated system health — delivery rates, credit totals, webhook stats, provider stats, and circuit breaker state.
@@ -141,6 +144,6 @@ Plans:
 | 13. Foundation Extension | v1.2 | 3/3 | Complete | 2026-03-12 |
 | 14. Client & API Key Management | v1.2 | 3/3 | Complete | 2026-03-12 |
 | 15. Top-up Management | v1.2 | 2/2 | Complete | 2026-03-12 |
-| 16. SMS Monitoring & Webhooks | v1.2 | 0/? | Not started | - |
+| 16. SMS Monitoring & Webhooks | v1.2 | 4/4 | Complete | 2026-03-12 |
 | 17. Dashboard | v1.2 | 0/? | Not started | - |
 | 18. Testing | v1.2 | 0/? | Not started | - |

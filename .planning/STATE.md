@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Phase 16 — SMS Monitoring & Webhooks (v1.2)
+**Current focus:** Phase 17 — Dashboard (v1.2)
 
 ## Current Position
 
-Phase: 16 of 18 (SMS Monitoring & Webhooks)
-Plan: 4 of 4 (Phase complete — all four plans done)
-Status: Phase complete
-Last activity: 2026-03-12 — Completed 16-04-PLAN.md (WebhooksPage two-tab monitoring replacing stub; WEBH-01 + WEBH-02)
+Phase: 17 of 18 (Dashboard)
+Plan: 0 of ? (Not started)
+Status: Phase 16 complete — ready to plan Phase 17
+Last activity: 2026-03-12 — Completed Phase 16 (SMS Monitoring & Webhooks) — all 4 plans verified 10/10
 
 Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ██████████ ~97%
 

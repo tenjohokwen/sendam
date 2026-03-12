@@ -44,13 +44,13 @@
 
 ### SMS Monitoring
 
-- [ ] **SMSM-01**: Admin can view a list of SMS requests in `ACCEPTED` state scheduled for future delivery
-- [ ] **SMSM-02**: Admin can drill into a `sendRequestId` to view per-recipient delivery reports (DLR)
+- [x] **SMSM-01**: Admin can view a list of SMS requests in `ACCEPTED` state scheduled for future delivery
+- [x] **SMSM-02**: Admin can drill into a `sendRequestId` to view per-recipient delivery reports (DLR)
 
 ### Webhooks
 
-- [ ] **WEBH-01**: Admin can view registered webhook URLs per client
-- [ ] **WEBH-02**: Admin can monitor outgoing delivery report statuses to client webhooks (PENDING/DELIVERED/FAILED)
+- [x] **WEBH-01**: Admin can view registered webhook URLs per client
+- [x] **WEBH-02**: Admin can monitor outgoing delivery report statuses to client webhooks (PENDING/DELIVERED/FAILED)
 
 ### UX Standards
 
@@ -106,10 +106,10 @@ Which phases cover which requirements. Updated by create-roadmap.
 | TOUP-02 | Phase 15 | Complete |
 | TOUP-03 | Phase 15 | Complete |
 | TOUP-04 | Phase 15 | Complete |
-| SMSM-01 | Phase 16 | Pending |
-| SMSM-02 | Phase 16 | Pending |
-| WEBH-01 | Phase 16 | Pending |
-| WEBH-02 | Phase 16 | Pending |
+| SMSM-01 | Phase 16 | Complete |
+| SMSM-02 | Phase 16 | Complete |
+| WEBH-01 | Phase 16 | Complete |
+| WEBH-02 | Phase 16 | Complete |
 | UXST-01 | Phase 14 | Complete |
 | UXST-02 | Phase 13 | Complete |
 | UXST-03 | Phase 13 | Complete |
