@@ -154,5 +154,20 @@ export default {
     confirm2faEnable: 'Entrez votre mot de passe pour activer l\'authentification a deux facteurs.',
     confirm2faDisable: 'Entrez votre mot de passe pour desactiver l\'authentification a deux facteurs.',
     emailChangeWarning: 'La modification de votre adresse e-mail entrainera egalement un changement de vos identifiants de connexion. Vous serez automatiquement deconnecte et devrez vous reconnecter avec votre nouvelle adresse e-mail.'
+  },
+  admin: {
+    title: 'Administration',
+    nav: {
+      clients: 'Clients',
+      topups: 'Recharges',
+      sms: 'Surveillance SMS',
+      webhooks: 'Webhooks',
+      audit: "Journal d'audit",
+      dashboard: 'Tableau de bord admin'
+    },
+    accessDenied: 'Acces refuse. Privileges administrateur requis.'
+  },
+  pagination: {
+    summary: '{from}–{to} sur {total}'
   }
 }
