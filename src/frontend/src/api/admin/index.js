@@ -49,5 +49,30 @@ export const adminApi = {
   // WEBH-02: Webhook delivery records — params: { clientId, attemptStatus, page, size } all optional
   getWebhookDeliveries(params = {}) {
     return api.get('/api/admin/webhooks/deliveries', { params })
+  },
+
+  // DASH-01: Delivery stats for SMS card
+  getDeliveryStats(params = {}) {
+    return api.get('/api/admin/sms/analytics/delivery-stats', { params })
+  },
+
+  // DASH-01: Credit spend summary for billing card
+  getCreditSummary(params = {}) {
+    return api.get('/api/admin/credits/summary', { params })
+  },
+
+  // DASH-02: Nexah circuit breaker state
+  getCircuitBreakerHealth() {
+    return api.get('/api/admin/health/nexah/circuit-breaker')
+  },
+
+  // DASH-01: Nexah provider send aggregate
+  getProviderStats() {
+    return api.get('/api/admin/health/nexah/provider-stats')
+  },
+
+  // DASH-01: Webhook delivery health aggregate
+  getWebhookHealth() {
+    return api.get('/api/admin/health/webhooks/stats')
   }
 }
