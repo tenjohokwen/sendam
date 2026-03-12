@@ -154,5 +154,20 @@ export default {
     confirm2faEnable: 'Enter your password to enable two-factor authentication.',
     confirm2faDisable: 'Enter your password to disable two-factor authentication.',
     emailChangeWarning: 'Changing your email address will also change your login credentials. You will be automatically signed out and will need to log in again with your new email address.'
+  },
+  admin: {
+    title: 'Administration',
+    nav: {
+      clients: 'Clients',
+      topups: 'Top-ups',
+      sms: 'SMS Monitor',
+      webhooks: 'Webhooks',
+      audit: 'Audit Log',
+      dashboard: 'Admin Dashboard'
+    },
+    accessDenied: 'Access denied. Admin privileges required.'
+  },
+  pagination: {
+    summary: '{from}–{to} of {total}'
   }
 }
