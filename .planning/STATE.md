@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 17 of 18 (Dashboard)
-Plan: 0 of ? (Not started)
-Status: Phase 16 complete — ready to plan Phase 17
-Last activity: 2026-03-12 — Completed Phase 16 (SMS Monitoring & Webhooks) — all 4 plans verified 10/10
+Plan: 1 of 3 (In progress)
+Status: Plan 17-01 complete — API foundation ready
+Last activity: 2026-03-12 — Completed 17-01-PLAN.md (adminApi methods + i18n dashboard namespace)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ██████████ ~97%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ██████████ ~98%
 
 ## Accumulated Context
 
@@ -83,6 +83,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - events column omitted from WebhooksPage Registrations table — removed as prescribed fallback to stay under 250-line limit (234 total)
 - deliveryStatus uses binary positive/negative badge; attemptStatus uses named attemptStatusColorMap — distinct semantics kept visually separate
 
+**17-01 decisions:**
+- dashboard section inserted after webhooks inside admin i18n object — natural placement after last existing admin subsection
+- getCircuitBreakerHealth/getProviderStats/getWebhookHealth take no params — backend endpoints accept no query parameters
+- Actual dashboard key count is 32 (not 37 as plan estimate) — key spec body is authoritative
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -100,6 +105,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T20:20:45Z
-Stopped at: Completed 16-03-PLAN.md — SmsMonitorPage.vue functional + DlrDialog.vue created; SMSM-01 + SMSM-02 addressed (16-04 also complete in parallel)
+Last session: 2026-03-12T23:54:08Z
+Stopped at: Completed 17-01-PLAN.md — five adminApi dashboard methods + admin.dashboard i18n namespace (32 keys, full en/fr parity)
 Resume file: None
