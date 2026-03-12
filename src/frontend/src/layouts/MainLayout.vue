@@ -100,63 +100,64 @@
           </q-item-section>
         </q-item>
 
-        <!-- TODO Phase 14: add v-if="isAdmin" when user store is available -->
-        <q-separator />
-        <q-item-label header>{{ t('admin.title') }}</q-item-label>
+        <template v-if="userStore.isAdmin">
+          <q-separator />
+          <q-item-label header>{{ t('admin.title') }}</q-item-label>
 
-        <q-item clickable to="/admin/clients" active-class="text-primary">
-          <q-item-section avatar>
-            <q-icon name="people" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ t('admin.nav.clients') }}</q-item-label>
-          </q-item-section>
-        </q-item>
+          <q-item clickable to="/admin/clients" active-class="text-primary">
+            <q-item-section avatar>
+              <q-icon name="people" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ t('admin.nav.clients') }}</q-item-label>
+            </q-item-section>
+          </q-item>
 
-        <q-item clickable to="/admin/topups" active-class="text-primary">
-          <q-item-section avatar>
-            <q-icon name="account_balance_wallet" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ t('admin.nav.topups') }}</q-item-label>
-          </q-item-section>
-        </q-item>
+          <q-item clickable to="/admin/topups" active-class="text-primary">
+            <q-item-section avatar>
+              <q-icon name="account_balance_wallet" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ t('admin.nav.topups') }}</q-item-label>
+            </q-item-section>
+          </q-item>
 
-        <q-item clickable to="/admin/sms" active-class="text-primary">
-          <q-item-section avatar>
-            <q-icon name="sms" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ t('admin.nav.sms') }}</q-item-label>
-          </q-item-section>
-        </q-item>
+          <q-item clickable to="/admin/sms" active-class="text-primary">
+            <q-item-section avatar>
+              <q-icon name="sms" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ t('admin.nav.sms') }}</q-item-label>
+            </q-item-section>
+          </q-item>
 
-        <q-item clickable to="/admin/webhooks" active-class="text-primary">
-          <q-item-section avatar>
-            <q-icon name="webhook" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ t('admin.nav.webhooks') }}</q-item-label>
-          </q-item-section>
-        </q-item>
+          <q-item clickable to="/admin/webhooks" active-class="text-primary">
+            <q-item-section avatar>
+              <q-icon name="webhook" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ t('admin.nav.webhooks') }}</q-item-label>
+            </q-item-section>
+          </q-item>
 
-        <q-item clickable to="/admin/audit" active-class="text-primary">
-          <q-item-section avatar>
-            <q-icon name="history" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ t('admin.nav.audit') }}</q-item-label>
-          </q-item-section>
-        </q-item>
+          <q-item clickable to="/admin/audit" active-class="text-primary">
+            <q-item-section avatar>
+              <q-icon name="history" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ t('admin.nav.audit') }}</q-item-label>
+            </q-item-section>
+          </q-item>
 
-        <q-item clickable to="/admin/dashboard" active-class="text-primary">
-          <q-item-section avatar>
-            <q-icon name="bar_chart" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ t('admin.nav.dashboard') }}</q-item-label>
-          </q-item-section>
-        </q-item>
+          <q-item clickable to="/admin/dashboard" active-class="text-primary">
+            <q-item-section avatar>
+              <q-icon name="bar_chart" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ t('admin.nav.dashboard') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
       </q-list>
     </q-drawer>
 
@@ -172,10 +173,12 @@ import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { authApi } from 'src/api/auth.api';
 import { useSession } from 'src/composables/useSession';
+import { useUserStore } from 'src/stores/user.store';
 
 const router = useRouter();
 const { t, locale } = useI18n();
 const { destroySession } = useSession();
+const userStore = useUserStore();
 
 const leftDrawerOpen = ref(false);
 
@@ -248,6 +251,9 @@ async function handleLogout() {
 
   // Clean up session monitoring
   destroySession();
+
+  // Reset user store (clears authorities / isAdmin state)
+  userStore.reset();
 
   // Clear username and cookie (updates isAuthenticated immediately)
   username.value = '';

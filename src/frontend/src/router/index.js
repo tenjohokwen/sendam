@@ -6,6 +6,7 @@ import {
   createWebHashHistory,
 } from 'vue-router'
 import routes from './routes'
+import { useUserStore } from 'src/stores/user.store'
 
 /*
  * If not building with SSR mode, you can
@@ -34,7 +35,7 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   })
 
   // Navigation guards for auth protection
-  Router.beforeEach((to, from, next) => {
+  Router.beforeEach(async (to, from, next) => {
     const requiresAuth = to.matched.some((r) => r.meta.requiresAuth)
     const requiresGuest = to.matched.some((r) => r.meta.requiresGuest)
     const requiresAdmin = to.matched.some((r) => r.meta.requiresAdmin)
@@ -45,14 +46,25 @@ export default defineRouter(function (/* { store, ssrContext } */) {
       return
     }
 
-    // Redirect unauthenticated users away from admin routes.
-    // NOTE: Full ROLE_ADMIN check is intentionally deferred to Phase 14 when the
-    // user store is built. The backend enforces ROLE_ADMIN at the API layer — a 403
-    // is the real security boundary. This guard only prevents the blank-page
-    // experience for unauthenticated users.
     if (requiresAdmin && !isAuthenticated) {
       next({ path: '/login', query: { redirect: to.fullPath } })
       return
+    }
+
+    if (requiresAdmin && isAuthenticated) {
+      const userStore = useUserStore()
+      if (!userStore.isLoaded) {
+        try {
+          await userStore.fetchUser()
+        } catch {
+          next({ name: 'login' })
+          return
+        }
+      }
+      if (!userStore.isAdmin) {
+        next({ name: 'dashboard' })
+        return
+      }
     }
 
     if (requiresGuest && isAuthenticated) {
