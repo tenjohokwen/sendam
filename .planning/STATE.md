@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 15 of 18 (Top-up Management)
-Plan: 1 of 2 (adminApi topup methods + i18n foundation complete)
-Status: In progress
-Last activity: 2026-03-12 — Completed 15-01-PLAN.md (adminApi extended, en-US/fr-FR admin.topups added)
+Plan: 2 of 2 (TopupsPage two-tab approve/reject workflow complete)
+Status: Phase complete
+Last activity: 2026-03-12 — Completed 15-02-PLAN.md (TopupsPage full implementation, TOUP-01 through TOUP-04 done)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ███████ ~80%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ████████ ~90%
 
 ## Accumulated Context
 
@@ -60,6 +60,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - topupId for approveTopup/rejectTopup MUST be "top_XXX" format — raw numeric id returns 404; Plan 02 must construct "top_" + item.id after fetch
 - topupAlreadyProcessed i18n key added for 409 TOPUP_ALREADY_PROCESSED — prevents raw English backend message leaking through useErrorHandler fallback
 
+**15-02 decisions:**
+- topupId constructed as 'top_' + item.id before normalizeLongIds spread — explicit ordering to preserve numeric value for string prefix
+- Both Approve and Reject buttons disabled when either isApproving[topupId] or isRejecting[topupId] truthy — prevents double-action per row
+- History tab shows item.id (string-normalized) without top_ prefix — prefix only needed for PUT API calls, not display
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -77,6 +82,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T18:45:48Z
-Stopped at: Completed 15-01-PLAN.md — adminApi topup methods + en-US/fr-FR admin.topups i18n; ready for 15-02 TopupsPage
+Last session: 2026-03-12T18:53:47Z
+Stopped at: Completed 15-02-PLAN.md — TopupsPage full implementation; Phase 15 complete
 Resume file: None
