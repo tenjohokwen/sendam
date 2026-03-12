@@ -45,10 +45,12 @@
   2. Long IDs from the backend display correctly without precision loss
   3. A reusable server-side pagination component exists and works
   4. All FOUND/UXST patterns (loading states, error handling, i18n, lazy validation, notifications, WCAG, navigation) verified in place
-**Plans**: TBD
+**Plans**: 3/3 complete
 
 Plans:
-- [ ] 13-01: TBD
+- [x] 13-01: Long→String utility, i18n namespaces, api/ skeleton, useErrorHandler
+- [x] 13-02: ServerPagination component
+- [x] 13-03: Admin routing, requiresAdmin guard, 6 page stubs, sidebar navigation
 
 #### Phase 14: Client & API Key Management
 **Goal**: Admin can view, register, and search clients; manage API keys per client (view, generate, revoke, show raw key once).
@@ -135,7 +137,7 @@ Plans:
 | 10. System Health (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
 | 11. Audit Log | v1.1 | 3/3 | Complete | 2026-03-11 |
 | 12. Client Analytics | v1.1 | 1/1 | Complete | 2026-03-12 |
-| 13. Foundation Extension | v1.2 | 0/? | Not started | - |
+| 13. Foundation Extension | v1.2 | 3/3 | Complete | 2026-03-12 |
 | 14. Client & API Key Management | v1.2 | 0/? | Not started | - |
 | 15. Top-up Management | v1.2 | 0/? | Not started | - |
 | 16. SMS Monitoring & Webhooks | v1.2 | 0/? | Not started | - |

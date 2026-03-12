@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Phase 13 — Foundation Extension (v1.2)
+**Current focus:** Phase 14 — Client & API Key Management (v1.2)
 
 ## Current Position
 
-Phase: 13 of 18 (Foundation Extension)
-Plan: 03 of 6 in phase (13-03 complete)
-Status: In progress
-Last activity: 2026-03-12 — Completed 13-03-PLAN.md (admin routes, stubs, navigation)
+Phase: 14 of 18 (Client & API Key Management)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-03-12 — Phase 13 complete (3/3 plans, goal verified 4/4)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ███░░░ ~9%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 █░░░░░ ~17%
 
 ## Accumulated Context
 
