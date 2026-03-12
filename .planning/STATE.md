@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 14 of 18 (Client & API Key Management)
-Plan: 1 of N (foundation complete)
+Plan: 2 of N (ClientsPage + CreateClientDialog complete)
 Status: In progress
-Last activity: 2026-03-12 — Completed 14-01-PLAN.md (API layer, user store, router guard, i18n)
+Last activity: 2026-03-12 — Completed 14-02-PLAN.md (ClientsPage.vue, CreateClientDialog.vue)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ██░░░░ ~33%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ████░░ ~50%
 
 ## Accumulated Context
 
@@ -45,6 +45,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - userStore.reset() called on logout in MainLayout — clears isAdmin immediately without page reload
 - isLoaded guard pattern: check `userStore.isLoaded` before fetchUser() to avoid duplicate profile API calls per navigation
 
+**14-02 decisions:**
+- statusLabelMap pattern: `{ ACTIVE: () => t('...'), INACTIVE: ... }` map with getter functions for enum-to-i18n labels — reactive, avoids string manipulation
+- openManageKeys stub: sets showApiKeysDialog=true but no ApiKeysDialog yet — Plan 03 completes the wiring
+- No raw key shown after createClient — backend POST /api/admin/clients returns rawApiKey: null; admin must generate key explicitly in API Keys panel
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -62,6 +67,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T14:06:00Z
-Stopped at: Completed 14-01-PLAN.md — admin API layer, user store, router guard, sidebar isAdmin, i18n foundations
+Last session: 2026-03-12T14:21:00Z
+Stopped at: Completed 14-02-PLAN.md — ClientsPage.vue (full client list page), CreateClientDialog.vue (create client dialog)
 Resume file: None
