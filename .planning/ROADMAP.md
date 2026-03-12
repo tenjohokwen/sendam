@@ -138,7 +138,7 @@ Plans:
 | 11. Audit Log | v1.1 | 3/3 | Complete | 2026-03-11 |
 | 12. Client Analytics | v1.1 | 1/1 | Complete | 2026-03-12 |
 | 13. Foundation Extension | v1.2 | 3/3 | Complete | 2026-03-12 |
-| 14. Client & API Key Management | v1.2 | 0/? | Not started | - |
+| 14. Client & API Key Management | v1.2 | 3/3 | Complete | 2026-03-12 |
 | 15. Top-up Management | v1.2 | 0/? | Not started | - |
 | 16. SMS Monitoring & Webhooks | v1.2 | 0/? | Not started | - |
 | 17. Dashboard | v1.2 | 0/? | Not started | - |
