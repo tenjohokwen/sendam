@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 13 of 18 (Foundation Extension)
-Plan: 01 of 6 in phase (13-01 complete)
+Plan: 02 of 6 in phase (13-02 complete)
 Status: In progress
-Last activity: 2026-03-12 — Completed 13-01-PLAN.md (foundation utilities)
+Last activity: 2026-03-12 — Completed 13-02-PLAN.md (ServerPagination.vue component)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 █░░░░░ ~3%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ██░░░░ ~6%
 
 ## Accumulated Context
 
@@ -28,6 +28,10 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - FOUND-06 pattern: all API calls centralized in `api/<domain>/` folders; no direct axios in components/composables
 - FOUND-07 pattern: admin pages import `useErrorHandler` exclusively for API error handling; existing reactive implementation (setError/clearError + computed + i18n) preserved over simpler spec
 - Long ID guard: always call `longToString()` on backend ID fields before display (Java BIGSERIAL exceeds JS MAX_SAFE_INTEGER)
+
+**13-02 decisions:**
+- ServerPagination pattern: `:total-elements :total-pages :page-size v-model @page-change` — component handles 1-to-0-based conversion internally; callers pass 0-based index directly to `?page=` query param
+- v-if (not v-show) on ServerPagination outer wrapper — component truly unmounts when totalPages <= 1
 
 ### Pending Todos
 
@@ -46,6 +50,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T13:25:57Z
-Stopped at: Completed 13-01-PLAN.md — foundation utilities created
+Last session: 2026-03-12T13:28:03Z
+Stopped at: Completed 13-02-PLAN.md — ServerPagination.vue component created
 Resume file: None
