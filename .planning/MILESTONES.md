@@ -8,6 +8,31 @@
 
 ## Archived
 
+### v1.1 — Operations & Observability (Shipped: 2026-03-12)
+
+**Delivered:** Admin-facing operational visibility (delivery analytics, spend reporting, system health, audit log) and client-facing self-service analytics — all 17 v1.1 requirements satisfied.
+
+**Phases completed:** 8–12 (7 plans total)
+
+**Key accomplishments:**
+
+- Admin delivery analytics — `GET /api/admin/analytics/delivery-stats` + `/segment-totals` with daily breakdown; closed-projection native SQL pattern on send_request_recipient
+- Admin spend reporting — `GET /api/admin/spend/credits` (net consumption + per-type breakdown) + `/topups` (filterable top-up history); ABS() sign-convention for debit amounts
+- Admin system health — circuit breaker state (live Resilience4j registry), webhook delivery aggregates, provider send stats; AppEndpoints migrated to Map.ofEntries() (11+ entries)
+- Audit log — append-only audit_event table, REQUIRES_NEW write pipeline, exception-swallowing listener, 8 event hook points across 5 services; paginated admin query API
+- Client analytics — three client-scoped endpoints secured by API-key chain; clientId from SecurityContextHolder only; no admin-only fields exposed; reuses existing service layer
+
+**Stats:**
+
+- 77 files changed, 6,069 insertions, 81 deletions
+- ~21,329 LOC main Java, ~7,530 LOC test Java
+- 5 phases, 7 plans
+- 1 day (2026-03-11 → 2026-03-12)
+
+**Archive:** `.planning/milestones/v1.1-ROADMAP.md`
+
+---
+
 ### v1.0 — SMS Gateway (Shipped: 2026-03-11)
 
 **Delivered:** Full REST API SMS gateway with API key auth, credit ledger, Nexah provider integration, delivery report state machine, and webhook notifications — all 33 v1 requirements satisfied.

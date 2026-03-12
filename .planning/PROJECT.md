@@ -40,15 +40,17 @@ Clients can send SMS messages and trust that billing is exact, idempotent, and a
 - ✓ sms.finalized event delivery on message finalization — v1.0
 - ✓ Webhook retry with exponential backoff — v1.0
 - ✓ Client-specified sender ID forwarded to Nexah — v1.0
+- ✓ Admin delivery analytics (sent/delivered/failed, delivery rate, segment totals, daily breakdown) — v1.1
+- ✓ Admin spend reporting (net credits consumed with per-type breakdown, top-up history) — v1.1
+- ✓ Admin system health (Nexah circuit breaker state, webhook delivery stats, provider send stats) — v1.1
+- ✓ Audit log (admin actions, API key ops, SMS submissions, webhook config changes, paginated query) — v1.1
+- ✓ Client delivery analytics (own delivery stats, segment totals, credit consumption via API-key auth) — v1.1
 
 ### Active
 
-<!-- Current scope for v1.1. Building toward these. -->
+<!-- Current scope for v1.2+. Building toward these. -->
 
-- [ ] Delivery analytics — admin API endpoints for sent/delivered/failed counts, delivery rates, segment totals; filterable per client and time period
-- [ ] Usage/spend reporting — credit consumption aggregated from ledger_entry; per client, per period
-- [ ] System health / monitoring — circuit breaker state, webhook attempt/failure rates, provider stats
-- [ ] Audit log — new audit_event table capturing admin actions (client creation, top-up approval/rejection, API key ops), client API key revocations, send request submissions, webhook config changes
+(None identified — planning next milestone)
 
 ### Out of Scope
 
@@ -64,8 +66,8 @@ Clients can send SMS messages and trust that billing is exact, idempotent, and a
 - **Upstream provider**: Nexah BulkSMS (`smsvas.com`), REST API (send SMS, receive DRs via callback)
 - **Existing foundation**: Security module (JWT auth, users, 2FA, audit), email module, common infra (payment, message, consumer, persistence, `CamMobileValidator`)
 - **Architecture pattern**: Layered packages (`api → service → repo`, `infrastructure`, `contract`, `common`, `config`) — see `ARCHITECTURE.md`
-- **Current codebase**: ~20,200 LOC main Java, ~7,500 LOC test Java; 156 passing tests
-- **Shipped**: v1.0 on 2026-03-11
+- **Current codebase**: ~21,329 LOC main Java, ~7,530 LOC test Java; 156 passing tests
+- **Shipped**: v1.0 on 2026-03-11, v1.1 on 2026-03-12
 
 ## Constraints
 
@@ -91,16 +93,17 @@ Clients can send SMS messages and trust that billing is exact, idempotent, and a
 | @TransactionalEventListener(AFTER_COMMIT) + @Transactional(REQUIRES_NEW) | AFTER_COMMIT leaves no ambient TX; REQUIRES_NEW opens fresh one for webhook writes | ✓ Good — essential pattern for event-driven writes post-commit |
 | send_status column (not status) for SMS lifecycle | Avoids Hibernate mapping collision with AbstractAuditingEntity.status | ✓ Good — prevents field-access ambiguity; reused convention for attempt_status in webhooks |
 | Child entities must NOT re-declare 'status' field | Hibernate field-access maps parent @Column; shadowing it breaks hydration silently | ✓ Good — caught and fixed as Phase 6 bug (ClientApiKeyEntity) |
+| Repository<Object, Long> for pure-aggregation repos | No entity binding needed for native SQL analytics queries; avoids dummy entity requirement | ✓ Good — used in phases 8, 9, 10; clean and explicit |
+| Map.ofEntries() mandatory for SECURED_MAPPINGS | Map.of() capped at 10 pairs; migrated at phase 10 when 11th entry needed | ✓ Good — no further migration needed; ofEntries() has no cap |
+| AuditEventEntity extends BaseEntity only | Audit table is append-only; AbstractAuditingEntity adds unwanted status column | ✓ Good — table stays immutable; no lifecycle columns to maintain |
+| AuditEventService.record() uses REQUIRES_NEW | Audit rows must persist even when outer TX rolls back | ✓ Good — mirrors TrailService pattern; audit is isolated from caller outcome |
+| AuditEventType passed as param by callers | Single ApiKeyService handles both admin and client key ops; caller determines event type | ✓ Good — avoids duplicating key generation logic for different audit semantics |
+| CLIENT_ANALYTICS excluded from SECURED_MAPPINGS | Client endpoints use @Order(1) API-key chain; adding to SECURED_MAPPINGS would require JWT/ADMIN role | ✓ Good — consistent with all other /v1/** client endpoints |
 
-## Current Milestone: v1.1 — Operations & Observability
+## Previous Milestones
 
-**Goal:** Add admin-facing operational visibility — what was sent, what was spent, what happened, and how the system is behaving.
-
-**Constraints:**
-- Admin API only — no client-facing analytics endpoints in v1.1
-- Live aggregation queries on existing tables — no pre-aggregation/materialized tables unless query performance requires it
-- Must not touch existing domain logic — read-only analytics layer (except audit_event table)
-- Spring Boot + PostgreSQL only — no new frameworks or time-series DBs
+- **v1.0 — SMS Gateway** (shipped 2026-03-11) — 7 phases, 16 plans, 33 requirements. See `.planning/milestones/v1.0-ROADMAP.md`
+- **v1.1 — Operations & Observability** (shipped 2026-03-12) — 5 phases, 7 plans, 17 requirements. See `.planning/milestones/v1.1-ROADMAP.md`
 
 ---
-*Last updated: 2026-03-11 after v1.1 milestone start*
+*Last updated: 2026-03-12 after v1.1 milestone completion*

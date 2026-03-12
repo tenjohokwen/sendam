@@ -3,7 +3,8 @@
 ## Milestones
 
 - ✅ **v1.0 SMS Gateway** — Phases 1-7 (shipped 2026-03-11) — see `.planning/milestones/v1.0-ROADMAP.md`
-- 🚧 **v1.1 Operations & Observability** — Phases 8-12 (in progress)
+- ✅ **v1.1 Operations & Observability** — Phases 8-12 (shipped 2026-03-12) — see `.planning/milestones/v1.1-ROADMAP.md`
+- 📋 **v1.2** — TBD (planning)
 
 ## Phases
 
@@ -20,78 +21,20 @@
 
 </details>
 
-### 🚧 v1.1 Operations & Observability (In Progress)
+<details>
+<summary>✅ v1.1 Operations & Observability (Phases 8-12) — SHIPPED 2026-03-12</summary>
 
-**Milestone Goal:** Admin-facing operational visibility — what was sent, what was spent, what happened, and how the system is behaving. Plus client-facing self-service analytics.
+- [x] Phase 8: Delivery Analytics (Admin) (1/1 plans) — completed 2026-03-11
+- [x] Phase 9: Spend Reporting (Admin) (1/1 plans) — completed 2026-03-11
+- [x] Phase 10: System Health (Admin) (1/1 plans) — completed 2026-03-11
+- [x] Phase 11: Audit Log (3/3 plans) — completed 2026-03-11
+- [x] Phase 12: Client Analytics (1/1 plans) — completed 2026-03-11
 
-#### Phase 8: Delivery Analytics (Admin)
-**Goal**: Admin can query SMS delivery outcomes with filters and daily breakdown
-**Depends on**: Nothing (read-only queries on existing sms tables)
-**Requirements**: DANL-01, DANL-02, DANL-03
-**Success Criteria** (what must be TRUE):
-  1. Admin can query sent / delivered / failed counts and delivery rate, with optional filter by client and time period
-  2. Segment totals are included alongside message counts
-  3. Response includes a daily breakdown (counts per day) within the filtered window
-**Plans**: 1/1 complete
+</details>
 
-Plans:
-- [x] 08-01: Delivery analytics data layer + admin REST endpoint — completed 2026-03-11
+### 📋 v1.2 (Planned)
 
-#### Phase 9: Spend Reporting (Admin)
-**Goal**: Admin can query credit consumption and top-up history per client
-**Depends on**: Nothing (read-only queries on existing ledger_entry table)
-**Requirements**: SPEN-01, SPEN-02, SPEN-03
-**Success Criteria** (what must be TRUE):
-  1. Admin can query net credits consumed (debits minus refunds) per client for a given period
-  2. Response includes breakdown by ledger entry type (SMS_DEBIT, SMS_REFUND, TOPUP_APPROVED, etc.)
-  3. Admin can view top-up history (pending / approved / rejected) per client per period
-**Plans**: 1/1 complete
-
-Plans:
-- [x] 09-01: Spend reporting data layer + admin REST endpoint — completed 2026-03-11
-
-#### Phase 10: System Health (Admin)
-**Goal**: Admin can query real-time health metrics for the platform's critical subsystems
-**Depends on**: Nothing (reads Resilience4j state and existing webhook/sms tables)
-**Requirements**: HLTH-01, HLTH-02, HLTH-03
-**Success Criteria** (what must be TRUE):
-  1. Admin can query the current Nexah circuit breaker state (CLOSED / OPEN / HALF_OPEN)
-  2. Admin can query webhook delivery stats — total attempts, failure count, EXHAUSTED count
-  3. Admin can query provider send stats — SMS submissions to Nexah, DR callbacks received, failure rate
-**Plans**: 1/1 complete
-
-Plans:
-- [x] 10-01: System health data layer + admin REST endpoint — completed 2026-03-11
-
-#### Phase 11: Audit Log
-**Goal**: All significant platform events are recorded and queryable by admin
-**Depends on**: Nothing (adds new table; hooks into existing service calls)
-**Requirements**: AUDT-01, AUDT-02, AUDT-03, AUDT-04, AUDT-05
-**Success Criteria** (what must be TRUE):
-  1. Admin actions on clients (creation, top-up decisions, API key ops) are automatically recorded
-  2. Client API key operations (create / revoke) are automatically recorded
-  3. Every SMS send request submission is automatically recorded (client, recipient count, timestamp)
-  4. Webhook config changes (register / update / delete) are automatically recorded
-  5. Admin can query the audit log, paginated, with optional filter by client and time period
-**Plans**: 3/3 complete
-
-Plans:
-- [x] 11-01: Audit data layer — completed 2026-03-11
-- [x] 11-02: Write pipeline (AuditEventService, AuditEventListener, service hooks) — completed 2026-03-11
-- [x] 11-03: Admin query API (AdminAuditResource, AppEndpoints ADMIN_AUDIT) — completed 2026-03-11
-
-#### Phase 12: Client Analytics
-**Goal**: Clients can query their own delivery stats and credit consumption
-**Depends on**: Phase 8 (shares query patterns with admin delivery analytics)
-**Requirements**: CANL-01, CANL-02, CANL-03
-**Success Criteria** (what must be TRUE):
-  1. Client can query their own delivery stats (sent / delivered / failed + delivery rate) filtered by time period
-  2. Client can query their own billed segment totals for a time period
-  3. Client can query their own net credit consumption for a time period
-**Plans**: 1/1 complete
-
-Plans:
-- [x] 12-01: Client analytics endpoints (delivery stats, segment totals, credit consumption) — completed 2026-03-11
+(No phases defined yet — run `/gsd:discuss-milestone` to plan)
 
 ## Progress
 
@@ -108,4 +51,4 @@ Plans:
 | 9. Spend Reporting (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
 | 10. System Health (Admin) | v1.1 | 1/1 | Complete | 2026-03-11 |
 | 11. Audit Log | v1.1 | 3/3 | Complete | 2026-03-11 |
-| 12. Client Analytics | v1.1 | 1/1 | Complete | 2026-03-11 |
+| 12. Client Analytics | v1.1 | 1/1 | Complete | 2026-03-12 |
