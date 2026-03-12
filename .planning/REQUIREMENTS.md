@@ -37,10 +37,10 @@
 
 ### Top-up Management
 
-- [ ] **TOUP-01**: Admin can view a list of top-up requests in `PENDING_APPROVAL` status
-- [ ] **TOUP-02**: Admin can approve a top-up request, immediately crediting the client's balance
-- [ ] **TOUP-03**: Admin can reject a top-up request without changing the client's balance
-- [ ] **TOUP-04**: Admin can view historical top-up requests with their final status (APPROVED/REJECTED)
+- [x] **TOUP-01**: Admin can view a list of top-up requests in `PENDING_APPROVAL` status
+- [x] **TOUP-02**: Admin can approve a top-up request, immediately crediting the client's balance
+- [x] **TOUP-03**: Admin can reject a top-up request without changing the client's balance
+- [x] **TOUP-04**: Admin can view historical top-up requests with their final status (APPROVED/REJECTED)
 
 ### SMS Monitoring
 
@@ -102,10 +102,10 @@ Which phases cover which requirements. Updated by create-roadmap.
 | AKEY-02 | Phase 14 | Complete |
 | AKEY-03 | Phase 14 | Complete |
 | AKEY-04 | Phase 14 | Complete |
-| TOUP-01 | Phase 15 | Pending |
-| TOUP-02 | Phase 15 | Pending |
-| TOUP-03 | Phase 15 | Pending |
-| TOUP-04 | Phase 15 | Pending |
+| TOUP-01 | Phase 15 | Complete |
+| TOUP-02 | Phase 15 | Complete |
+| TOUP-03 | Phase 15 | Complete |
+| TOUP-04 | Phase 15 | Complete |
 | SMSM-01 | Phase 16 | Pending |
 | SMSM-02 | Phase 16 | Pending |
 | WEBH-01 | Phase 16 | Pending |

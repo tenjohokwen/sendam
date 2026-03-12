@@ -77,10 +77,11 @@ Plans:
   2. Admin can approve a request and the client's balance increases immediately
   3. Admin can reject a request with no change to the client's balance
   4. Admin can browse top-up history with final statuses (APPROVED/REJECTED)
-**Plans**: TBD
+**Plans**: 2/2 complete
 
 Plans:
-- [ ] 15-01: TBD
+- [x] 15-01: Top-up API methods (getTopupHistory, approveTopup, rejectTopup) + i18n keys
+- [x] 15-02: TopupsPage.vue — pending/history tabs, approve/reject workflow
 
 #### Phase 16: SMS Monitoring & Webhooks
 **Goal**: Admin can monitor scheduled SMS and webhook delivery — view scheduled messages, drill into per-recipient DLRs, inspect webhook config and delivery statuses.
@@ -139,7 +140,7 @@ Plans:
 | 12. Client Analytics | v1.1 | 1/1 | Complete | 2026-03-12 |
 | 13. Foundation Extension | v1.2 | 3/3 | Complete | 2026-03-12 |
 | 14. Client & API Key Management | v1.2 | 3/3 | Complete | 2026-03-12 |
-| 15. Top-up Management | v1.2 | 0/? | Not started | - |
+| 15. Top-up Management | v1.2 | 2/2 | Complete | 2026-03-12 |
 | 16. SMS Monitoring & Webhooks | v1.2 | 0/? | Not started | - |
 | 17. Dashboard | v1.2 | 0/? | Not started | - |
 | 18. Testing | v1.2 | 0/? | Not started | - |

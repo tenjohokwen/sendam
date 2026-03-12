@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Phase 15 — Top-up Management (v1.2)
+**Current focus:** Phase 16 — SMS Monitoring & Webhooks (v1.2)
 
 ## Current Position
 
