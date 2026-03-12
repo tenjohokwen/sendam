@@ -85,43 +85,43 @@ Which phases cover which requirements. Updated by create-roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | — | Pending |
-| FOUND-02 | — | Pending |
-| FOUND-03 | — | Pending |
-| FOUND-04 | — | Pending |
-| FOUND-05 | — | Pending |
-| FOUND-06 | — | Pending |
-| FOUND-07 | — | Pending |
-| FOUND-08 | — | Pending |
-| DASH-01 | — | Pending |
-| DASH-02 | — | Pending |
-| CLNT-01 | — | Pending |
-| CLNT-02 | — | Pending |
-| CLNT-03 | — | Pending |
-| AKEY-01 | — | Pending |
-| AKEY-02 | — | Pending |
-| AKEY-03 | — | Pending |
-| AKEY-04 | — | Pending |
-| TOUP-01 | — | Pending |
-| TOUP-02 | — | Pending |
-| TOUP-03 | — | Pending |
-| TOUP-04 | — | Pending |
-| SMSM-01 | — | Pending |
-| SMSM-02 | — | Pending |
-| WEBH-01 | — | Pending |
-| WEBH-02 | — | Pending |
-| UXST-01 | — | Pending |
-| UXST-02 | — | Pending |
-| UXST-03 | — | Pending |
-| UXST-04 | — | Pending |
-| TEST-01 | — | Pending |
-| TEST-02 | — | Pending |
-| TEST-03 | — | Pending |
+| FOUND-01 | Phase 13 | Pending |
+| FOUND-02 | Phase 13 | Pending |
+| FOUND-03 | Phase 13 | Pending |
+| FOUND-04 | Phase 13 | Pending |
+| FOUND-05 | Phase 13 | Pending |
+| FOUND-06 | Phase 13 | Pending |
+| FOUND-07 | Phase 13 | Pending |
+| FOUND-08 | Phase 13 | Pending |
+| DASH-01 | Phase 17 | Pending |
+| DASH-02 | Phase 17 | Pending |
+| CLNT-01 | Phase 14 | Pending |
+| CLNT-02 | Phase 14 | Pending |
+| CLNT-03 | Phase 14 | Pending |
+| AKEY-01 | Phase 14 | Pending |
+| AKEY-02 | Phase 14 | Pending |
+| AKEY-03 | Phase 14 | Pending |
+| AKEY-04 | Phase 14 | Pending |
+| TOUP-01 | Phase 15 | Pending |
+| TOUP-02 | Phase 15 | Pending |
+| TOUP-03 | Phase 15 | Pending |
+| TOUP-04 | Phase 15 | Pending |
+| SMSM-01 | Phase 16 | Pending |
+| SMSM-02 | Phase 16 | Pending |
+| WEBH-01 | Phase 16 | Pending |
+| WEBH-02 | Phase 16 | Pending |
+| UXST-01 | Phase 13 | Pending |
+| UXST-02 | Phase 13 | Pending |
+| UXST-03 | Phase 13 | Pending |
+| UXST-04 | Phase 13 | Pending |
+| TEST-01 | Phase 18 | Pending |
+| TEST-02 | Phase 18 | Pending |
+| TEST-03 | Phase 18 | Pending |
 
 **Coverage:**
 - v1 requirements: 32 total
-- Mapped to phases: 0
-- Unmapped: 32 ⚠️ (fill in after create-roadmap)
+- Mapped to phases: 32
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-12*

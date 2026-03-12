@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Planning v1.2 — milestone complete, next milestone TBD
+**Current focus:** Phase 13 — Foundation Extension (v1.2)
 
 ## Current Position
 
-Phase: v1.1 complete (12 phases total)
-Plan: —
-Status: Milestone complete — ready to plan v1.2
-Last activity: 2026-03-12 — v1.1 milestone archived (5 phases, 7 plans, 17 requirements, tagged v1.1)
+Phase: 13 of 18 (Foundation Extension)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-03-12 — v1.2 roadmap created (6 phases, 32 requirements)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 not started
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ░░░░░░ 0%
 
 ## Accumulated Context
 
@@ -41,6 +41,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T00:30:00Z
-Stopped at: v1.1 milestone complete and archived (tagged v1.1)
+Last session: 2026-03-12
+Stopped at: v1.2 roadmap created — ready to plan Phase 13
 Resume file: None
