@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 16 of 18 (SMS Monitoring & Webhooks)
-Plan: 2 of 4 (API client methods and i18n foundation complete)
-Status: In progress
-Last activity: 2026-03-12 — Completed 16-02-PLAN.md (adminApi 4 new methods; admin.sms + admin.webhooks i18n sections en-US + fr-FR)
+Plan: 4 of 4 (Phase complete — all four plans done)
+Status: Phase complete
+Last activity: 2026-03-12 — Completed 16-04-PLAN.md (WebhooksPage two-tab monitoring replacing stub; WEBH-01 + WEBH-02)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 █████████ ~93%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ██████████ ~97%
 
 ## Accumulated Context
 
@@ -74,6 +74,10 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - admin.sms has 24 keys and admin.webhooks has 30 keys — plan stated 20/22 but those were undercount of the actual key spec; actual key list is authoritative
 - adminApi extension pattern: new methods appended after last existing method with TICKET-ID comment annotations
 
+**16-04 decisions:**
+- events column omitted from WebhooksPage Registrations table — removed as prescribed fallback to stay under 250-line limit (234 total)
+- deliveryStatus uses binary positive/negative badge; attemptStatus uses named attemptStatusColorMap — distinct semantics kept visually separate
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -91,6 +95,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T20:17:04Z
-Stopped at: Completed 16-01-PLAN.md — four admin REST endpoints for SMS and webhook monitoring (Wave 1 both plans now complete)
+Last session: 2026-03-12T20:33:00Z
+Stopped at: Completed 16-04-PLAN.md — Phase 16 complete; WebhooksPage two-tab monitoring (WEBH-01 + WEBH-02)
 Resume file: None
