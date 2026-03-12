@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 13 of 18 (Foundation Extension)
-Plan: 02 of 6 in phase (13-02 complete)
+Plan: 03 of 6 in phase (13-03 complete)
 Status: In progress
-Last activity: 2026-03-12 — Completed 13-02-PLAN.md (ServerPagination.vue component)
+Last activity: 2026-03-12 — Completed 13-03-PLAN.md (admin routes, stubs, navigation)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ██░░░░ ~6%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ███░░░ ~9%
 
 ## Accumulated Context
 
@@ -33,6 +33,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - ServerPagination pattern: `:total-elements :total-pages :page-size v-model @page-change` — component handles 1-to-0-based conversion internally; callers pass 0-based index directly to `?page=` query param
 - v-if (not v-show) on ServerPagination outer wrapper — component truly unmounts when totalPages <= 1
 
+**13-03 decisions:**
+- Admin route group: parent sets `requiresAuth: true, requiresAdmin: true`; children use lazy imports; `requiresAdmin` guard defers full role check to Phase 14 (no Pinia user store yet; backend 403 is the real security boundary)
+- Admin sidebar nav section: no `v-if="isAdmin"` in this plan — visible to all authenticated users until Phase 14 adds the user store and role-based conditional rendering
+- Admin page stubs use static `"Loading..."` string (not i18n key) — placeholder is replaced entirely when Phase 14-17 build real content
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -50,6 +55,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T13:28:03Z
-Stopped at: Completed 13-02-PLAN.md — ServerPagination.vue component created
+Last session: 2026-03-12T13:29:09Z
+Stopped at: Completed 13-03-PLAN.md — admin routes, stubs, and sidebar navigation added
 Resume file: None
