@@ -81,7 +81,13 @@
       v-model="showCreateDialog"
       @created="onClientCreated"
     />
-    <!-- ApiKeysDialog mounted in Plan 03 -->
+    <ApiKeysDialog
+      v-if="showApiKeysDialog && selectedClient"
+      v-model="showApiKeysDialog"
+      :client-id="selectedClient.id"
+      :client-name="selectedClient.name"
+      @update:model-value="(val) => { if (!val) selectedClient = null }"
+    />
   </q-page>
 </template>
 
@@ -92,6 +98,7 @@ import { adminApi } from 'src/api/admin'
 import { useErrorHandler } from 'src/composables/useErrorHandler'
 import { normalizeLongIds } from 'src/utils/longToString'
 import CreateClientDialog from 'src/components/admin/CreateClientDialog.vue'
+import ApiKeysDialog from 'src/components/admin/ApiKeysDialog.vue'
 
 const { t } = useI18n()
 const { setError, clearError, hasError, errorMessage } = useErrorHandler()
@@ -100,7 +107,6 @@ const clients = ref([])
 const isLoading = ref(false)
 const filterText = ref('')
 const showCreateDialog = ref(false)
-// ApiKeysDialog wired in Plan 03:
 const selectedClient = ref(null)
 const showApiKeysDialog = ref(false)
 
@@ -135,7 +141,7 @@ async function loadClients() {
 
 function openManageKeys(client) {
   selectedClient.value = client
-  showApiKeysDialog.value = true // TODO: Plan 03 — wire ApiKeysDialog
+  showApiKeysDialog.value = true
 }
 
 function onClientCreated() {
