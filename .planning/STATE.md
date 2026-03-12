@@ -65,6 +65,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - Both Approve and Reject buttons disabled when either isApproving[topupId] or isRejecting[topupId] truthy — prevents double-action per row
 - History tab shows item.id (string-normalized) without top_ prefix — prefix only needed for PUT API calls, not display
 
+**16-01 decisions:**
+- ADMIN_SMS_MONITOR = /api/admin/sms/monitor/** (not /api/admin/sms/**) — preserves sibling ADMIN_ANALYTICS at /api/admin/sms/analytics/**
+- findBySendRequestId(String) derived query added to SendRequestRepository — AdminSmsMonitorService needs String→Long PK resolution for DLR lookup
+- WebhookEndpointRow.status uses EntityStatus.name() — WebhookEndpoint has no separate WebhookStatus field, EntityStatus is the lifecycle status
+
 **16-02 decisions:**
 - admin.sms has 24 keys and admin.webhooks has 30 keys — plan stated 20/22 but those were undercount of the actual key spec; actual key list is authoritative
 - adminApi extension pattern: new methods appended after last existing method with TICKET-ID comment annotations
@@ -86,6 +91,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T19:58:48Z
-Stopped at: Completed 16-02-PLAN.md — adminApi foundation and i18n sections for Phase 16
+Last session: 2026-03-12T20:17:04Z
+Stopped at: Completed 16-01-PLAN.md — four admin REST endpoints for SMS and webhook monitoring (Wave 1 both plans now complete)
 Resume file: None
