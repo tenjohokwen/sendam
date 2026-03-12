@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 
 ## Current Position
 
-Phase: 14 of 18 (Client & API Key Management)
-Plan: 3 of 3 (ApiKeysDialog + RawKeyDialog complete — Phase 14 DONE)
-Status: Phase complete
-Last activity: 2026-03-12 — Completed 14-03-PLAN.md (ApiKeysDialog.vue, RawKeyDialog.vue, ClientsPage.vue wired)
+Phase: 15 of 18 (Top-up Management)
+Plan: 1 of 2 (adminApi topup methods + i18n foundation complete)
+Status: In progress
+Last activity: 2026-03-12 — Completed 15-01-PLAN.md (adminApi extended, en-US/fr-FR admin.topups added)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ██████ ~75%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ███████ ~80%
 
 ## Accumulated Context
 
@@ -55,6 +55,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - v-if (not v-show) on ApiKeysDialog in ClientsPage — all key state released on close; selectedClient cleared on close
 - per-row loading map: isRevoking = ref({}) keyed by keyId string — independent per-row loading without shared boolean
 
+**15-01 decisions:**
+- getTopupHistory accepts params={} default — all filters (topupStatus, clientId, from, to) are optional; callers omit arg for unfiltered results
+- topupId for approveTopup/rejectTopup MUST be "top_XXX" format — raw numeric id returns 404; Plan 02 must construct "top_" + item.id after fetch
+- topupAlreadyProcessed i18n key added for 409 TOPUP_ALREADY_PROCESSED — prevents raw English backend message leaking through useErrorHandler fallback
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -72,6 +77,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T14:18:58Z
-Stopped at: Completed 14-03-PLAN.md — ApiKeysDialog.vue, RawKeyDialog.vue, ClientsPage.vue wired; Phase 14 complete
+Last session: 2026-03-12T18:45:48Z
+Stopped at: Completed 15-01-PLAN.md — adminApi topup methods + en-US/fr-FR admin.topups i18n; ready for 15-02 TopupsPage
 Resume file: None
