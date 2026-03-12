@@ -165,7 +165,44 @@ export default {
       audit: "Journal d'audit",
       dashboard: 'Tableau de bord admin'
     },
-    accessDenied: 'Acces refuse. Privileges administrateur requis.'
+    accessDenied: 'Acces refuse. Privileges administrateur requis.',
+    clients: {
+      title: 'Clients',
+      id: 'ID client',
+      name: 'Nom',
+      status: 'Statut',
+      balance: 'Solde (XAF)',
+      filterPlaceholder: 'Rechercher par ID ou nom',
+      registerClient: 'Enregistrer un client',
+      manageKeys: 'Gerer les cles',
+      noClients: 'Aucun client trouve',
+      createTitle: 'Enregistrer un nouveau client',
+      clientName: 'Nom du client',
+      keyLabel: 'Libelle de la cle API initiale (optionnel)',
+      created: 'Client enregistre avec succes',
+      statusActive: 'Actif',
+      statusInactive: 'Inactif',
+      statusDeleted: 'Supprime'
+    },
+    apiKeys: {
+      title: 'Cles API — {name}',
+      id: 'ID cle',
+      label: 'Libelle',
+      status: 'Statut',
+      createdDate: 'Cree le',
+      generateKey: 'Generer une nouvelle cle',
+      revoke: 'Revoquer',
+      revoked: 'Cle API revoquee',
+      generated: 'Cle API generee',
+      noKeys: 'Aucune cle API trouvee',
+      rawKeyTitle: 'Nouvelle cle API creee',
+      rawKeyWarning: "Cette cle ne sera affichee qu'une seule fois. Copiez-la maintenant — elle ne peut pas etre recuperee.",
+      copyKey: 'Copier la cle',
+      keyCopied: 'Cle API copiee dans le presse-papiers',
+      keyLabelOptional: 'Libelle de la cle (optionnel)',
+      statusActive: 'Active',
+      statusRevoked: 'Revoquee'
+    }
   },
   pagination: {
     summary: '{from}–{to} sur {total}'

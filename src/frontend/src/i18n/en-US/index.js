@@ -165,7 +165,44 @@ export default {
       audit: 'Audit Log',
       dashboard: 'Admin Dashboard'
     },
-    accessDenied: 'Access denied. Admin privileges required.'
+    accessDenied: 'Access denied. Admin privileges required.',
+    clients: {
+      title: 'Clients',
+      id: 'Client ID',
+      name: 'Name',
+      status: 'Status',
+      balance: 'Balance (XAF)',
+      filterPlaceholder: 'Search by ID or name',
+      registerClient: 'Register Client',
+      manageKeys: 'Manage Keys',
+      noClients: 'No clients found',
+      createTitle: 'Register New Client',
+      clientName: 'Client Name',
+      keyLabel: 'Initial API Key Label (optional)',
+      created: 'Client registered successfully',
+      statusActive: 'Active',
+      statusInactive: 'Inactive',
+      statusDeleted: 'Deleted'
+    },
+    apiKeys: {
+      title: 'API Keys — {name}',
+      id: 'Key ID',
+      label: 'Label',
+      status: 'Status',
+      createdDate: 'Created',
+      generateKey: 'Generate New Key',
+      revoke: 'Revoke',
+      revoked: 'API key revoked',
+      generated: 'API key generated',
+      noKeys: 'No API keys found',
+      rawKeyTitle: 'New API Key Created',
+      rawKeyWarning: 'This key will only be shown once. Copy it now — it cannot be recovered.',
+      copyKey: 'Copy Key',
+      keyCopied: 'API key copied to clipboard',
+      keyLabelOptional: 'Key Label (optional)',
+      statusActive: 'Active',
+      statusRevoked: 'Revoked'
+    }
   },
   pagination: {
     summary: '{from}–{to} of {total}'
