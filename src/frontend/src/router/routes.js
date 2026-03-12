@@ -54,6 +54,21 @@ const routes = [
         component: () => import('pages/ProfilePage.vue'),
         meta: { requiresAuth: true },
       },
+
+      // Admin section (Phase 14-17 will build real content into these pages)
+      {
+        path: 'admin',
+        meta: { requiresAuth: true, requiresAdmin: true },
+        children: [
+          { path: '', redirect: '/admin/clients' },
+          { path: 'clients', component: () => import('pages/admin/ClientsPage.vue') },
+          { path: 'topups', component: () => import('pages/admin/TopupsPage.vue') },
+          { path: 'sms', component: () => import('pages/admin/SmsMonitorPage.vue') },
+          { path: 'webhooks', component: () => import('pages/admin/WebhooksPage.vue') },
+          { path: 'audit', component: () => import('pages/admin/AuditPage.vue') },
+          { path: 'dashboard', component: () => import('pages/admin/AdminDashboardPage.vue') },
+        ],
+      },
     ],
   },
 

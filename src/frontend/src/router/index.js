@@ -37,9 +37,20 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   Router.beforeEach((to, from, next) => {
     const requiresAuth = to.matched.some((r) => r.meta.requiresAuth)
     const requiresGuest = to.matched.some((r) => r.meta.requiresGuest)
+    const requiresAdmin = to.matched.some((r) => r.meta.requiresAdmin)
     const isAuthenticated = document.cookie.includes('user=')
 
     if (requiresAuth && !isAuthenticated) {
+      next({ path: '/login', query: { redirect: to.fullPath } })
+      return
+    }
+
+    // Redirect unauthenticated users away from admin routes.
+    // NOTE: Full ROLE_ADMIN check is intentionally deferred to Phase 14 when the
+    // user store is built. The backend enforces ROLE_ADMIN at the API layer — a 403
+    // is the real security boundary. This guard only prevents the blank-page
+    // experience for unauthenticated users.
+    if (requiresAdmin && !isAuthenticated) {
       next({ path: '/login', query: { redirect: to.fullPath } })
       return
     }
