@@ -3,6 +3,10 @@ import { useI18n } from 'vue-i18n';
 import { parseApiError } from 'src/utils/errorHandler';
 
 /**
+ * FOUND-07 contract: All admin pages import useErrorHandler instead of calling
+ * errorHandler.js or $q.notify directly for API errors. This composable is the
+ * single pattern for surfacing backend ErrorDto responses in the admin section.
+ *
  * Composable for handling API errors with reactive state.
  * Wraps the errorHandler utility with Vue reactivity.
  * Uses i18n to translate error messages based on errorKey.
