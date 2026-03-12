@@ -1,6 +1,6 @@
 package com.softropic.sendam.gateway.billing.service;
 
-import com.softropic.sendam.gateway.analytics.contract.ClientCreditConsumptionResponse;
+import com.softropic.sendam.gateway.billing.contract.ClientCreditConsumptionResponse;
 import com.softropic.sendam.gateway.billing.contract.BalanceResponse;
 import com.softropic.sendam.gateway.billing.contract.LedgerEntryDto;
 import com.softropic.sendam.gateway.billing.contract.LedgerEntryType;
@@ -77,6 +77,17 @@ public class CreditService {
                         entry.getReference()))
                 .toList();
         return new LedgerHistoryResponse(dtos, pageResult.getNumber(), pageResult.getSize(), pageResult.getTotalElements());
+    }
+
+    /** Initializes a new client's balance at zero. */
+    public void initializeBalance(Long clientId) {
+        ClientCreditBalance balanceRow = ClientCreditBalance.builder()
+                .clientId(clientId)
+                .balance(0L)
+                .status(EntityStatus.ACTIVE)
+                .build();
+        balanceRepository.save(balanceRow);
+        log.info("Initialized credit balance for clientId={}", clientId);
     }
 
     /**

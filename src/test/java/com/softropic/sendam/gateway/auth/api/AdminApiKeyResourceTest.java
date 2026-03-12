@@ -35,12 +35,13 @@ class AdminApiKeyResourceTest {
     @DisplayName("createKey: admin can create key for any client")
     void createKey_success() {
         CreateKeyRequest request = new CreateKeyRequest("Admin Created");
-        when(apiKeyService.createKey(100L, "Admin Created", AuditEventType.ADMIN_API_KEY_CREATED)).thenReturn(new ApiKeyCreationResult(1L, "snd_raw"));
+        when(apiKeyService.createKey(eq(100L), eq("Admin Created"), eq(AuditEventType.ADMIN_API_KEY_CREATED)))
+                .thenReturn(new ApiKeyCreationResult(1L, "snd_raw"));
 
         ApiKeyCreationResult result = adminApiKeyResource.createKey(100L, request);
 
         assertThat(result.rawKey()).isEqualTo("snd_raw");
-        verify(apiKeyService).createKey(100L, "Admin Created", AuditEventType.ADMIN_API_KEY_CREATED);
+        verify(apiKeyService).createKey(eq(100L), eq("Admin Created"), eq(AuditEventType.ADMIN_API_KEY_CREATED));
     }
 
     @Test
@@ -59,6 +60,6 @@ class AdminApiKeyResourceTest {
     @DisplayName("revokeKey: admin can revoke key for any client")
     void revokeKey_success() {
         adminApiKeyResource.revokeKey(100L, 1L);
-        verify(apiKeyService).revokeKey(100L, 1L, AuditEventType.ADMIN_API_KEY_REVOKED);
+        verify(apiKeyService).revokeKey(eq(100L), eq(1L), eq(AuditEventType.ADMIN_API_KEY_REVOKED));
     }
 }

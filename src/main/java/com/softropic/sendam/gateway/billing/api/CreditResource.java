@@ -1,15 +1,19 @@
 package com.softropic.sendam.gateway.billing.api;
 
 import com.softropic.sendam.gateway.billing.contract.BalanceResponse;
+import com.softropic.sendam.gateway.billing.contract.ClientCreditConsumptionResponse;
 import com.softropic.sendam.gateway.billing.contract.LedgerHistoryResponse;
 import com.softropic.sendam.gateway.billing.service.CreditService;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Instant;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,5 +50,18 @@ public class CreditResource {
             @RequestParam(defaultValue = "50") int size) {
         Long clientId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(creditService.getLedgerHistory(clientId, page, size));
+    }
+
+    /**
+     * Returns net credits consumed by the client within a time range.
+     * GET /v1/credits/consumption
+     */
+    @GetMapping("/consumption")
+    public ResponseEntity<ClientCreditConsumptionResponse> getCreditConsumption(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to) {
+        Long clientId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.debug("Client credits consumed query: clientId={}, from={}, to={}", clientId, from, to);
+        return ResponseEntity.ok(creditService.getNetCreditsConsumed(clientId, from, to));
     }
 }

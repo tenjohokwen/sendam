@@ -5,13 +5,10 @@ import com.softropic.sendam.gateway.provider.nexah.infrastructure.NexahClient;
 import com.softropic.sendam.gateway.sms.contract.SendRequestStatus;
 import com.softropic.sendam.gateway.sms.repo.SendRequest;
 import com.softropic.sendam.gateway.sms.repo.SendRequestRecipient;
-import com.softropic.sendam.gateway.sms.repo.SendRequestRecipientRepository;
-import com.softropic.sendam.gateway.sms.repo.SendRequestRepository;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,87 +26,78 @@ class NexahDispatchServiceTest {
     @Mock
     private NexahClient nexahClient;
     @Mock
-    private SendRequestRepository sendRequestRepository;
-    @Mock
-    private SendRequestRecipientRepository recipientRepository;
-    @Mock
     private NexahProperties nexahProperties;
 
     @InjectMocks
     private NexahDispatchService nexahDispatchService;
 
     @Test
-    @DisplayName("dispatch: success - moves recipients to SUBMITTED when provider returns IDs")
-    void dispatch_success() {
-        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").sender("MYAPP").build();
+    @DisplayName("send: success - moves recipients to SUBMITTED when provider returns IDs")
+    void send_success() {
+        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").build();
         SendRequestRecipient r1 = SendRequestRecipient.builder().recipient("237671234567").build();
-
-        when(recipientRepository.findBySendRequestIdFk(1L)).thenReturn(List.of(r1));
-        when(nexahProperties.user()).thenReturn("user");
-        when(nexahProperties.password()).thenReturn("pass");
-
+        
+        lenient().when(nexahProperties.user()).thenReturn("user");
+        lenient().when(nexahProperties.password()).thenReturn("pass");
+        lenient().when(nexahProperties.senderid()).thenReturn("sender");
+        
         NexahSmsEntry entry = new NexahSmsEntry("Success", "sms-1", "gw-123", "237671234567", 0, "OK", 1, 100);
-        ArgumentCaptor<NexahSendRequest> captor = ArgumentCaptor.forClass(NexahSendRequest.class);
         when(nexahClient.sendSms(any())).thenReturn(new NexahSendResponse(1, "OK", "Sent", List.of(entry)));
 
-        nexahDispatchService.dispatch(request);
+        nexahDispatchService.send(request, List.of(r1));
 
-        verify(nexahClient).sendSms(captor.capture());
-        assertThat(captor.getValue().senderid()).isEqualTo("MYAPP");
         assertThat(r1.getSendStatus()).isEqualTo(SendRequestStatus.SUBMITTED);
         assertThat(r1.getGatewayMessageId()).isEqualTo("gw-123");
-        assertThat(request.getSendStatus()).isEqualTo(SendRequestStatus.SUBMITTED);
-
-        verify(recipientRepository).save(r1);
-        verify(sendRequestRepository).save(request);
     }
 
     @Test
-    @DisplayName("dispatch: partial success - only matched recipients move to SUBMITTED")
-    void dispatch_partialSuccess() {
-        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").sender("MYAPP").build();
+    @DisplayName("send: partial success - only matched recipients move to SUBMITTED")
+    void send_partialSuccess() {
+        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").build();
         SendRequestRecipient r1 = SendRequestRecipient.builder().recipient("237671234567").build();
         SendRequestRecipient r2 = SendRequestRecipient.builder().recipient("237671234568").build();
         
-        when(recipientRepository.findBySendRequestIdFk(1L)).thenReturn(List.of(r1, r2));
-        
+        lenient().when(nexahProperties.user()).thenReturn("user");
+        lenient().when(nexahProperties.password()).thenReturn("pass");
+        lenient().when(nexahProperties.senderid()).thenReturn("sender");
+
         NexahSmsEntry entry1 = new NexahSmsEntry("Success", "sms-1", "gw-123", "237671234567", 0, "OK", 1, 100);
         when(nexahClient.sendSms(any())).thenReturn(new NexahSendResponse(1, "OK", "Sent", List.of(entry1)));
 
-        nexahDispatchService.dispatch(request);
+        nexahDispatchService.send(request, List.of(r1, r2));
 
         assertThat(r1.getSendStatus()).isEqualTo(SendRequestStatus.SUBMITTED);
         assertThat(r2.getSendStatus()).isEqualTo(SendRequestStatus.ACCEPTED); 
-        assertThat(request.getSendStatus()).isEqualTo(SendRequestStatus.SUBMITTED);
-        
-        verify(recipientRepository, times(1)).save(any());
-        verify(sendRequestRepository).save(request);
     }
 
     @Test
-    @DisplayName("dispatch: failure - rethrows ProviderUnavailableException from client")
-    void dispatch_providerUnavailable() {
-        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").sender("MYAPP").build();
-        when(recipientRepository.findBySendRequestIdFk(1L)).thenReturn(List.of());
+    @DisplayName("send: failure - rethrows ProviderUnavailableException from client")
+    void send_providerUnavailable() {
+        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").build();
         
+        lenient().when(nexahProperties.user()).thenReturn("user");
+        lenient().when(nexahProperties.password()).thenReturn("pass");
+        lenient().when(nexahProperties.senderid()).thenReturn("sender");
+
         when(nexahClient.sendSms(any())).thenThrow(new ProviderUnavailableException("down"));
 
-        assertThatThrownBy(() -> nexahDispatchService.dispatch(request))
+        assertThatThrownBy(() -> nexahDispatchService.send(request, List.of()))
                 .isInstanceOf(ProviderUnavailableException.class);
-        
-        verify(sendRequestRepository, never()).save(any());
     }
 
     @Test
-    @DisplayName("dispatch: edge case - nexah returns empty sms list")
-    void dispatch_emptyResponse() {
-        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").sender("MYAPP").sendStatus(SendRequestStatus.ACCEPTED).build();
-        when(recipientRepository.findBySendRequestIdFk(1L)).thenReturn(List.of());
+    @DisplayName("send: edge case - nexah returns empty sms list")
+    void send_emptyResponse() {
+        SendRequest request = SendRequest.builder().id(1L).sendRequestId("req-123").message("test").sendStatus(SendRequestStatus.ACCEPTED).build();
+        
+        lenient().when(nexahProperties.user()).thenReturn("user");
+        lenient().when(nexahProperties.password()).thenReturn("pass");
+        lenient().when(nexahProperties.senderid()).thenReturn("sender");
+
         when(nexahClient.sendSms(any())).thenReturn(new NexahSendResponse(1, "OK", "Empty", List.of()));
 
-        nexahDispatchService.dispatch(request);
+        nexahDispatchService.send(request, List.of());
 
         assertThat(request.getSendStatus()).isEqualTo(SendRequestStatus.ACCEPTED);
-        verify(sendRequestRepository, never()).save(any());
     }
 }

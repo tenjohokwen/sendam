@@ -1,7 +1,9 @@
 package com.softropic.sendam.gateway.webhook.repo;
 
 import com.softropic.sendam.gateway.webhook.contract.WebhookDeliveryStatus;
+import com.softropic.sendam.gateway.webhook.contract.WebhookStatsRow;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.Instant;
 import java.util.List;
@@ -17,4 +19,13 @@ public interface WebhookDeliveryRepository extends JpaRepository<WebhookDelivery
             WebhookDeliveryStatus attemptStatus,
             Instant cutoff
     );
+
+    @Query(value = """
+        SELECT
+            COUNT(*)                                                          AS total_attempts,
+            COUNT(CASE WHEN d.attempt_status = 'FAILED'    THEN 1 END)       AS failure_count,
+            COUNT(CASE WHEN d.attempt_status = 'EXHAUSTED' THEN 1 END)       AS exhausted_count
+        FROM main.webhook_delivery d
+        """, nativeQuery = true)
+    WebhookStatsRow findWebhookStats();
 }

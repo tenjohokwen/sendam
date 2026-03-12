@@ -1,6 +1,6 @@
 package com.softropic.sendam.gateway.billing.service;
 
-import com.softropic.sendam.gateway.analytics.contract.ClientCreditConsumptionResponse;
+import com.softropic.sendam.gateway.billing.contract.ClientCreditConsumptionResponse;
 import com.softropic.sendam.gateway.billing.contract.BalanceResponse;
 import com.softropic.sendam.gateway.billing.contract.LedgerEntryType;
 import com.softropic.sendam.gateway.billing.contract.InsufficientBalanceException;

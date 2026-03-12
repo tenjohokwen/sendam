@@ -20,13 +20,13 @@ public final class AppEndpoints {
     public static final String                    CREDITS_API       = "/v1/credits/**";
     public static final String                    CLIENT_API_KEYS   = "/v1/api/**";
     public static final String                    WEBHOOKS_API      = "/v1/webhooks/**";
-    public static final String                    CLIENT_ANALYTICS  = "/v1/analytics/**";
+    public static final String                    SMS_ANALYTICS     = "/v1/sms/analytics/**";
     public static final String                    ACTUATOR           = "/manage/**";
     public static final String                    REFRESH           = "/refresh";
     public static final String                    ADMIN_CLIENTS     = "/api/admin/clients/**";
     public static final String                    ADMIN_TOPUPS      = "/api/admin/topups/**";
     public static final String                    ADMIN_API_KEYS    = "/api/admin/clients/*/keys/**";
-    public static final String                    ADMIN_ANALYTICS   = "/api/admin/analytics/**";
+    public static final String                    ADMIN_ANALYTICS   = "/api/admin/sms/analytics/**";
     public static final String                    ADMIN_CREDITS     = "/api/admin/credits/**";
     public static final String                    ADMIN_HEALTH      = "/api/admin/health/**";
     public static final String                    ADMIN_AUDIT       = "/api/admin/audit/**";

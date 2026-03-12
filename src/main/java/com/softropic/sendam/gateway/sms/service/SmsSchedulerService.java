@@ -1,10 +1,11 @@
 package com.softropic.sendam.gateway.sms.service;
 
 import com.softropic.sendam.gateway.provider.nexah.contract.ProviderUnavailableException;
+import com.softropic.sendam.gateway.sms.contract.SendRequestStatus;
 import com.softropic.sendam.gateway.sms.repo.SendRequest;
+import com.softropic.sendam.gateway.sms.repo.SendRequestRecipient;
+import com.softropic.sendam.gateway.sms.repo.SendRequestRecipientRepository;
 import com.softropic.sendam.gateway.sms.repo.SendRequestRepository;
-import com.softropic.sendam.gateway.provider.nexah.service.NexahDispatchService;
-import com.softropic.sendam.gateway.provider.nexah.service.DrCallbackService;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -18,20 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Polls for SMS requests due for dispatch and submits them to Nexah via NexahDispatchService.
- *
- * <p>dispatchScheduledMessages() runs every 30 seconds (fixedDelay — not fixedRate — so
- * runs never overlap). It handles two categories of requests:
- * <ul>
- *   <li>Immediate sends: ACCEPTED with scheduleTime IS NULL
- *   <li>Due scheduled sends: ACCEPTED with scheduleTime IS NOT NULL AND scheduleTime <= now
- * </ul>
- *
- * <p>recoverStaleSms() runs every hour and force-finalizes requests that have been in SUBMITTED
- * state for 24+ hours without receiving a delivery report callback from Nexah.
- *
- * <p>Per-request exceptions are caught and logged — one failed dispatch must not block
- * the remaining requests in the same scheduler run.
+ * Polls for SMS requests due for dispatch and submits them to a provider via SmsSender.
  */
 @Service
 @Slf4j
@@ -39,13 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 public class SmsSchedulerService {
 
     private final SendRequestRepository sendRequestRepository;
-    private final NexahDispatchService nexahDispatchService;
-    private final DrCallbackService drCallbackService;
+    private final SendRequestRecipientRepository recipientRepository;
+    private final List<SmsSender> smsSenders; // Autowires all SmsSender implementations
 
     /**
-     * Dispatches both due scheduled requests and pending immediate requests via NexahDispatchService.
-     * Uses fixedDelay so the next run starts 30s after the previous run completes,
-     * preventing overlapping executions under heavy load.
+     * Dispatches both due scheduled requests and pending immediate requests.
      */
     @Scheduled(fixedDelay = 30_000)
     @Transactional
@@ -60,33 +46,56 @@ public class SmsSchedulerService {
         toDispatch.addAll(immediate);
 
         if (toDispatch.isEmpty()) {
-            return; // skip log noise on empty polls
+            return;
         }
 
-        log.info("Dispatching {} SMS request(s) ({} scheduled-due, {} immediate)",
-                toDispatch.size(), due.size(), immediate.size());
+        if (smsSenders.isEmpty()) {
+            log.error("No SmsSender implementations found! Cannot dispatch messages.");
+            return;
+        }
+
+        // For v1, we just use the first available sender (Nexah)
+        SmsSender sender = smsSenders.get(0);
+
+        log.info("Dispatching {} SMS request(s) using {} ({} scheduled-due, {} immediate)",
+                toDispatch.size(), sender.getClass().getSimpleName(), due.size(), immediate.size());
 
         for (SendRequest request : toDispatch) {
             try {
-                nexahDispatchService.dispatch(request);
+                List<SendRequestRecipient> recipients = recipientRepository.findBySendRequestIdFk(request.getId());
+                
+                sender.send(request, recipients);
+
+                boolean anySubmitted = false;
+                for (SendRequestRecipient recipient : recipients) {
+                    if (recipient.getSendStatus() == SendRequestStatus.SUBMITTED) {
+                        recipientRepository.save(recipient);
+                        anySubmitted = true;
+                    }
+                }
+
+                if (anySubmitted) {
+                    request.setSendStatus(SendRequestStatus.SUBMITTED);
+                    sendRequestRepository.save(request);
+                    log.info("Dispatched sendRequestId={} — {} recipient(s) transitioned to SUBMITTED",
+                            request.getSendRequestId(), recipients.size());
+                }
             } catch (ProviderUnavailableException e) {
                 log.warn("Provider unavailable for sendRequestId={}. Will retry on next cycle.",
                         request.getSendRequestId());
-                // Continue processing remaining requests — provider outage must not block others
             } catch (Exception e) {
                 log.error("Failed to dispatch sendRequestId={}", request.getSendRequestId(), e);
-                // Continue processing remaining requests — one failure must not block others
             }
         }
     }
 
     /**
      * Force-finalizes requests that have been stuck in SUBMITTED state for 24+ hours.
-     * Runs every hour (fixedDelay — no overlap).
-     *
-     * <p>A request is considered stale when it has at least one recipient still in SUBMITTED
-     * state and the send_request row's lastModifiedDate is older than 24 hours. This covers
-     * cases where the Nexah DR callback was never received (network issues, provider errors).
+     * Logic is now moved to SmsProviderReportListener via a ForceFinalizeEvent or similar,
+     * but for simplicity in this phase, we keep it here and call repositories directly
+     * since they belong to the SAME module (sms).
+     * 
+     * Refactoring Note: recoverStaleSms no longer calls Nexah's DrCallbackService.
      */
     @Scheduled(fixedDelay = 3_600_000)
     @Transactional
@@ -102,10 +111,33 @@ public class SmsSchedulerService {
 
         for (SendRequest request : stale) {
             try {
-                drCallbackService.forceFinalizeStaleSms(request.getId());
+                forceFinalize(request);
             } catch (Exception e) {
                 log.error("Failed to force-finalize stale sendRequestId={}", request.getSendRequestId(), e);
             }
         }
+    }
+
+    private void forceFinalize(SendRequest parent) {
+        List<SendRequestRecipient> recipients = recipientRepository.findBySendRequestIdFk(parent.getId());
+
+        for (SendRequestRecipient recipient : recipients) {
+            if (recipient.getSendStatus() == SendRequestStatus.SUBMITTED) {
+                int estimatedSegments = Math.max(1, parent.getSegmentCount());
+                recipient.setSegmentsConsumed(estimatedSegments);
+                recipient.setSendStatus(SendRequestStatus.FAILED);
+                recipientRepository.save(recipient);
+            }
+        }
+        
+        // Finalize parent logic moved from provider module to sms module
+        // We'll trigger the same logic used for normal DLR processing
+        // This will be easier once the ProviderReportListener is implemented.
+        // For now, let's just mark it FAIL_FINALIZED.
+        parent.setSendStatus(SendRequestStatus.FAIL_FINALIZED);
+        parent.setFinalizedAt(Instant.now());
+        sendRequestRepository.save(parent);
+        
+        log.info("SendRequest {} force-finalized as FAIL_FINALIZED", parent.getSendRequestId());
     }
 }

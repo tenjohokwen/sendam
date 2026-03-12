@@ -19,10 +19,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 /**
- * Second SecurityFilterChain scoped to /v1/**.
+ * Second SecurityFilterChain scoped to client-facing API paths.
  * Runs at @Order(1) so it claims these paths before the JWT chain (@Order(2)).
  * Authenticates requests using Bearer API keys via ApiKeyAuthenticationFilter.
- * // Covers all client-facing endpoints: /v1/api/**, /v1/credits/**, /v1/sms/**
  * The @Order(2) JWT chain uses /api/** and other admin paths — it will not interfere with /v1/** paths.
  */
 @Configuration
@@ -42,7 +41,7 @@ public class ClientSecurityConfiguration {
         http
             .securityMatcher(AppEndpoints.SMS_API, AppEndpoints.CREDITS_API,
                              AppEndpoints.CLIENT_API_KEYS, AppEndpoints.WEBHOOKS_API,
-                             AppEndpoints.CLIENT_ANALYTICS)
+                             AppEndpoints.SMS_ANALYTICS)
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())

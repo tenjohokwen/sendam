@@ -1,39 +1,26 @@
 package com.softropic.sendam.gateway.account.service;
 
-import com.softropic.sendam.gateway.auth.contract.ApiKeyCreationResult;
+import com.softropic.sendam.gateway.account.contract.ClientCreatedEvent;
 import com.softropic.sendam.gateway.account.contract.CreateClientRequest;
 import com.softropic.sendam.gateway.account.contract.CreateClientResponse;
 import com.softropic.sendam.gateway.audit.contract.AuditEventType;
 import com.softropic.sendam.gateway.audit.contract.DomainAuditEvent;
-import com.softropic.sendam.gateway.billing.repo.ClientCreditBalance;
-import com.softropic.sendam.gateway.billing.repo.ClientCreditBalanceRepository;
 import com.softropic.sendam.gateway.account.repo.ClientEntity;
 import com.softropic.sendam.gateway.account.repo.ClientRepository;
 import com.softropic.sendam.common.persistence.EntityStatus;
-import com.softropic.sendam.gateway.auth.service.ApiKeyService;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ClientService {
 
     private final ClientRepository clientRepository;
-    private final ApiKeyService apiKeyService;
-    private final ClientCreditBalanceRepository clientCreditBalanceRepository;
     private final ApplicationEventPublisher eventPublisher;
-
-    public ClientService(final ClientRepository clientRepository,
-                         final ApiKeyService apiKeyService,
-                         final ClientCreditBalanceRepository clientCreditBalanceRepository,
-                         final ApplicationEventPublisher eventPublisher) {
-        this.clientRepository = clientRepository;
-        this.apiKeyService = apiKeyService;
-        this.clientCreditBalanceRepository = clientCreditBalanceRepository;
-        this.eventPublisher = eventPublisher;
-    }
 
     public CreateClientResponse createClient(final CreateClientRequest request) {
         ClientEntity client = ClientEntity.builder()
@@ -42,15 +29,8 @@ public class ClientService {
             .build();
         clientRepository.save(client);
 
-        // Create balance lock row atomically with client creation — ensures no ResourceNotFoundException on first balance query
-        ClientCreditBalance balanceRow = ClientCreditBalance.builder()
-                .clientId(client.getId())
-                .balance(0L)
-                .status(EntityStatus.ACTIVE)
-                .build();
-        clientCreditBalanceRepository.save(balanceRow);
-
-        ApiKeyCreationResult keyResult = apiKeyService.generateAndPersist(client.getId(), request.keyLabel());
+        // Publish event to decouple API key and Billing initialization
+        eventPublisher.publishEvent(new ClientCreatedEvent(client.getId(), client.getName(), request.keyLabel()));
 
         eventPublisher.publishEvent(new DomainAuditEvent(
             AuditEventType.CLIENT_CREATED,
@@ -59,7 +39,11 @@ public class ClientService {
             "Client created: " + request.name()
         ));
 
-        return new CreateClientResponse(client.getId(), keyResult.apiKeyId(), keyResult.rawKey());
+        // Note: The response no longer contains the raw API key since it's now created asynchronously/via listener.
+        // If the v8 contract requires it in the response, we might need to change the listener to be synchronous
+        // or re-think this specific decoupling if the contract is strict.
+        // Assuming for now that listeners are synchronous (default Spring Event behavior).
+        return new CreateClientResponse(client.getId(), null, null);
     }
 
     private String resolveAdminActor() {

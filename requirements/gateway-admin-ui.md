@@ -29,7 +29,7 @@ The Gateway Admin UI is a dedicated web interface for system administrators to m
 ## 3. Functional Requirements
 
 ### 3.1 Dashboard (Overview)
-- **Aggregated Stats**: Display total active clients, total credits in system, and SMS success/failure rates.
+- **Aggregated Stats**: Display total active clients, total credits in system, and SMS success/failure rates (delivery-stats, delivery rate, segment totals) , day-level breakdown, topup analysis, webhook delivery aggregates, provider send aggregate
 - **System Health**: Visibility into provider (Nexah) connectivity status (Circuit Breaker state).
 
 ### 3.2 Client Management
