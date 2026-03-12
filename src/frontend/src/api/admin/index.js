@@ -18,5 +18,16 @@ export const adminApi = {
   },
   revokeApiKey(clientId, keyId) {
     return api.delete(`/api/admin/clients/${clientId}/keys/${keyId}`)
+  },
+  getTopupHistory(params = {}) {
+    // params may include: topupStatus, clientId, from, to — all optional
+    return api.get('/api/admin/topups/history', { params })
+  },
+  approveTopup(topupId) {
+    // topupId MUST be in "top_XXX" format — raw numeric id will return 404
+    return api.put(`/api/admin/topups/${topupId}/approve`)
+  },
+  rejectTopup(topupId) {
+    return api.put(`/api/admin/topups/${topupId}/reject`)
   }
 }
