@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 14 of 18 (Client & API Key Management)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-03-12 — Phase 13 complete (3/3 plans, goal verified 4/4)
+Plan: 1 of N (foundation complete)
+Status: In progress
+Last activity: 2026-03-12 — Completed 14-01-PLAN.md (API layer, user store, router guard, i18n)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 █░░░░░ ~17%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ██░░░░ ~33%
 
 ## Accumulated Context
 
@@ -38,6 +38,13 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - Admin sidebar nav section: no `v-if="isAdmin"` in this plan — visible to all authenticated users until Phase 14 adds the user store and role-based conditional rendering
 - Admin page stubs use static `"Loading..."` string (not i18n key) — placeholder is replaced entirely when Phase 14-17 build real content
 
+**14-01 decisions:**
+- UserDto.authorities (Set<String>) is the role field; store named `authorities` to match; values are strings like `"ROLE_ADMIN"`
+- profileApi import path: `src/api/profile.api` (flat file, no subfolder)
+- beforeEach guard made async to support `await userStore.fetchUser()`
+- userStore.reset() called on logout in MainLayout — clears isAdmin immediately without page reload
+- isLoaded guard pattern: check `userStore.isLoaded` before fetchUser() to avoid duplicate profile API calls per navigation
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -55,6 +62,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T13:29:09Z
-Stopped at: Completed 13-03-PLAN.md — admin routes, stubs, and sidebar navigation added
+Last session: 2026-03-12T14:06:00Z
+Stopped at: Completed 14-01-PLAN.md — admin API layer, user store, router guard, sidebar isAdmin, i18n foundations
 Resume file: None
