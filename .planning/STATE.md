@@ -74,6 +74,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - admin.sms has 24 keys and admin.webhooks has 30 keys — plan stated 20/22 but those were undercount of the actual key spec; actual key list is authoritative
 - adminApi extension pattern: new methods appended after last existing method with TICKET-ID comment annotations
 
+**16-03 decisions:**
+- showDlrDialog + selectedSendRequestId pair: two separate refs — dialog opens via showDlrDialog=true, DlrDialog loads when sendRequestId non-null; onPageChange resets selectedSendRequestId=null to prevent stale DLR data
+- DlrDialog.vue is maximized q-dialog — full-screen gives most usable space for DLR recipient tables
+- Dialog drill-down pattern: parent page manages showDialog + selectedId; child dialog watches prop with immediate to auto-load on open
+
 **16-04 decisions:**
 - events column omitted from WebhooksPage Registrations table — removed as prescribed fallback to stay under 250-line limit (234 total)
 - deliveryStatus uses binary positive/negative badge; attemptStatus uses named attemptStatusColorMap — distinct semantics kept visually separate
@@ -95,6 +100,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T20:33:00Z
-Stopped at: Completed 16-04-PLAN.md — Phase 16 complete; WebhooksPage two-tab monitoring (WEBH-01 + WEBH-02)
+Last session: 2026-03-12T20:20:45Z
+Stopped at: Completed 16-03-PLAN.md — SmsMonitorPage.vue functional + DlrDialog.vue created; SMSM-01 + SMSM-02 addressed (16-04 also complete in parallel)
 Resume file: None
