@@ -89,10 +89,10 @@ Which phases cover which requirements. Updated by create-roadmap.
 | FOUND-02 | Phase 13 | Pending |
 | FOUND-03 | Phase 13 | Pending |
 | FOUND-04 | Phase 13 | Pending |
-| FOUND-05 | Phase 13 | Pending |
+| FOUND-05 | Phase 14 | Pending |
 | FOUND-06 | Phase 13 | Pending |
 | FOUND-07 | Phase 13 | Pending |
-| FOUND-08 | Phase 13 | Pending |
+| FOUND-08 | Phase 14 | Pending |
 | DASH-01 | Phase 17 | Pending |
 | DASH-02 | Phase 17 | Pending |
 | CLNT-01 | Phase 14 | Pending |
@@ -110,10 +110,10 @@ Which phases cover which requirements. Updated by create-roadmap.
 | SMSM-02 | Phase 16 | Pending |
 | WEBH-01 | Phase 16 | Pending |
 | WEBH-02 | Phase 16 | Pending |
-| UXST-01 | Phase 13 | Pending |
+| UXST-01 | Phase 14 | Pending |
 | UXST-02 | Phase 13 | Pending |
 | UXST-03 | Phase 13 | Pending |
-| UXST-04 | Phase 13 | Pending |
+| UXST-04 | Phase 14 | Pending |
 | TEST-01 | Phase 18 | Pending |
 | TEST-02 | Phase 18 | Pending |
 | TEST-03 | Phase 18 | Pending |
@@ -125,4 +125,4 @@ Which phases cover which requirements. Updated by create-roadmap.
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-03-12 after initial definition*
+*Last updated: 2026-03-12 — moved FOUND-05, FOUND-08, UXST-01, UXST-04 from Phase 13 to Phase 14 (first phase with real async operations and forms)*
