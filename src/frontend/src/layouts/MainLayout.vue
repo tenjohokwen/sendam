@@ -99,6 +99,64 @@
             <q-item-label>{{ t('profile.title') }}</q-item-label>
           </q-item-section>
         </q-item>
+
+        <!-- TODO Phase 14: add v-if="isAdmin" when user store is available -->
+        <q-separator />
+        <q-item-label header>{{ t('admin.title') }}</q-item-label>
+
+        <q-item clickable to="/admin/clients" active-class="text-primary">
+          <q-item-section avatar>
+            <q-icon name="people" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ t('admin.nav.clients') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable to="/admin/topups" active-class="text-primary">
+          <q-item-section avatar>
+            <q-icon name="account_balance_wallet" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ t('admin.nav.topups') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable to="/admin/sms" active-class="text-primary">
+          <q-item-section avatar>
+            <q-icon name="sms" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ t('admin.nav.sms') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable to="/admin/webhooks" active-class="text-primary">
+          <q-item-section avatar>
+            <q-icon name="webhook" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ t('admin.nav.webhooks') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable to="/admin/audit" active-class="text-primary">
+          <q-item-section avatar>
+            <q-icon name="history" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ t('admin.nav.audit') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable to="/admin/dashboard" active-class="text-primary">
+          <q-item-section avatar>
+            <q-icon name="bar_chart" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ t('admin.nav.dashboard') }}</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
