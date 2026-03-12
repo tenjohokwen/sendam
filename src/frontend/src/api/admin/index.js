@@ -29,5 +29,25 @@ export const adminApi = {
   },
   rejectTopup(topupId) {
     return api.put(`/api/admin/topups/${topupId}/reject`)
+  },
+
+  // SMSM-01: Scheduled SMS list — params: { clientId, page, size } all optional
+  getScheduledSms(params = {}) {
+    return api.get('/api/admin/sms/monitor/scheduled', { params })
+  },
+
+  // SMSM-02: Per-recipient DLR for a sendRequestId — params: { page, size } optional
+  getDlrForRequest(sendRequestId, params = {}) {
+    return api.get(`/api/admin/sms/monitor/scheduled/${sendRequestId}/dlr`, { params })
+  },
+
+  // WEBH-01: All webhook registrations — params: { page, size } optional
+  getWebhookEndpoints(params = {}) {
+    return api.get('/api/admin/webhooks/endpoints', { params })
+  },
+
+  // WEBH-02: Webhook delivery records — params: { clientId, attemptStatus, page, size } all optional
+  getWebhookDeliveries(params = {}) {
+    return api.get('/api/admin/webhooks/deliveries', { params })
   }
 }
