@@ -12,10 +12,10 @@
 - [x] **FOUND-02**: UI supports English (en-US) and French (fr-FR) with full i18n key parity
 - [x] **FOUND-03**: All `Long` values from backend API are handled as `String` in the frontend to prevent JavaScript precision loss
 - [x] **FOUND-04**: All listing pages implement server-side pagination
-- [ ] **FOUND-05**: Every async operation displays a loading state (`QInnerLoading` or `:loading` on buttons)
+- [x] **FOUND-05**: Every async operation displays a loading state (`QInnerLoading` or `:loading` on buttons)
 - [x] **FOUND-06**: All API calls are centralized in an `api/` folder organized by domain
 - [x] **FOUND-07**: API errors in standard `ErrorDto` format (`helpCode`, `errorMsg.key`, `errorMsg.message`) are handled and surfaced to the user
-- [ ] **FOUND-08**: All form inputs use lazy-rules validation (validate on blur)
+- [x] **FOUND-08**: All form inputs use lazy-rules validation (validate on blur)
 
 ### Dashboard
 
@@ -24,16 +24,16 @@
 
 ### Client Management
 
-- [ ] **CLNT-01**: Admin can view all clients with their ID (String), label, and current available balance
-- [ ] **CLNT-02**: Admin can register new clients via a creation form
-- [ ] **CLNT-03**: Admin can filter/search clients by ID or name
+- [x] **CLNT-01**: Admin can view all clients with their ID (String), label, and current available balance
+- [x] **CLNT-02**: Admin can register new clients via a creation form
+- [x] **CLNT-03**: Admin can filter/search clients by ID or name
 
 ### API Key Management
 
-- [ ] **AKEY-01**: Admin can view all API keys associated with a specific client
-- [ ] **AKEY-02**: Admin can generate a new API key for any client
-- [ ] **AKEY-03**: Admin can revoke an existing API key for any client
-- [ ] **AKEY-04**: Raw API key value is shown only once upon creation
+- [x] **AKEY-01**: Admin can view all API keys associated with a specific client
+- [x] **AKEY-02**: Admin can generate a new API key for any client
+- [x] **AKEY-03**: Admin can revoke an existing API key for any client
+- [x] **AKEY-04**: Raw API key value is shown only once upon creation
 
 ### Top-up Management
 
@@ -54,10 +54,10 @@
 
 ### UX Standards
 
-- [ ] **UXST-01**: All success and error notifications use `$q.notify()`
+- [x] **UXST-01**: All success and error notifications use `$q.notify()`
 - [x] **UXST-02**: Form labels and contrast ratios meet WCAG AA standards
 - [x] **UXST-03**: Sidebar navigation for desktop; bottom tabs or burger menu for mobile
-- [ ] **UXST-04**: Action buttons are disabled during loading states to prevent duplicate submissions
+- [x] **UXST-04**: Action buttons are disabled during loading states to prevent duplicate submissions
 
 ### Testing
 
@@ -89,19 +89,19 @@ Which phases cover which requirements. Updated by create-roadmap.
 | FOUND-02 | Phase 13 | Complete |
 | FOUND-03 | Phase 13 | Complete |
 | FOUND-04 | Phase 13 | Complete |
-| FOUND-05 | Phase 14 | Pending |
+| FOUND-05 | Phase 14 | Complete |
 | FOUND-06 | Phase 13 | Complete |
 | FOUND-07 | Phase 13 | Complete |
-| FOUND-08 | Phase 14 | Pending |
+| FOUND-08 | Phase 14 | Complete |
 | DASH-01 | Phase 17 | Pending |
 | DASH-02 | Phase 17 | Pending |
-| CLNT-01 | Phase 14 | Pending |
-| CLNT-02 | Phase 14 | Pending |
-| CLNT-03 | Phase 14 | Pending |
-| AKEY-01 | Phase 14 | Pending |
-| AKEY-02 | Phase 14 | Pending |
-| AKEY-03 | Phase 14 | Pending |
-| AKEY-04 | Phase 14 | Pending |
+| CLNT-01 | Phase 14 | Complete |
+| CLNT-02 | Phase 14 | Complete |
+| CLNT-03 | Phase 14 | Complete |
+| AKEY-01 | Phase 14 | Complete |
+| AKEY-02 | Phase 14 | Complete |
+| AKEY-03 | Phase 14 | Complete |
+| AKEY-04 | Phase 14 | Complete |
 | TOUP-01 | Phase 15 | Pending |
 | TOUP-02 | Phase 15 | Pending |
 | TOUP-03 | Phase 15 | Pending |
@@ -110,10 +110,10 @@ Which phases cover which requirements. Updated by create-roadmap.
 | SMSM-02 | Phase 16 | Pending |
 | WEBH-01 | Phase 16 | Pending |
 | WEBH-02 | Phase 16 | Pending |
-| UXST-01 | Phase 14 | Pending |
+| UXST-01 | Phase 14 | Complete |
 | UXST-02 | Phase 13 | Complete |
 | UXST-03 | Phase 13 | Complete |
-| UXST-04 | Phase 14 | Pending |
+| UXST-04 | Phase 14 | Complete |
 | TEST-01 | Phase 18 | Pending |
 | TEST-02 | Phase 18 | Pending |
 | TEST-03 | Phase 18 | Pending |
