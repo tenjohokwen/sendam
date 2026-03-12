@@ -284,6 +284,43 @@ export default {
       endpointStatusActive: 'Actif',
       endpointStatusInactive: 'Inactif',
       endpointStatusDeleted: 'Supprime'
+    },
+    dashboard: {
+      title: 'Vue d\'ensemble du systeme',
+      refresh: 'Actualiser',
+      lastUpdated: 'Mis a jour : {time}',
+      // SMS card
+      smsCard: 'Statistiques SMS',
+      totalSent: 'Total envoye',
+      delivered: 'Livre',
+      failed: 'Echoue',
+      deliveryRate: 'Taux de livraison',
+      totalSegments: 'Total segments',
+      dailyBreakdown: 'Historique quotidien',
+      date: 'Date',
+      // Billing card
+      billingCard: 'Credits et clients',
+      activeClients: 'Clients actifs',
+      totalCredits: 'Total credits (XAF)',
+      smsDebit: 'Debit SMS',
+      smsRefund: 'Remboursement SMS',
+      topupApproved: 'Recharge approuvee',
+      netConsumed: 'Net consomme',
+      // System health card
+      systemCard: 'Sante du systeme',
+      circuitBreaker: 'Disjoncteur',
+      cbStateClosed: 'Ferme (Sain)',
+      cbStateOpen: 'Ouvert (Declenche)',
+      cbStateHalfOpen: 'Semi-ouvert (En recuperation)',
+      failureRate: 'Taux d\'echec',
+      providerStats: 'Fournisseur (Nexah)',
+      totalSubmitted: 'Soumis',
+      drReceived: 'DRs recus',
+      failedCount: 'Echoue',
+      webhookStats: 'Webhooks',
+      totalAttempts: 'Total tentatives',
+      failureCount: 'Echecs',
+      exhaustedCount: 'Epuise'
     }
   },
   pagination: {
