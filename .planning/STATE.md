@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 
 ## Current Position
 
-Phase: 15 of 18 (Top-up Management)
-Plan: 2 of 2 (TopupsPage two-tab approve/reject workflow complete)
-Status: Phase complete
-Last activity: 2026-03-12 — Completed 15-02-PLAN.md (TopupsPage full implementation, TOUP-01 through TOUP-04 done)
+Phase: 16 of 18 (SMS Monitoring & Webhooks)
+Plan: 2 of 4 (API client methods and i18n foundation complete)
+Status: In progress
+Last activity: 2026-03-12 — Completed 16-02-PLAN.md (adminApi 4 new methods; admin.sms + admin.webhooks i18n sections en-US + fr-FR)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ████████ ~90%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 █████████ ~93%
 
 ## Accumulated Context
 
@@ -65,6 +65,10 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - Both Approve and Reject buttons disabled when either isApproving[topupId] or isRejecting[topupId] truthy — prevents double-action per row
 - History tab shows item.id (string-normalized) without top_ prefix — prefix only needed for PUT API calls, not display
 
+**16-02 decisions:**
+- admin.sms has 24 keys and admin.webhooks has 30 keys — plan stated 20/22 but those were undercount of the actual key spec; actual key list is authoritative
+- adminApi extension pattern: new methods appended after last existing method with TICKET-ID comment annotations
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -82,6 +86,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T18:53:47Z
-Stopped at: Completed 15-02-PLAN.md — TopupsPage full implementation; Phase 15 complete
+Last session: 2026-03-12T19:58:48Z
+Stopped at: Completed 16-02-PLAN.md — adminApi foundation and i18n sections for Phase 16
 Resume file: None
