@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 14 of 18 (Client & API Key Management)
-Plan: 2 of N (ClientsPage + CreateClientDialog complete)
-Status: In progress
-Last activity: 2026-03-12 — Completed 14-02-PLAN.md (ClientsPage.vue, CreateClientDialog.vue)
+Plan: 3 of 3 (ApiKeysDialog + RawKeyDialog complete — Phase 14 DONE)
+Status: Phase complete
+Last activity: 2026-03-12 — Completed 14-03-PLAN.md (ApiKeysDialog.vue, RawKeyDialog.vue, ClientsPage.vue wired)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ████░░ ~50%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ██████ ~75%
 
 ## Accumulated Context
 
@@ -50,6 +50,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - openManageKeys stub: sets showApiKeysDialog=true but no ApiKeysDialog yet — Plan 03 completes the wiring
 - No raw key shown after createClient — backend POST /api/admin/clients returns rawApiKey: null; admin must generate key explicitly in API Keys panel
 
+**14-03 decisions:**
+- show-once credential pattern: v-if on RawKeyDialog inside ApiKeysDialog + null rawKeyResult.value in onRawKeyDialogClose — raw key dropped from memory (AKEY-04)
+- v-if (not v-show) on ApiKeysDialog in ClientsPage — all key state released on close; selectedClient cleared on close
+- per-row loading map: isRevoking = ref({}) keyed by keyId string — independent per-row loading without shared boolean
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -67,6 +72,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T14:21:00Z
-Stopped at: Completed 14-02-PLAN.md — ClientsPage.vue (full client list page), CreateClientDialog.vue (create client dialog)
+Last session: 2026-03-12T14:18:58Z
+Stopped at: Completed 14-03-PLAN.md — ApiKeysDialog.vue, RawKeyDialog.vue, ClientsPage.vue wired; Phase 14 complete
 Resume file: None
