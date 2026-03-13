@@ -5,6 +5,8 @@ package com.softropic.sendam.utils;
 import com.softropic.sendam.email.contract.Envelope;
 import com.softropic.sendam.email.service.MailManager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 
 import java.util.Map;
@@ -12,7 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public class TestMailManager extends MailManager {
-    private final Map<String, Envelope> sentMails = new ConcurrentHashMap<>();
+    private static final Logger                log       = LoggerFactory.getLogger(TestMailManager.class);
+    private final        Map<String, Envelope> sentMails = new ConcurrentHashMap<>();
 
     public TestMailManager() {
         super(null, null, null, null);
@@ -20,6 +23,8 @@ public class TestMailManager extends MailManager {
 
     @Override
     public void sendEmailSync(final Envelope envelope) {
+        log.debug("EMAIL***:       " + envelope.data());
+        log.debug("EMAIL DATA***:       " + envelope.data().toString());
         sentMails.put(envelope.sendId(), envelope);
     }
 

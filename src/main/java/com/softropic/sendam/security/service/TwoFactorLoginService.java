@@ -1,19 +1,17 @@
 package com.softropic.sendam.security.service;
 
 
-
 import com.softropic.sendam.common.ClockProvider;
 import com.softropic.sendam.email.contract.EmailTemplate;
 import com.softropic.sendam.security.contract.LoginData;
-import com.softropic.sendam.security.service.LoginTokenManager;
 import com.softropic.sendam.security.contract.Principal;
 import com.softropic.sendam.security.contract.event.SendMailEvent;
 import com.softropic.sendam.security.contract.util.ShortCode;
 import com.softropic.sendam.security.repo.LoginInfo;
-import com.softropic.sendam.security.service.LoginInfoService;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -22,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class TwoFactorLoginService {
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 

@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -42,7 +43,7 @@ import io.micrometer.common.util.StringUtils;
 import static com.softropic.sendam.security.contract.exception.SecurityError.EMAIL_OR_PW_MISMATCH;
 import static com.softropic.sendam.security.contract.exception.SecurityError.PWD_RESET_REJECTED;
 
-
+@Transactional
 @Service
 public class AccountManagementFacade {
 

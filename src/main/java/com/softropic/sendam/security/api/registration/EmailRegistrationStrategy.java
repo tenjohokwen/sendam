@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -37,6 +38,7 @@ import java.util.UUID;
  * @see RegistrationNotificationStrategy
  */
 @Component
+@Transactional
 public class EmailRegistrationStrategy implements RegistrationNotificationStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailRegistrationStrategy.class);

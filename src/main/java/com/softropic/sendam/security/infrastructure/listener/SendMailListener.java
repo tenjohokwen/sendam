@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneOffset;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ public class SendMailListener {
         this.userService = userService;
     }
 
+    @Transactional
     @EventListener
     public void handleSendMailEvent(SendMailEvent sendMailEvent) {
         final List<User> users = userService.findUsersByIds(sendMailEvent.userIds());

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -37,6 +38,7 @@ public class AccountChangeEmailListener {
         this.serverPort = serverPort;
     }
 
+    @Transactional
     @EventListener
     public void handleAccountChange(AccountChangeEvent event) {
         log.info("Sending notification email for account change: {}", event.getAction());
