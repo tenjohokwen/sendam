@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 17 of 18 (Dashboard)
-Plan: 1 of 3 (In progress)
-Status: Plan 17-01 complete — API foundation ready
-Last activity: 2026-03-12 — Completed 17-01-PLAN.md (adminApi methods + i18n dashboard namespace)
+Plan: 2 of 3 (In progress)
+Status: Plan 17-02 complete — three dashboard card components ready
+Last activity: 2026-03-13 — Completed 17-02-PLAN.md (DashboardSmsCard, DashboardBillingCard, DashboardSystemCard)
 
 Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ██████████ ~98%
 
@@ -88,6 +88,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - getCircuitBreakerHealth/getProviderStats/getWebhookHealth take no params — backend endpoints accept no query parameters
 - Actual dashboard key count is 32 (not 37 as plan estimate) — key spec body is authoritative
 
+**17-02 decisions:**
+- Three separate card components (SmsCard, BillingCard, SystemCard) enforced by 250-line page limit — decomposition is mandatory
+- cbColorMap { CLOSED: 'positive', HALF_OPEN: 'warning', OPEN: 'negative' } defined in DashboardSystemCard — card owns its health display logic
+- formatPct(rate) local to DashboardSmsCard — not promoted to shared utility; used only in this one card
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -105,6 +110,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-12T23:54:08Z
-Stopped at: Completed 17-01-PLAN.md — five adminApi dashboard methods + admin.dashboard i18n namespace (32 keys, full en/fr parity)
+Last session: 2026-03-13T00:03:41Z
+Stopped at: Completed 17-02-PLAN.md — DashboardSmsCard, DashboardBillingCard, DashboardSystemCard (3 pure-display cards, all under 100 lines)
 Resume file: None
