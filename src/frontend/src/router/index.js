@@ -41,27 +41,25 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     const requiresAdmin = to.matched.some((r) => r.meta.requiresAdmin)
     const isAuthenticated = document.cookie.includes('user=')
 
-    if (requiresAuth && !isAuthenticated) {
+    if ((requiresAuth || requiresAdmin) && !isAuthenticated) {
       next({ path: '/login', query: { redirect: to.fullPath } })
       return
     }
 
-    if (requiresAdmin && !isAuthenticated) {
-      next({ path: '/login', query: { redirect: to.fullPath } })
-      return
-    }
-
-    if (requiresAdmin && isAuthenticated) {
+    if ((requiresAuth || requiresAdmin) && isAuthenticated) {
       const userStore = useUserStore()
       if (!userStore.isLoaded) {
         try {
           await userStore.fetchUser()
         } catch {
-          next({ name: 'login' })
-          return
+          // Profile load failed; only hard-block on admin routes
+          if (requiresAdmin) {
+            next({ name: 'login' })
+            return
+          }
         }
       }
-      if (!userStore.isAdmin) {
+      if (requiresAdmin && !userStore.isAdmin) {
         next({ name: 'dashboard' })
         return
       }

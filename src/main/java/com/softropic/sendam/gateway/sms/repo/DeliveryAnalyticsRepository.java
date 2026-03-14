@@ -22,9 +22,9 @@ public interface DeliveryAnalyticsRepository extends Repository<SendRequestRecip
                        THEN 1 END)                                AS failed,
             COALESCE(SUM(r.segments_consumed), 0)                 AS total_segments
         FROM main.send_request_recipient r
-        WHERE (:clientId IS NULL OR r.client_id = :clientId)
-          AND (:from IS NULL    OR r.created_date >= :from)
-          AND (:to   IS NULL    OR r.created_date <= :to)
+        WHERE (CAST(:clientId AS bigint) IS NULL OR r.client_id = :clientId)
+          AND (CAST(:from AS timestamptz) IS NULL OR r.created_date >= :from)
+          AND (CAST(:to   AS timestamptz) IS NULL OR r.created_date <= :to)
         """, nativeQuery = true)
     DeliveryStatRow findDeliveryStats(
         @Param("clientId") Long clientId,
@@ -42,9 +42,9 @@ public interface DeliveryAnalyticsRepository extends Repository<SendRequestRecip
                        THEN 1 END)                                 AS failed,
             COALESCE(SUM(r.segments_consumed), 0)                  AS total_segments
         FROM main.send_request_recipient r
-        WHERE (:clientId IS NULL OR r.client_id = :clientId)
-          AND (:from IS NULL    OR r.created_date >= :from)
-          AND (:to   IS NULL    OR r.created_date <= :to)
+        WHERE (CAST(:clientId AS bigint) IS NULL OR r.client_id = :clientId)
+          AND (CAST(:from AS timestamptz) IS NULL OR r.created_date >= :from)
+          AND (CAST(:to   AS timestamptz) IS NULL OR r.created_date <= :to)
         GROUP BY DATE_TRUNC('day', r.created_date)::date
         ORDER BY day
         """, nativeQuery = true)

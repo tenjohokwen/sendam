@@ -23,17 +23,17 @@ public interface AuditEventRepository extends JpaRepository<AuditEventEntity, Lo
             ae.detail       AS detail,
             ae.occurred_at  AS occurredAt
         FROM main.audit_event ae
-        WHERE (:clientId IS NULL OR ae.client_id = :clientId)
-          AND (:from IS NULL     OR ae.occurred_at >= :from)
-          AND (:to   IS NULL     OR ae.occurred_at <= :to)
+        WHERE (CAST(:clientId AS bigint) IS NULL OR ae.client_id = :clientId)
+          AND (CAST(:from AS timestamptz) IS NULL OR ae.occurred_at >= :from)
+          AND (CAST(:to   AS timestamptz) IS NULL OR ae.occurred_at <= :to)
         ORDER BY ae.occurred_at DESC
         """,
         countQuery = """
         SELECT COUNT(*)
         FROM main.audit_event ae
-        WHERE (:clientId IS NULL OR ae.client_id = :clientId)
-          AND (:from IS NULL     OR ae.occurred_at >= :from)
-          AND (:to   IS NULL     OR ae.occurred_at <= :to)
+        WHERE (CAST(:clientId AS bigint) IS NULL OR ae.client_id = :clientId)
+          AND (CAST(:from AS timestamptz) IS NULL OR ae.occurred_at >= :from)
+          AND (CAST(:to   AS timestamptz) IS NULL OR ae.occurred_at <= :to)
         """,
         nativeQuery = true)
     Page<AuditEventRow> findEvents(

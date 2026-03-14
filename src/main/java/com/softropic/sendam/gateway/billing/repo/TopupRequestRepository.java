@@ -45,10 +45,10 @@ public interface TopupRequestRepository extends JpaRepository<TopupRequestEntity
             t.approved_at       AS approved_at,
             t.rejected_at       AS rejected_at
         FROM main.topup_request t
-        WHERE (:clientId     IS NULL OR t.client_id    = :clientId)
-          AND (:topupStatus  IS NULL OR t.topup_status = :topupStatus)
-          AND (:from         IS NULL OR t.created_date >= :from)
-          AND (:to           IS NULL OR t.created_date <= :to)
+        WHERE (CAST(:clientId AS bigint) IS NULL OR t.client_id    = :clientId)
+          AND (CAST(:topupStatus AS text) IS NULL OR t.topup_status = :topupStatus)
+          AND (CAST(:from AS timestamptz) IS NULL OR t.created_date >= :from)
+          AND (CAST(:to   AS timestamptz) IS NULL OR t.created_date <= :to)
         ORDER BY t.created_date DESC
         """, nativeQuery = true)
     List<TopupHistoryRow> findTopupHistory(

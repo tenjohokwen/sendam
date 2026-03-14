@@ -29,9 +29,9 @@ public interface CreditLedgerRepository extends JpaRepository<CreditLedgerEntry,
                               THEN -e.amount
                               ELSE 0 END), 0)                              AS net_credits_consumed
         FROM main.credit_ledger_entry e
-        WHERE (:clientId IS NULL OR e.client_id = :clientId)
-          AND (:from IS NULL     OR e.created_date >= :from)
-          AND (:to   IS NULL     OR e.created_date <= :to)
+        WHERE (CAST(:clientId AS bigint) IS NULL OR e.client_id = :clientId)
+          AND (CAST(:from AS timestamptz) IS NULL OR e.created_date >= :from)
+          AND (CAST(:to   AS timestamptz) IS NULL OR e.created_date <= :to)
         """, nativeQuery = true)
     SpendSummaryRow findSpendSummary(
         @Param("clientId") Long clientId,
