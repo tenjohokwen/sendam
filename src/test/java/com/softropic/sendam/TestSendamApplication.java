@@ -4,10 +4,10 @@ import com.softropic.sendam.config.TestConfig;
 
 import org.springframework.boot.SpringApplication;
 
-public class TestAppTemplateApplication {
+public class TestSendamApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.from(AppTemplateApplication::main).with(TestConfig.class).run(args);
+		SpringApplication.from(SendamApplication::main).with(TestConfig.class).run(args);
 	}
 
 }

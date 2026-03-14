@@ -6,10 +6,10 @@ import org.springframework.retry.annotation.EnableRetry;
 
 @SpringBootApplication
 @EnableRetry
-public class AppTemplateApplication {
+public class SendamApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AppTemplateApplication.class, args);
+		SpringApplication.run(SendamApplication.class, args);
 	}
 
 }

@@ -14,7 +14,7 @@
 
         <q-toolbar-title>
           <router-link to="/" class="text-white" style="text-decoration: none">
-            AppTemplate
+            Sendam
           </router-link>
         </q-toolbar-title>
 
