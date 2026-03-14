@@ -123,11 +123,11 @@ describe('DlrDialog', () => {
     const wrapper = mountComponent()
     await flushPromises()
 
-    // onPageChange(page) sets currentPage=page, then loadDlr uses currentPage-1
-    // ServerPagination emits page-change with 0-based value; passing 2 → currentPage=2 → API page=1
+    // ServerPagination emits page-change with 0-based value; onPageChange converts to 1-based (page+1)
+    // passing 1 (0-based = UI page 2) → currentPage=2 → API page=1
     adminApi.getDlrForRequest.mockClear()
     adminApi.getDlrForRequest.mockResolvedValue(emptyPage)
-    await wrapper.vm.onPageChange(2)
+    await wrapper.vm.onPageChange(1)
     await flushPromises()
 
     expect(adminApi.getDlrForRequest).toHaveBeenCalledWith('req-001', { page: 1, size: 20 })

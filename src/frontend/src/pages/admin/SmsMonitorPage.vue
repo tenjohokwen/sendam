@@ -107,7 +107,7 @@ async function loadScheduled() {
 }
 
 function onPageChange(page) {
-  currentPage.value = page
+  currentPage.value = page + 1
   selectedSendRequestId.value = null  // clear DLR selection on page change
   loadScheduled()
 }

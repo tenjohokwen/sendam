@@ -126,7 +126,7 @@ async function loadDlr() {
 }
 
 function onPageChange(page) {
-  currentPage.value = page
+  currentPage.value = page + 1
   loadDlr()
 }
 

@@ -225,8 +225,8 @@ function loadForTab() {
   else loadDeliveries()
 }
 
-function onEndpointsPageChange(page) { endpointsPage.value = page; loadEndpoints() }
-function onDeliveriesPageChange(page) { deliveriesPage.value = page; loadDeliveries() }
+function onEndpointsPageChange(page) { endpointsPage.value = page + 1; loadEndpoints() }
+function onDeliveriesPageChange(page) { deliveriesPage.value = page + 1; loadDeliveries() }
 function onFilterChange() { deliveriesPage.value = 1; loadDeliveries() }
 
 watch(activeTab, loadForTab)
