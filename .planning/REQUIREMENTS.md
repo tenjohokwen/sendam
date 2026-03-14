@@ -114,9 +114,9 @@ Which phases cover which requirements. Updated by create-roadmap.
 | UXST-02 | Phase 13 | Complete |
 | UXST-03 | Phase 13 | Complete |
 | UXST-04 | Phase 14 | Complete |
-| TEST-01 | Phase 18 | Pending |
-| TEST-02 | Phase 18 | Pending |
-| TEST-03 | Phase 18 | Pending |
+| TEST-01 | Phase 18 | Complete |
+| TEST-02 | Phase 18 | Complete |
+| TEST-03 | Phase 18 | Complete |
 
 **Coverage:**
 - v1 requirements: 32 total

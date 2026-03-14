@@ -120,10 +120,13 @@ Plans:
   1. Every component introduced in v1.2 has a corresponding Vitest test file
   2. Tests simulate actual user flows including edge cases (e.g. network failures, validation errors)
   3. Full test suite passes cleanly
-**Plans**: TBD
+**Plans**: 4/4 complete
 
 Plans:
-- [ ] 18-01: TBD
+- [x] 18-01: Vitest + Vue Test Utils + Quasar test harness setup
+- [x] 18-02: ServerPagination + Dashboard card component tests
+- [x] 18-03: Dialog component tests (CreateClientDialog, RawKeyDialog, ApiKeysDialog, DlrDialog)
+- [x] 18-04: Page component tests (ClientsPage, TopupsPage, SmsMonitorPage, WebhooksPage, AdminDashboardPage)
 
 ## Progress
 
@@ -145,5 +148,5 @@ Plans:
 | 14. Client & API Key Management | v1.2 | 3/3 | Complete | 2026-03-12 |
 | 15. Top-up Management | v1.2 | 2/2 | Complete | 2026-03-12 |
 | 16. SMS Monitoring & Webhooks | v1.2 | 4/4 | Complete | 2026-03-12 |
-| 17. Dashboard | v1.2 | 0/? | Not started | - |
-| 18. Testing | v1.2 | 0/? | Not started | - |
+| 17. Dashboard | v1.2 | 3/3 | Complete | 2026-03-14 |
+| 18. Testing | v1.2 | 4/4 | Complete | 2026-03-14 |
