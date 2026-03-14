@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 
 ## Current Position
 
-Phase: 18 of 18 (Testing) — In progress
-Plan: 4 of 4 — 18-04 complete (18-02 complete; 18-03 pending)
-Status: 18-01 complete; 18-02 complete; 18-04 complete; 18-03 pending
-Last activity: 2026-03-14 — Completed 18-04-PLAN.md (5 admin page test files, 28 tests pass)
+Phase: 18 of 18 (Testing) — COMPLETE
+Plan: 4 of 4 — all plans complete
+Status: 18-01, 18-02, 18-03, 18-04 all complete
+Last activity: 2026-03-14 — Completed 18-03-PLAN.md (24 dialog component tests: CreateClientDialog, RawKeyDialog, ApiKeysDialog, DlrDialog)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ████████████████ ~99.8% (18-03 remains)
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ████████████████ 100% COMPLETE
 
 ## Accumulated Context
 
@@ -104,6 +104,12 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - QInnerLoading PascalCase in AdminDashboardPage.vue produces Vue resolution warning in jsdom (cosmetic only, all tests pass) — other pages use kebab q-inner-loading which resolves cleanly
 - mockResolvedValueOnce chaining needed for TopupsPage approve/reject: handler calls loadPending() after success requiring a second mock for the reload
 
+**18-03 decisions:**
+- Quasar q-dialog teleports content to document.body — wrapper.find() fails; use document.querySelector for physical DOM assertions; wrapper.findComponent() still finds virtual tree components
+- ApiKeysDialog watch-without-immediate: mount with modelValue=false then setProps to trigger watcher; mounting open=true does not fire the watcher
+- DlrDialog watch-immediate: mock getDlrForRequest BEFORE mount when sendRequestId is non-null; immediate watcher fires synchronously during component setup
+- DlrDialog pagination: onPageChange(N) sets currentPage=N, loadDlr uses currentPage-1; test calls onPageChange(2) to expect API page=1
+
 **18-01 decisions:**
 - Manual npm install used instead of quasar ext add — avoids interactive prompts, exact version control
 - passWithNoTests: true in vitest.config.mjs — Vitest 4 exits code 1 on no files; option added for CI safety
@@ -132,6 +138,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-14T22:33:00Z
-Stopped at: 18-04-PLAN.md fully complete — 28 page tests passing, SUMMARY.md created
-Resume file: None — 18-03 is the remaining parallel plan
+Last session: 2026-03-14T22:36:00Z
+Stopped at: 18-03-PLAN.md fully complete — 24 dialog tests passing, SUMMARY.md created
+Resume file: None — Phase 18 complete, all 4 plans done
