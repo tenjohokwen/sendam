@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 17 of 18 (Dashboard)
-Plan: 2 of 3 (In progress)
-Status: Plan 17-02 complete — three dashboard card components ready
-Last activity: 2026-03-13 — Completed 17-02-PLAN.md (DashboardSmsCard, DashboardBillingCard, DashboardSystemCard)
+Plan: 3 of 3 (checkpoint:human-verify — awaiting browser verification)
+Status: Task 1 complete (AdminDashboardPage.vue rewritten); paused at checkpoint:human-verify
+Last activity: 2026-03-14 — Completed Task 1 of 17-03-PLAN.md; awaiting human verification of dashboard in browser
 
 Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ██████████ ~98%
 
@@ -93,6 +93,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - cbColorMap { CLOSED: 'positive', HALF_OPEN: 'warning', OPEN: 'negative' } defined in DashboardSystemCard — card owns its health display logic
 - formatPct(rate) local to DashboardSmsCard — not promoted to shared utility; used only in this one card
 
+**17-03 decisions:**
+- normalizeLongIds applied only to clients array (each client's id field); never applied to numeric stat/health aggregates
+- activeClientCount and totalCredits derived client-side from clients.value — no dedicated aggregate endpoint needed
+- useErrorHandler pattern: hasError/errorMessage/setError/clearError — consistent with ClientsPage and WebhooksPage
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -110,6 +115,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-13T00:03:41Z
-Stopped at: Completed 17-02-PLAN.md — DashboardSmsCard, DashboardBillingCard, DashboardSystemCard (3 pure-display cards, all under 100 lines)
+Last session: 2026-03-14T00:00:00Z
+Stopped at: 17-03-PLAN.md Task 1 complete (AdminDashboardPage.vue 101 lines, commit 298c9ec); paused at checkpoint:human-verify (Task 2)
 Resume file: None
