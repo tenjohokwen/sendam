@@ -48,11 +48,11 @@ completed: 2026-03-13
 
 ## Performance
 
-- **Duration:** ~5 min
+- **Duration:** ~5 min (Task 1) + human verification pass
 - **Started:** 2026-03-13T01:00:00Z
-- **Completed:** 2026-03-13T01:09:46Z
-- **Tasks:** 1 (+ checkpoint:human-verify pending)
-- **Files modified:** 1
+- **Completed:** 2026-03-14T00:00:00Z
+- **Tasks:** 2 (Task 1 auto + Task 2 checkpoint:human-verify — approved)
+- **Files modified:** 1 (by this plan)
 
 ## Accomplishments
 
@@ -67,8 +67,9 @@ completed: 2026-03-13
 Each task was committed atomically:
 
 1. **Task 1: Rewrite AdminDashboardPage.vue** - `298c9ec` (feat)
+2. **Task 2: checkpoint:human-verify** - approved by user (no code commit; visual verification)
 
-**Plan metadata:** (pending — checkpoint:human-verify reached before final commit)
+**Plan metadata:** `44dfef6` (docs: create SUMMARY and update STATE at checkpoint)
 
 ## Files Created/Modified
 
@@ -84,6 +85,27 @@ Each task was committed atomically:
 
 None - plan executed exactly as written.
 
+## Bugs Fixed During Human Verification (Outside This Plan)
+
+Three bugs surfaced during browser verification and were fixed in separate commits (not part of 17-03 scope):
+
+**1. PostgreSQL null type inference in native queries**
+- **Found during:** Human verification (backend errors visible in browser)
+- **Issue:** Four native-query repositories (DeliveryAnalyticsRepository, TopupRequestRepository, AuditEventRepository, CreditLedgerRepository) failed with PostgreSQL null type inference when optional parameters were null
+- **Fix:** Added `CAST(:param AS type) IS NULL` pattern to all four repositories
+- **Commits:** `c55dccd`, `2502c09`
+
+**2. Admin menu visibility after login**
+- **Found during:** Human verification (sidebar did not show admin links immediately after login)
+- **Issue:** `fetchUser()` was only called on navigation guards; sidebar role-check was stale until page refresh
+- **Fix:** `fetchUser()` now called in LoginPage.vue and OtpPage.vue success handlers
+- **Commit:** `c766706`
+
+**3. Router guard regression (separate fix)**
+- **Found during:** Human verification session
+- **Issue:** Router guard had been altered; restored to original `requiresAdmin` only behaviour
+- **Commit:** included in `c766706`
+
 ## Issues Encountered
 
 None.
@@ -94,9 +116,9 @@ None - no external service configuration required.
 
 ## Next Phase Readiness
 
-- AdminDashboardPage.vue is complete and awaiting human visual verification in browser
-- After checkpoint approval, Phase 17 (Dashboard) is fully complete
-- Phase 18 (v1.2 release) can begin immediately after checkpoint is cleared
+- Phase 17 (Dashboard) is fully complete — all three plans (17-01, 17-02, 17-03) delivered and human-verified
+- AdminDashboardPage.vue is live in the browser with real backend data
+- Phase 18 (v1.2 release) can begin immediately
 - No blockers
 
 ---
