@@ -20,21 +20,19 @@ class LoginAttemptsServiceTest {
     private LoginAttemptsService loginAttemptsService;
     private ClientIdAccessDecisionManager defaultDecisionVoter;
 
-    // Default values for TestRequestMetadataProvider state
-    private static final String DEFAULT_TEST_USERNAME = "defaultUser@example.com";
+    private static final String DEFAULT_TEST_USERNAME  = "defaultUser@example.com";
     private static final String DEFAULT_TEST_CLIENT_ID = "defaultClient";
     private static final String DEFAULT_TEST_IP_ADDRESS = "127.0.0.1";
 
-    // Thresholds from LoginAttemptsService (consider making them package-private or test constants if possible)
+    // Mirror thresholds from LoginAttemptsService
     private static final int MAX_FAILED_CLIENT_ATTEMPTS = 3;
-    private static final int MAX_FAILED_IP_ATTEMPTS =  MAX_FAILED_CLIENT_ATTEMPTS; //MAX_FAILED_CLIENT_ATTEMPTS * 2;
-    private static final int MAX_FAILED_USER_ATTEMPTS = MAX_FAILED_CLIENT_ATTEMPTS + 2;
+    private static final int MAX_FAILED_IP_ATTEMPTS     = MAX_FAILED_CLIENT_ATTEMPTS;
+    private static final int MAX_FAILED_USER_ATTEMPTS   = MAX_FAILED_CLIENT_ATTEMPTS + 2;
 
 
     @BeforeEach
     void setUp() {
         defaultDecisionVoter = new ClientIdAccessDecisionManager(List.of());
-        // Default service uses system ticker. Tests needing FakeTicker will create their own instance.
         loginAttemptsService = new LoginAttemptsService(defaultDecisionVoter, Ticker.systemTicker());
         resetTestRequestMetadataProvider();
     }
@@ -97,30 +95,64 @@ class LoginAttemptsServiceTest {
         loginAttemptsService.loginSucceeded(TestRequestMetadataProvider.getClientInfo());
         assertLoginAllowed(true, "Allowed after successful login, attempts should be cleared");
 
-        simulateFailedLogins(MAX_FAILED_CLIENT_ATTEMPTS -1);
+        simulateFailedLogins(MAX_FAILED_CLIENT_ATTEMPTS - 1);
         assertLoginAllowed(true, "Allowed after new attempts less than max (post success)");
 
         simulateFailedLogins(1);
         assertLoginAllowed(false, "Blocked after new attempts reach max (post success)");
     }
 
-    // Helper for tests that modify client ID or IP randomly
+    /**
+     * Bug fix verification: successful login from a different client than the one used during failures
+     * must still clear the user-level lock.
+     */
+    @Test
+    void givenFailedAttemptsOnOneClient_whenLoginSucceedsOnDifferentClient_thenUserLevelLockCleared() {
+        // Fail MAX_FAILED_USER_ATTEMPTS times from unique clients/IPs to trigger user-level block
+        for (int i = 0; i < MAX_FAILED_USER_ATTEMPTS; i++) {
+            TestRequestMetadataProvider.setBrowserCookie(RandomStringUtils.randomAlphabetic(10));
+            TestRequestMetadataProvider.setIpAddress(randomIp());
+            loginAttemptsService.loginFailed(TestRequestMetadataProvider.getClientInfo());
+        }
+
+        // Use a fresh client + IP to confirm the user is blocked at user level
+        TestRequestMetadataProvider.setBrowserCookie("freshClient");
+        TestRequestMetadataProvider.setIpAddress("10.99.99.99");
+        assertLoginAllowed(false, "User should be blocked after exceeding user-level attempts");
+
+        // Successful login from yet another client
+        TestRequestMetadataProvider.setBrowserCookie("successClient");
+        TestRequestMetadataProvider.setIpAddress("10.88.88.88");
+        loginAttemptsService.loginSucceeded(TestRequestMetadataProvider.getClientInfo());
+
+        // User-level lock must be cleared; a fresh attempt should now be allowed
+        TestRequestMetadataProvider.setBrowserCookie("brandNewClient");
+        TestRequestMetadataProvider.setIpAddress("10.77.77.77");
+        assertLoginAllowed(true, "User-level lock should be cleared after successful login from any client");
+    }
+
+    private String randomIp() {
+        return RandomStringUtils.randomNumeric(3) + "." +
+                RandomStringUtils.randomNumeric(3) + "." +
+                RandomStringUtils.randomNumeric(3) + "." +
+                RandomStringUtils.randomNumeric(3);
+    }
+
     private boolean simulateAndCheckLoginWithRandomizedClient(LoginAttemptsService serviceToTest) {
-        TestRequestMetadataProvider.setBrowserCookie(RandomStringUtils.randomAlphabetic(10)); // Unique client
+        TestRequestMetadataProvider.setBrowserCookie(RandomStringUtils.randomAlphabetic(10));
         serviceToTest.loginFailed(TestRequestMetadataProvider.getClientInfo());
         return serviceToTest.isAllowed(TestRequestMetadataProvider.getClientInfo());
     }
 
     private boolean simulateAndCheckLoginWithRandomizedClientAndIp(LoginAttemptsService serviceToTest) {
-        TestRequestMetadataProvider.setBrowserCookie(RandomStringUtils.randomAlphabetic(10)); // Unique client
-        TestRequestMetadataProvider.setIpAddress(RandomStringUtils.randomNumeric(3) + "." + RandomStringUtils.randomNumeric(3) + "." + RandomStringUtils.randomNumeric(3) + "." + RandomStringUtils.randomNumeric(3)); // Unique IP
+        TestRequestMetadataProvider.setBrowserCookie(RandomStringUtils.randomAlphabetic(10));
+        TestRequestMetadataProvider.setIpAddress(randomIp());
         serviceToTest.loginFailed(TestRequestMetadataProvider.getClientInfo());
         return serviceToTest.isAllowed(TestRequestMetadataProvider.getClientInfo());
     }
 
     @Test
     void givenSameIpUser_whenClientChangesAndMaxIpAttemptsExceeded_thenBlocked() {
-        // This test uses the default loginAttemptsService from setUp
         TestRequestMetadataProvider.setUserName("ipUserTest@example.com");
         TestRequestMetadataProvider.setIpAddress("10.0.0.1");
 
@@ -137,7 +169,6 @@ class LoginAttemptsServiceTest {
 
     @Test
     void givenSameUser_whenClientAndIpChangeAndMaxUserAttemptsExceeded_thenBlocked() {
-        // This test uses the default loginAttemptsService from setUp
         TestRequestMetadataProvider.setUserName("userOnlyTest@example.com");
 
         for (int i = 0; i < MAX_FAILED_USER_ATTEMPTS - 1; i++) {
@@ -150,8 +181,6 @@ class LoginAttemptsServiceTest {
                 .isFalse();
     }
 
-    // Removed static initRequestMetadata as it's handled by @BeforeEach/@AfterEach
-
     @Test
     void givenClientManuallyBlacklisted_whenLoginAttempted_thenBlocked() {
         loginAttemptsService.blacklistClient(TestRequestMetadataProvider.getClientInfo());
@@ -161,7 +190,6 @@ class LoginAttemptsServiceTest {
     @Test
     void givenAttemptsMade_whenCacheExpires_thenAttemptCountResets() {
         FakeTicker fakeTicker = new FakeTicker();
-        // Need a specific LoginAttemptsService instance that uses this fakeTicker
         LoginAttemptsService expiringService = new LoginAttemptsService(defaultDecisionVoter, fakeTicker);
 
         TestRequestMetadataProvider.setUserName("expiryTestUser@example.com");
@@ -176,7 +204,6 @@ class LoginAttemptsServiceTest {
         simulateFailedLogins(expiringService, 1);
         assertLoginAllowed(expiringService, true, "Allowed after cache expiry and 1 new attempt");
 
-        // Fill up to max attempts again
         simulateFailedLogins(expiringService, MAX_FAILED_CLIENT_ATTEMPTS - 2); // Already made 1, so N-2 more
         assertLoginAllowed(expiringService, true, "Still allowed just before hitting max attempts post-expiry");
 
@@ -187,7 +214,7 @@ class LoginAttemptsServiceTest {
     @Test
     void givenBlankUsername_whenLoginFailedMultipleTimes_thenNoAttemptsRecordedAndLoginAllowed() {
         TestRequestMetadataProvider.setUserName("");
-        simulateFailedLogins(MAX_FAILED_USER_ATTEMPTS + 5); // More than any threshold
+        simulateFailedLogins(MAX_FAILED_USER_ATTEMPTS + 5);
         assertLoginAllowed(true, "Login allowed with blank username despite many failures");
     }
 
@@ -207,9 +234,7 @@ class LoginAttemptsServiceTest {
     void givenBlankIpAddress_whenMaxAttemptsForIpUserExceeded_thenBlocked() {
         TestRequestMetadataProvider.setIpAddress("");
         TestRequestMetadataProvider.setUserName("userForBlankIpTest@example.com");
-        // Ensure client ID is non-blank for this test to focus on IP behavior
         TestRequestMetadataProvider.setBrowserCookie("clientForBlankIpScenario");
-
 
         simulateFailedLogins(MAX_FAILED_IP_ATTEMPTS - 1);
         assertLoginAllowed(true, "Allowed before max IP attempts with blank IP address");
@@ -218,5 +243,22 @@ class LoginAttemptsServiceTest {
         assertLoginAllowed(false, "Blocked after max IP attempts with blank IP address");
     }
 
+    /**
+     * Verifies that key separator characters inside field values do not cause cache key collisions
+     * between different (clientId, username) combinations.
+     */
+    @Test
+    void givenPipeCharacterInClientIdOrUsername_whenFailedLogins_thenNoKeyCollisionBetweenUsers() {
+        // user A: clientId = "abc|", username = "def"  → key must differ from
+        // user B: clientId = "abc",  username = "|def"
+        TestRequestMetadataProvider.setUserName("def");
+        TestRequestMetadataProvider.setBrowserCookie("abc|");
+        simulateFailedLogins(MAX_FAILED_CLIENT_ATTEMPTS);
+
+        // user B should not be affected by user A's failures
+        TestRequestMetadataProvider.setUserName("|def");
+        TestRequestMetadataProvider.setBrowserCookie("abc");
+        assertLoginAllowed(true, "User B must not be blocked by User A's failures due to key collision");
+    }
 
 }
