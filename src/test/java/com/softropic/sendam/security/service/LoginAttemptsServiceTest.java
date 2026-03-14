@@ -243,6 +243,56 @@ class LoginAttemptsServiceTest {
         assertLoginAllowed(false, "Blocked after max IP attempts with blank IP address");
     }
 
+    // ── Admin unlock ──────────────────────────────────────────────────────────
+
+    /**
+     * Admin can unlock a fully locked user before the cache window expires.
+     * All three lock levels (client, IP, user) must be cleared.
+     */
+    @Test
+    void givenUserLockedAtAllLevels_whenAdminUnlocks_thenLoginAllowed() {
+        // Drive the user to the user-level limit via unique clients + IPs
+        for (int i = 0; i < MAX_FAILED_USER_ATTEMPTS; i++) {
+            TestRequestMetadataProvider.setBrowserCookie(RandomStringUtils.randomAlphabetic(10));
+            TestRequestMetadataProvider.setIpAddress(randomIp());
+            loginAttemptsService.loginFailed(TestRequestMetadataProvider.getClientInfo());
+        }
+
+        TestRequestMetadataProvider.setBrowserCookie("checkClient");
+        TestRequestMetadataProvider.setIpAddress("10.99.99.99");
+        assertLoginAllowed(false, "User should be locked before admin unlock");
+
+        loginAttemptsService.unlockUser(DEFAULT_TEST_USERNAME);
+
+        assertLoginAllowed(true, "Login should be allowed immediately after admin unlock");
+    }
+
+    @Test
+    void givenUserLockedAtClientLevel_whenAdminUnlocks_thenLoginAllowed() {
+        // Use the same default client to trigger client-level lock
+        simulateFailedLogins(MAX_FAILED_CLIENT_ATTEMPTS);
+        assertLoginAllowed(false, "User should be blocked at client level");
+
+        loginAttemptsService.unlockUser(DEFAULT_TEST_USERNAME);
+
+        assertLoginAllowed(true, "Login should be allowed after admin unlocks client-level lock");
+    }
+
+    @Test
+    void givenAdminUnlock_whenUserFailsAgain_thenFreshLimitApplies() {
+        simulateFailedLogins(MAX_FAILED_CLIENT_ATTEMPTS);
+        assertLoginAllowed(false, "Blocked before admin unlock");
+
+        loginAttemptsService.unlockUser(DEFAULT_TEST_USERNAME);
+
+        // One shy of the limit again — must still be allowed
+        simulateFailedLogins(MAX_FAILED_CLIENT_ATTEMPTS - 1);
+        assertLoginAllowed(true, "Allowed while below limit after admin unlock");
+
+        simulateFailedLogins(1);
+        assertLoginAllowed(false, "Blocked again once fresh limit is reached");
+    }
+
     /**
      * Verifies that key separator characters inside field values do not cause cache key collisions
      * between different (clientId, username) combinations.

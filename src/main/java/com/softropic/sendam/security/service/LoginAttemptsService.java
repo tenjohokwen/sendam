@@ -200,6 +200,25 @@ public class LoginAttemptsService implements LoginDecisionManager<RequestMetadat
         deRecordAttempts(metadata);
     }
 
+    /**
+     * Removes all login-attempt locks for the given username across all cache layers.
+     * Intended for admin use when a legitimate user is locked out and cannot wait for the cache window to expire.
+     * <p>
+     * Because composite keys are structured as {@code escapedField|escapedUsername}, all entries
+     * belonging to the username can be identified by their suffix and removed atomically.
+     * </p>
+     *
+     * @param username the login name of the user to unlock
+     */
+    public void unlockUser(final String username) {
+        log.info("Admin unlock requested for user '{}'.", username);
+        final String userKeySuffix = KEY_SEPARATOR + escapeField(username);
+        attemptsByUserCache.invalidate(username);
+        attemptsByClientUserCache.asMap().keySet().removeIf(key -> key.endsWith(userKeySuffix));
+        attemptsByIpUserCache.asMap().keySet().removeIf(key -> key.endsWith(userKeySuffix));
+        log.info("All login-attempt locks cleared for user '{}'.", username);
+    }
+
     private String getClientIdUserKey(final RequestMetadata metadata) {
         return escapeField(StringUtils.defaultString(metadata.getClientIdentifier())) + KEY_SEPARATOR + escapeField(metadata.getUserName());
     }
