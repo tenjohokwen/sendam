@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 18 of 18 (Testing) — In progress
-Plan: 2 of 4 — 18-02 complete
-Status: 18-02 complete; 20 component tests passing; 18-03/04 pending
-Last activity: 2026-03-14 — Completed 18-02-PLAN.md (Simple component tests: ServerPagination + 3 Dashboard cards)
+Plan: 4 of 4 — 18-04 complete (18-02 complete; 18-03 pending)
+Status: 18-01 complete; 18-02 complete; 18-04 complete; 18-03 pending
+Last activity: 2026-03-14 — Completed 18-04-PLAN.md (5 admin page test files, 28 tests pass)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ████████████ ~99.5% (3 test plans remaining)
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ████████████████ ~99.8% (18-03 remains)
 
 ## Accumulated Context
 
@@ -98,6 +98,12 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - activeClientCount and totalCredits derived client-side from clients.value — no dedicated aggregate endpoint needed
 - useErrorHandler pattern: hasError/errorMessage/setError/clearError — consistent with ClientsPage and WebhooksPage
 
+**18-04 decisions:**
+- Tab switch tested via wrapper.vm.activeTab = 'tab-name' — jsdom q-tab clicks don't reliably trigger Quasar panel routing; direct ref mutation fires the watch watcher correctly
+- onFilterChange() called directly via wrapper.vm for WebhooksPage filter test — equivalent to q-select @update:model-value without jsdom select interaction complexity
+- QInnerLoading PascalCase in AdminDashboardPage.vue produces Vue resolution warning in jsdom (cosmetic only, all tests pass) — other pages use kebab q-inner-loading which resolves cleanly
+- mockResolvedValueOnce chaining needed for TopupsPage approve/reject: handler calls loadPending() after success requiring a second mock for the reload
+
 **18-01 decisions:**
 - Manual npm install used instead of quasar ext add — avoids interactive prompts, exact version control
 - passWithNoTests: true in vitest.config.mjs — Vitest 4 exits code 1 on no files; option added for CI safety
@@ -126,6 +132,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-14T21:37:00Z
-Stopped at: 18-02-PLAN.md fully complete — 20 component tests passing, SUMMARY.md created
-Resume file: None — ready for 18-03
+Last session: 2026-03-14T22:33:00Z
+Stopped at: 18-04-PLAN.md fully complete — 28 page tests passing, SUMMARY.md created
+Resume file: None — 18-03 is the remaining parallel plan
