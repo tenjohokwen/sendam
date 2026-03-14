@@ -19,8 +19,8 @@
 
 ### Dashboard
 
-- [ ] **DASH-01**: Admin can view aggregated system stats: total active clients, total credits in system, SMS success/failure rates, delivery rate, segment totals, daily breakdown, top-up analysis, webhook delivery aggregates, provider send aggregate
-- [ ] **DASH-02**: Admin can view Nexah circuit breaker state (system health indicator)
+- [x] **DASH-01**: Admin can view aggregated system stats: total active clients, total credits in system, SMS success/failure rates, delivery rate, segment totals, daily breakdown, top-up analysis, webhook delivery aggregates, provider send aggregate
+- [x] **DASH-02**: Admin can view Nexah circuit breaker state (system health indicator)
 
 ### Client Management
 
@@ -61,9 +61,9 @@
 
 ### Testing
 
-- [ ] **TEST-01**: Vitest + Vue Test Utils are mandatory for all components
-- [ ] **TEST-02**: One test file per component
-- [ ] **TEST-03**: Tests simulate actual user flows including edge cases like network failures
+- [x] **TEST-01**: Vitest + Vue Test Utils are mandatory for all components
+- [x] **TEST-02**: One test file per component
+- [x] **TEST-03**: Tests simulate actual user flows including edge cases like network failures
 
 ## v2 Requirements
 
@@ -93,8 +93,8 @@ Which phases cover which requirements. Updated by create-roadmap.
 | FOUND-06 | Phase 13 | Complete |
 | FOUND-07 | Phase 13 | Complete |
 | FOUND-08 | Phase 14 | Complete |
-| DASH-01 | Phase 17 | Pending |
-| DASH-02 | Phase 17 | Pending |
+| DASH-01 | Phase 17 | Complete |
+| DASH-02 | Phase 17 | Complete |
 | CLNT-01 | Phase 14 | Complete |
 | CLNT-02 | Phase 14 | Complete |
 | CLNT-03 | Phase 14 | Complete |
