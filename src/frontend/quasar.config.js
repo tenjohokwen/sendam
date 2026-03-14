@@ -113,6 +113,10 @@ export default defineConfig((ctx) => {
           target: 'http://localhost:9990',
           changeOrigin: true,
         },
+        '/otp': {
+          target: 'http://localhost:9990',
+          changeOrigin: true,
+        },
       },
     },
 

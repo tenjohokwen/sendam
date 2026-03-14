@@ -93,11 +93,13 @@ import { useI18n } from 'vue-i18n';
 import { authApi } from 'src/api/auth.api';
 import { useErrorHandler } from 'src/composables/useErrorHandler';
 import { useSession } from 'src/composables/useSession';
+import { useUserStore } from 'src/stores/user.store';
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const { initSession } = useSession();
+const userStore = useUserStore();
 
 const {
   setError,
@@ -140,7 +142,8 @@ async function handleLogin() {
         }
       });
     } else {
-      // Login successful, initialize session monitoring and redirect
+      // Login successful — load user profile so sidebar reflects role immediately
+      await userStore.fetchUser().catch(() => {});
       initSession();
       router.push(route.query.redirect || '/dashboard');
     }

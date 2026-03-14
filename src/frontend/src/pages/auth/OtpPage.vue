@@ -84,12 +84,14 @@ import { useI18n } from 'vue-i18n';
 import { authApi } from 'src/api/auth.api';
 import { useErrorHandler } from 'src/composables/useErrorHandler';
 import { useSession } from 'src/composables/useSession';
+import { useUserStore } from 'src/stores/user.store';
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const { setError, clearError, hasError, errorMessage, helpCode } = useErrorHandler();
 const { initSession } = useSession();
+const userStore = useUserStore();
 
 // State
 const digits = ref(['', '', '', '', '', '']);
@@ -168,6 +170,8 @@ async function handleSubmit() {
   isSubmitting.value = true;
   try {
     await authApi.verifyOtp(loginInfoId.value, otp);
+    // Load user profile so sidebar reflects role immediately after OTP
+    await userStore.fetchUser().catch(() => {});
     initSession();
     router.push(redirectPath.value);
   } catch (err) {
