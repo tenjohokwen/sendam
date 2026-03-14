@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Phase 17 — Dashboard (v1.2)
+**Current focus:** Phase 18 — Testing (v1.2)
 
 ## Current Position
 
-Phase: 17 of 18 (Dashboard) — COMPLETE
-Plan: 3 of 3 — all plans complete
-Status: Phase 17 fully complete; human verification passed
-Last activity: 2026-03-14 — Completed 17-03-PLAN.md; human verified dashboard in browser (approved); Phase 17 closed
+Phase: 18 of 18 (Testing) — In progress
+Plan: 1 of 4 — 18-01 complete
+Status: 18-01 complete; test infrastructure up; 18-02/03/04 pending
+Last activity: 2026-03-14 — Completed 18-01-PLAN.md (Vitest harness installed and smoke-tested)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ██████████ ~99% (Phase 18 remaining)
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ████████████ ~99.5% (3 test plans remaining)
 
 ## Accumulated Context
 
@@ -98,6 +98,12 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - activeClientCount and totalCredits derived client-side from clients.value — no dedicated aggregate endpoint needed
 - useErrorHandler pattern: hasError/errorMessage/setError/clearError — consistent with ClientsPage and WebhooksPage
 
+**18-01 decisions:**
+- Manual npm install used instead of quasar ext add — avoids interactive prompts, exact version control
+- passWithNoTests: true in vitest.config.mjs — Vitest 4 exits code 1 on no files; option added for CI safety
+- sassVariables: false in quasar vite plugin — no sass processing needed in jsdom test environment
+- Global axios boot mock in setup-file.js blocks #q-app/wrappers virtual module before any test runs
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -115,6 +121,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-14T00:00:00Z
-Stopped at: 17-03-PLAN.md fully complete — all tasks done, human verification approved, SUMMARY.md updated
-Resume file: None — ready for Phase 18
+Last session: 2026-03-14T21:26:14Z
+Stopped at: 18-01-PLAN.md fully complete — Vitest harness installed, smoke test passed, SUMMARY.md created
+Resume file: None — ready for 18-02
