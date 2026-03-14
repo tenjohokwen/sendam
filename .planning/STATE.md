@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 18 of 18 (Testing) — In progress
-Plan: 1 of 4 — 18-01 complete
-Status: 18-01 complete; test infrastructure up; 18-02/03/04 pending
-Last activity: 2026-03-14 — Completed 18-01-PLAN.md (Vitest harness installed and smoke-tested)
+Plan: 2 of 4 — 18-02 complete
+Status: 18-02 complete; 20 component tests passing; 18-03/04 pending
+Last activity: 2026-03-14 — Completed 18-02-PLAN.md (Simple component tests: ServerPagination + 3 Dashboard cards)
 
 Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ████████████ ~99.5% (3 test plans remaining)
 
@@ -104,6 +104,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - sassVariables: false in quasar vite plugin — no sass processing needed in jsdom test environment
 - Global axios boot mock in setup-file.js blocks #q-app/wrappers virtual module before any test runs
 
+**18-02 decisions:**
+- mount (not shallowMount) for Quasar display cards — shallowMount stubs q-card-section; wrapper.text() returns empty string
+- DashboardSystemCard cbStateLabel verified via wrapper.text().toContain() — more resilient than QBadge stub attribute inspection
+- @quasar/quasar-app-extension-testing-unit-vitest installed with --legacy-peer-deps to resolve peer conflict
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -121,6 +126,6 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 
 ## Session Continuity
 
-Last session: 2026-03-14T21:26:14Z
-Stopped at: 18-01-PLAN.md fully complete — Vitest harness installed, smoke test passed, SUMMARY.md created
-Resume file: None — ready for 18-02
+Last session: 2026-03-14T21:37:00Z
+Stopped at: 18-02-PLAN.md fully complete — 20 component tests passing, SUMMARY.md created
+Resume file: None — ready for 18-03
