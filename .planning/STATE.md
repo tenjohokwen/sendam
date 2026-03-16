@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** Phase 18 — Testing (v1.2)
+**Current focus:** v1.3 — Provider Integrity & Platform Credit Account
 
 ## Current Position
 
-Phase: 18 of 18 (Testing) — COMPLETE
-Plan: 4 of 4 — all plans complete
-Status: Phase 18 fully complete; verification passed (3/3 must-haves)
-Last activity: 2026-03-14 — Completed all 4 plans; 72 tests passing across 13 files; verification passed; Phase 18 closed
+Phase: Not started (run /gsd:define-requirements then /gsd:create-roadmap)
+Plan: —
+Status: Defining requirements for v1.3
+Last activity: 2026-03-16 — Milestone v1.3 started; requirements drafted in PROJECT.md
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 ████████████████ 100% COMPLETE
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ░░░░░░░░░░░░░░░░ 0%
 
 ## Accumulated Context
 

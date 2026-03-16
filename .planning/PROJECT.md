@@ -48,9 +48,34 @@ Clients can send SMS messages and trust that billing is exact, idempotent, and a
 
 ### Active
 
-<!-- Current scope for v1.2+. Building toward these. -->
+<!-- Current scope for v1.3. Building toward these. -->
 
-(None identified — planning next milestone)
+**Milestone: v1.3 — Provider Integrity & Platform Credit Account**
+
+*Goal: Introduce a platform-level credit account so client credits are always backed by real Nexah credits, and detect billing deviations between Sendam's segment calculations and Nexah's reported consumption.*
+
+**Platform credit account:**
+- [ ] Single platform balance entity tracking credits Sendam purchased from Nexah
+- [ ] Admin records Nexah credit purchases (increases platform balance with ledger entry)
+- [ ] Client top-up approval debits platform balance; rejected if platform balance would go negative
+- [ ] Admin can query platform balance and its ledger history
+- [ ] Platform balance initialised at zero; must be topped up before any client top-ups can be approved
+
+**Per-send segment deviation tracking:**
+- [ ] Before each send, Sendam calculates expected segments per recipient (same formula used for credit reservation)
+- [ ] After Nexah responds, compare Sendam's expected `total_sms_unit` vs Nexah's reported `total_sms_unit` per recipient
+- [ ] On mismatch: record a `SEGMENT` deviation alert (sendRequestId, recipient, expected, actual, delta, timestamp) with status `OPEN`
+
+**Periodic platform balance reconciliation:**
+- [ ] Scheduled job polls Nexah `/smscredit` on a fixed interval (configurable, default 15 min)
+- [ ] Compare Nexah's reported balance vs Sendam's internally tracked platform balance
+- [ ] On mismatch: record a `BALANCE` deviation alert (expected, actual, delta, timestamp) with status `OPEN`
+
+**Admin deviation management:**
+- [ ] `GET /api/admin/deviations` — paginated list, filterable by type (`SEGMENT`/`BALANCE`) and status (`OPEN`/`ACKNOWLEDGED`/`RESOLVED`)
+- [ ] `PUT /api/admin/deviations/{id}/acknowledge` — admin adds a note; status → `ACKNOWLEDGED`
+- [ ] `PUT /api/admin/deviations/{id}/resolve` — admin adds a resolution note; status → `RESOLVED`
+- [ ] Each deviation record retains full history: timestamps, delta, related entity (sendRequestId or balance snapshot), admin notes
 
 ### Out of Scope
 
@@ -100,10 +125,29 @@ Clients can send SMS messages and trust that billing is exact, idempotent, and a
 | AuditEventType passed as param by callers | Single ApiKeyService handles both admin and client key ops; caller determines event type | ✓ Good — avoids duplicating key generation logic for different audit semantics |
 | CLIENT_ANALYTICS excluded from SECURED_MAPPINGS | Client endpoints use @Order(1) API-key chain; adding to SECURED_MAPPINGS would require JWT/ADMIN role | ✓ Good — consistent with all other /v1/** client endpoints |
 
+## Current Milestone: v1.3 — Provider Integrity & Platform Credit Account
+
+**Goal:** Introduce a platform-level credit account so client credits are always backed by real Nexah credits, and detect + surface billing deviations between Sendam's segment calculations and Nexah's reported consumption — giving admins traceable evidence for reconciliation with Nexah.
+
+**Scope:**
+- Platform balance entity (single row) + ledger; admin records Nexah purchases
+- Constrained top-up approval (platform balance debited; rejects if insufficient)
+- Per-send segment deviation detection using Nexah's `total_sms_unit` in send responses
+- Periodic platform balance reconciliation via Nexah `/smscredit` poll
+- `deviation_alert` table with `OPEN → ACKNOWLEDGED → RESOLVED` lifecycle + admin notes
+- Admin REST API for querying and actioning deviations
+
+**Out of scope for v1.3:**
+- Email/push notifications for deviations (admin polls the API)
+- Automatic resolution of deviations
+- Client-facing visibility of platform balance or deviations
+
+---
+
 ## Previous Milestones
 
 - **v1.0 — SMS Gateway** (shipped 2026-03-11) — 7 phases, 16 plans, 33 requirements. See `.planning/milestones/v1.0-ROADMAP.md`
 - **v1.1 — Operations & Observability** (shipped 2026-03-12) — 5 phases, 7 plans, 17 requirements. See `.planning/milestones/v1.1-ROADMAP.md`
 
 ---
-*Last updated: 2026-03-12 after v1.1 milestone completion*
+*Last updated: 2026-03-16 after v1.3 milestone started*
