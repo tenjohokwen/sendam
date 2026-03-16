@@ -102,6 +102,7 @@ public class SmsService {
                     "Recipient rate limit exceeded: max 1000 recipients per minute");
         }
 
+        //TODO correct this. The sender id needs to be fixed and not from the client. It is configured by softropic and internal
         // Step 3: Validate sender ID
         if (!SENDER_ID_PATTERN.matcher(request.sender()).matches()) {
             throw new SmsValidationException(

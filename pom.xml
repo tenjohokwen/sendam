@@ -342,7 +342,7 @@
 						</goals>
 						<phase>generate-resources</phase>
 						<configuration>
-							<arguments>install</arguments>
+ 7							<arguments>install --legacy-peer-deps</arguments>
 						</configuration>
 					</execution>
 					<execution>
@@ -353,6 +353,16 @@
 						<phase>generate-resources</phase>
 						<configuration>
 							<arguments>install -g @quasar/cli</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm test</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>test</phase>
+						<configuration>
+							<arguments>test</arguments>
 						</configuration>
 					</execution>
 					<execution>

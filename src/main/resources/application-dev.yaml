@@ -101,12 +101,6 @@ email:
       port: 587
       username: enkap24@gmail.com
       password: ${GMAIL_PASSWORD:dev_gmail_password}
-    -
-      name: mail
-      host: smtp.mail.de
-      port: 587
-      username: blue-bone@mail.de
-      password: ${MAIL_DE_PASSWORD:dev_mail_de_password}
 
 
 #log configuration
