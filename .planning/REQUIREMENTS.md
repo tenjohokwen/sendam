@@ -9,13 +9,13 @@
 
 ### Platform Credit Account (PLAT)
 
-- [ ] **PLAT-01**: Admin can record a Nexah credit purchase, specifying the amount purchased; platform balance increases by that amount and a ledger entry is written
-- [ ] **PLAT-02**: Platform balance has an append-only ledger; each entry records: entry type, amount (signed), balance_after, reference, and timestamp
-- [ ] **PLAT-03**: Platform ledger distinguishes between entry types: `NEXAH_PURCHASE` (credits bought from Nexah), `TOPUP_DEBIT` (client top-up approved), and `SHORTFALL_ABSORPTION` (client overdraft absorbed by platform)
-- [ ] **PLAT-04**: Admin can query the current platform balance
-- [ ] **PLAT-05**: Admin can query the platform balance ledger history, paginated and filterable by entry type
-- [ ] **PLAT-06**: Approving a client top-up debits the platform balance by the approved amount; the debit is atomic with the client credit
-- [ ] **PLAT-07**: Client top-up approval is rejected if the platform balance would go negative
+- [x] **PLAT-01**: Admin can record a Nexah credit purchase, specifying the amount purchased; platform balance increases by that amount and a ledger entry is written
+- [x] **PLAT-02**: Platform balance has an append-only ledger; each entry records: entry type, amount (signed), balance_after, reference, and timestamp
+- [x] **PLAT-03**: Platform ledger distinguishes between entry types: `NEXAH_PURCHASE` (credits bought from Nexah), `TOPUP_DEBIT` (client top-up approved), and `SHORTFALL_ABSORPTION` (client overdraft absorbed by platform)
+- [x] **PLAT-04**: Admin can query the current platform balance
+- [x] **PLAT-05**: Admin can query the platform balance ledger history, paginated and filterable by entry type
+- [x] **PLAT-06**: Approving a client top-up debits the platform balance by the approved amount; the debit is atomic with the client credit
+- [x] **PLAT-07**: Client top-up approval is rejected if the platform balance would go negative
 
 ### Credit Reservation (RESV)
 

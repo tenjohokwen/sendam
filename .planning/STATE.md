@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** v1.3 — Phase 19: Platform Credit Account
+**Current focus:** v1.3 — Phase 20: Account Freeze Infrastructure
 
 ## Current Position
 
-Phase: 19 of 24 (Platform Credit Account)
-Plan: 3 of 4 complete
-Status: In progress
-Last activity: 2026-03-17 — Completed 19-03-PLAN.md (REST layer: AdminPlatformCreditResource + TopupService atomic debit)
+Phase: 20 of 24 (Account Freeze Infrastructure)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-03-17 — Phase 19 (Platform Credit Account) complete — 3/3 plans, 4/4 must-haves verified
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ███░░░░░░░░░░░░░ 19%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 █████░░░░░░░░░░░ 17%
 
 ## Accumulated Context
 

@@ -145,10 +145,12 @@ Plans:
   2. Admin can query the current platform balance
   3. Admin can browse platform ledger history filtered by entry type (NEXAH_PURCHASE / TOPUP_DEBIT / SHORTFALL_ABSORPTION)
   4. Approving a client top-up atomically debits the platform balance; approval fails if platform balance would go negative
-**Plans**: TBD
+**Plans**: 3/3 complete
 
 Plans:
-- [ ] 19-01: TBD
+- [x] 19-01: Flyway migration V11 — platform credit account tables + JPA entities
+- [x] 19-02: PlatformCreditService + contract DTOs
+- [x] 19-03: Admin REST API + top-up constraint wiring
 
 #### Phase 20: Account Freeze Infrastructure
 **Goal**: Client and platform freeze lifecycle — freeze on shortfall, suspend scheduled SMS, admin unfreeze with mandatory note and auto-resume.
@@ -243,7 +245,7 @@ Plans:
 | 16. SMS Monitoring & Webhooks | v1.2 | 4/4 | Complete | 2026-03-12 |
 | 17. Dashboard | v1.2 | 3/3 | Complete | 2026-03-14 |
 | 18. Testing | v1.2 | 4/4 | Complete | 2026-03-14 |
-| 19. Platform Credit Account | v1.3 | 0/TBD | Not started | - |
+| 19. Platform Credit Account | v1.3 | 3/3 | Complete | 2026-03-17 |
 | 20. Account Freeze Infrastructure | v1.3 | 0/TBD | Not started | - |
 | 21. Enhanced Credit Reservation | v1.3 | 0/TBD | Not started | - |
 | 22. Final Booking & Segment Deviation | v1.3 | 0/TBD | Not started | - |
