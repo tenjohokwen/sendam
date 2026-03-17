@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** v1.3 — Phase 21: Enhanced Credit Reservation
+**Current focus:** v1.3 — Phase 22: Final Booking & Segment Deviation
 
 ## Current Position
 
-Phase: 21 of 24 (Enhanced Credit Reservation)
-Plan: 2 of 3 (service reservation logic)
-Status: In progress
-Last activity: 2026-03-17 — Completed 21-02-PLAN.md — RESV buffer formula in SmsService; 194 tests pass
+Phase: 22 of 24 (Final Booking & Segment Deviation)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-03-17 — Phase 21 (Enhanced Credit Reservation) complete — 2/2 plans, 3/3 must-haves verified; 194 tests pass
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ██████████████░░ 55%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ████████████████░░░░ 50%
 
 ## Accumulated Context
 
@@ -182,5 +182,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Completed 21-02-PLAN.md — RESV buffer formula in SmsService; 194 tests pass; ready for 21-03
-Resume file: None — continue with 21-03
+Stopped at: Phase 21 complete — V13 migration, JPA entity fields, SmsService +1 buffer formula, 4 RESV tests; 194 tests pass
+Resume file: None — ready for Phase 22

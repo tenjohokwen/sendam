@@ -19,10 +19,10 @@
 
 ### Credit Reservation (RESV)
 
-- [ ] **RESV-01**: Before sending to Nexah, Sendam calculates expected segment count per recipient using the standard SMS segment formula (GSM-7 vs UCS-2 encoding, 160/153 and 70/67 character thresholds)
-- [ ] **RESV-02**: Reservation amount = `(calculated_segments + 1) × recipient_count` — the +1 buffer per recipient guards against Nexah reporting a higher count than Sendam expects
-- [ ] **RESV-03**: The raw expected amount without buffer (`calculated_segments × recipient_count`) is stored alongside the reservation for deviation comparison
-- [ ] **RESV-04**: Per-recipient expected segment count is stored (not just the total) to enable per-recipient breakdown in deviation alerts
+- [x] **RESV-01**: Before sending to Nexah, Sendam calculates expected segment count per recipient using the standard SMS segment formula (GSM-7 vs UCS-2 encoding, 160/153 and 70/67 character thresholds)
+- [x] **RESV-02**: Reservation amount = `(calculated_segments + 1) × recipient_count` — the +1 buffer per recipient guards against Nexah reporting a higher count than Sendam expects
+- [x] **RESV-03**: The raw expected amount without buffer (`calculated_segments × recipient_count`) is stored alongside the reservation for deviation comparison
+- [x] **RESV-04**: Per-recipient expected segment count is stored (not just the total) to enable per-recipient breakdown in deviation alerts
 
 ### Final Booking on Nexah Send Response (BOOK)
 
@@ -117,10 +117,10 @@ Final booking uses `total_sms_unit` per recipient from the Nexah send response. 
 | PFLAT-03 | Phase 20 | Complete |
 | PFLAT-04 | Phase 20 | Complete |
 | PFLAT-05 | Phase 20 | Complete |
-| RESV-01 | Phase 21 | Pending |
-| RESV-02 | Phase 21 | Pending |
-| RESV-03 | Phase 21 | Pending |
-| RESV-04 | Phase 21 | Pending |
+| RESV-01 | Phase 21 | Complete |
+| RESV-02 | Phase 21 | Complete |
+| RESV-03 | Phase 21 | Complete |
+| RESV-04 | Phase 21 | Complete |
 | BOOK-01 | Phase 22 | Pending |
 | BOOK-02 | Phase 22 | Pending |
 | BOOK-03 | Phase 22 | Pending |

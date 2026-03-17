@@ -177,10 +177,11 @@ Plans:
   1. Before each send, per-recipient expected segment count is calculated using the standard GSM-7/UCS-2 formula and stored
   2. Reservation amount includes a +1 buffer per recipient; the raw expected amount (no buffer) is also stored
   3. Per-recipient expected segments are stored as structured data (not a total only) to support per-recipient deviation breakdown
-**Plans**: TBD
+**Plans**: 2/2 complete
 
 Plans:
-- [ ] 21-01: TBD
+- [x] 21-01: V13 Flyway migration + JPA entity fields (raw_expected_credits, expected_segments)
+- [x] 21-02: SmsService +1 buffer logic, per-recipient segment storage, RESV unit tests
 
 #### Phase 22: Final Booking & Segment Deviation
 **Goal**: Post-response booking using Nexah's actual `total_sms_unit`; shortfall absorption from platform balance; freeze triggers; SEGMENT deviation alert creation.
@@ -249,7 +250,7 @@ Plans:
 | 18. Testing | v1.2 | 4/4 | Complete | 2026-03-14 |
 | 19. Platform Credit Account | v1.3 | 3/3 | Complete | 2026-03-17 |
 | 20. Account Freeze Infrastructure | v1.3 | 3/3 | Complete | 2026-03-17 |
-| 21. Enhanced Credit Reservation | v1.3 | 0/TBD | Not started | - |
+| 21. Enhanced Credit Reservation | v1.3 | 2/2 | Complete | 2026-03-17 |
 | 22. Final Booking & Segment Deviation | v1.3 | 0/TBD | Not started | - |
 | 23. Periodic Balance Reconciliation | v1.3 | 0/TBD | Not started | - |
 | 24. Deviation Alert Management | v1.3 | 0/TBD | Not started | - |
