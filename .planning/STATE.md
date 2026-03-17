@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 ## Current Position
 
 Phase: 21 of 24 (Enhanced Credit Reservation)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-03-17 — Phase 20 (Account Freeze Infrastructure) complete — 3/3 plans, 5/5 must-haves verified
+Plan: 1 of 3 (schema foundation)
+Status: In progress
+Last activity: 2026-03-17 — Completed 21-01-PLAN.md — V13 migration + entity fields; 190 tests pass
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ████████████░░░░ 33%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 █████████████░░░ 37%
 
 ## Accumulated Context
 
@@ -148,6 +148,10 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - PlatformFreezeService lives in billing.service — keeps CreditReservationService (also billing) calling isFrozen() within the same package without cross-module service dependency
 - isFrozen() uses @Transactional(readOnly=true) method-level override — class-level @Transactional is readWrite; method-level narrows to read for non-locking state checks
 
+**21-01 decisions:**
+- No @Builder.Default on rawExpectedCredits/expectedSegments — 0 is Java's natural primitive default; omitting @Builder.Default keeps Lombok @SuperBuilder chain clean (contrast with @Builder.Default on sendStatus enum fields which require explicit initializer)
+- DEFAULT 0 pattern for NOT NULL numeric ALTER TABLE columns — mirrors V12 DEFAULT FALSE pattern for boolean columns; satisfies NOT NULL constraint for existing rows without a data migration
+
 **20-03 decisions:**
 - AdminClientFreezeResource uses class-level @PreAuthorize("hasRole('ADMIN')") — consistent with AdminPlatformCreditResource pattern (19-03 precedent)
 - ADMIN_CLIENT_FREEZE = /api/admin/clients/*/freeze/** added alongside existing ADMIN_CLIENTS — belt-and-suspenders specificity; same pattern as ADMIN_API_KEYS alongside ADMIN_CLIENTS
@@ -173,5 +177,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Completed 20-03-PLAN.md — all 10 CFREEZE/PFLAT requirements satisfied; Phase 20 complete; 190 passing tests
-Resume file: None — ready for Phase 21
+Stopped at: Completed 21-01-PLAN.md — V13 schema migration + JPA entity fields; 190 tests pass; ready for 21-02
+Resume file: None — continue with 21-02
