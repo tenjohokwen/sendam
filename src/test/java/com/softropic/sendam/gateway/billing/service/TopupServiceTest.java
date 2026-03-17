@@ -32,6 +32,8 @@ class TopupServiceTest {
     private CreditService creditService;
     @Mock
     private ApplicationEventPublisher eventPublisher;
+    @Mock
+    private PlatformCreditService platformCreditService;
 
     @InjectMocks
     private TopupService topupService;
@@ -86,6 +88,7 @@ class TopupServiceTest {
 
         assertThat(response.status()).isEqualTo(TopupStatus.APPROVED);
         verify(creditService).applyLedgerEntry(eq(100L), eq(LedgerEntryType.TOPUP_APPROVED), eq(500L), eq("top_1"));
+        verify(platformCreditService).applyLedgerEntry(eq(PlatformLedgerEntryType.TOPUP_DEBIT), eq(-500L), eq("top_1"));
         verify(topupRepository).save(entity);
     }
 

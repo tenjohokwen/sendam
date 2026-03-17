@@ -3,6 +3,7 @@ package com.softropic.sendam.gateway.billing.service;
 import com.softropic.sendam.gateway.audit.contract.AuditEventType;
 import com.softropic.sendam.gateway.audit.contract.DomainAuditEvent;
 import com.softropic.sendam.gateway.billing.contract.*;
+import com.softropic.sendam.gateway.billing.contract.PlatformLedgerEntryType;
 import com.softropic.sendam.gateway.billing.repo.TopupRequestEntity;
 import com.softropic.sendam.gateway.billing.repo.TopupRequestRepository;
 import com.softropic.sendam.common.exception.ResourceNotFoundException;
@@ -34,6 +35,7 @@ public class TopupService {
     private final TopupRequestRepository topupRepository;
     private final CreditService creditService;
     private final ApplicationEventPublisher eventPublisher;
+    private final PlatformCreditService platformCreditService;
 
     // ---- helpers ----
 
@@ -123,10 +125,13 @@ public class TopupService {
     /**
      * Admin: approves a PENDING_APPROVAL top-up. Acquires a pessimistic lock on the top-up row
      * to prevent double-approval under concurrent admin requests. Credits the client's balance
-     * via TOPUP_APPROVED ledger entry.
+     * via TOPUP_APPROVED ledger entry and debits the platform balance via TOPUP_DEBIT entry —
+     * both writes occur in the same transaction.
      *
-     * @throws ResourceNotFoundException      if topup_id does not exist
-     * @throws TopupAlreadyProcessedException if the top-up is not PENDING_APPROVAL
+     * @throws ResourceNotFoundException             if topup_id does not exist
+     * @throws TopupAlreadyProcessedException        if the top-up is not PENDING_APPROVAL
+     * @throws InsufficientPlatformBalanceException  if approving this top-up would reduce the platform
+     *                                               balance below zero; the entire transaction rolls back
      */
     public TopupStatusResponse approve(String topupId) {
         Long id = parseTopupId(topupId);
@@ -139,6 +144,16 @@ public class TopupService {
 
         // Credit the balance — positive amount
         creditService.applyLedgerEntry(entity.getClientId(), LedgerEntryType.TOPUP_APPROVED, entity.getAmount(), topupId);
+
+        // Debit platform balance — same transaction as client credit. Lock order: topup row (above) →
+        // client credit balance (inside creditService.applyLedgerEntry) → platform balance (here). Never invert.
+        // Throws InsufficientPlatformBalanceException (HTTP 422) if platform balance would go negative,
+        // which rolls back the entire transaction including the client credit write above.
+        platformCreditService.applyLedgerEntry(
+            PlatformLedgerEntryType.TOPUP_DEBIT,
+            -entity.getAmount(),   // negative: debit from platform
+            topupId
+        );
 
         entity.setTopupStatus(TopupStatus.APPROVED);
         entity.setApprovedAt(Instant.now());
