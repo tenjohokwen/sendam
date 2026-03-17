@@ -4,7 +4,7 @@ import com.softropic.sendam.common.exception.ApplicationException;
 
 /**
  * Thrown when a platform credit operation would reduce the platform balance below zero.
- * Handled by ApiAdvice with HTTP 400 and error_code INSUFFICIENT_PLATFORM_BALANCE.
+ * Handled by ApiAdvice with HTTP 422 and error_code INSUFFICIENT_PLATFORM_BALANCE.
  *
  * <p>Extends ApplicationException (which extends RuntimeException) so that:
  * <ul>
