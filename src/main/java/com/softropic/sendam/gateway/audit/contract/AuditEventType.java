@@ -21,5 +21,12 @@ public enum AuditEventType {
     // AUDT-04: Webhook config changes
     WEBHOOK_REGISTERED,
     WEBHOOK_UPDATED,
-    WEBHOOK_DELETED
+    WEBHOOK_DELETED,
+
+    // CFREEZE-03: Admin freeze/unfreeze client account
+    CLIENT_ACCOUNT_FROZEN,
+    CLIENT_ACCOUNT_UNFROZEN,
+    // PFLAT-03: Admin freeze/unfreeze platform
+    PLATFORM_FROZEN,
+    PLATFORM_UNFROZEN
 }

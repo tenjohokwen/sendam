@@ -5,7 +5,8 @@ import com.softropic.sendam.common.exception.ErrorCode;
 public enum ClientError implements ErrorCode {
     INSUFFICIENT_CLIENT_BALANCE,
     DUPLICATE_TRANSACTION_ID,
-    TOPUP_ALREADY_PROCESSED;
+    TOPUP_ALREADY_PROCESSED,
+    ACCOUNT_FROZEN;
 
     @Override
     public String getErrorCode() {
