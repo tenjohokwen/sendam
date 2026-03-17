@@ -67,6 +67,9 @@ public class SendRequest extends AbstractAuditingEntity {
     @Column(name = "reservation_id", nullable = false)
     private Long reservationId;
 
+    @Column(name = "raw_expected_credits", nullable = false)
+    private long rawExpectedCredits;
+
     @Column(name = "finalized_at")
     private Instant finalizedAt;
 

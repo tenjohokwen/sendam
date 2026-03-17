@@ -54,6 +54,9 @@ public class SendRequestRecipient extends AbstractAuditingEntity {
     @Column(name = "segments_consumed")
     private Integer segmentsConsumed;
 
+    @Column(name = "expected_segments", nullable = false)
+    private int expectedSegments;
+
     @Builder.Default
     protected EntityStatus status = EntityStatus.ACTIVE;
 }
