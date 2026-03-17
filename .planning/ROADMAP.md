@@ -208,10 +208,11 @@ Plans:
   1. A scheduled job runs at a configurable interval (default 15 min) and polls Nexah `/smscredit`
   2. When Nexah's reported balance differs from Sendam's tracked platform balance, a BALANCE deviation alert is created with expected/actual/delta
   3. The interval is configurable via `sendam.reconciliation.interval-minutes` application property
-**Plans**: TBD
+**Plans**: 2/2 complete
 
 Plans:
-- [ ] 23-01: TBD
+- [x] 23-01: V15 Flyway migration + BalanceDeviationAlert entity + ReconciliationProperties config + NexahClient credit fetch
+- [x] 23-02: BalanceReconciliationJob + BalanceDeviationAlertService + unit tests (3 paths)
 
 #### Phase 24: Deviation Alert Management
 **Goal**: Admin REST API for listing, acknowledging, and resolving all deviation alert types (SEGMENT / BALANCE / PLATFORM_FREEZE).
@@ -254,5 +255,5 @@ Plans:
 | 20. Account Freeze Infrastructure | v1.3 | 3/3 | Complete | 2026-03-17 |
 | 21. Enhanced Credit Reservation | v1.3 | 2/2 | Complete | 2026-03-17 |
 | 22. Final Booking & Segment Deviation | v1.3 | 3/3 | Complete | 2026-03-17 |
-| 23. Periodic Balance Reconciliation | v1.3 | 0/TBD | Not started | - |
+| 23. Periodic Balance Reconciliation | v1.3 | 2/2 | Complete | 2026-03-17 |
 | 24. Deviation Alert Management | v1.3 | 0/TBD | Not started | - |

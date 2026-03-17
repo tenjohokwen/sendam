@@ -60,10 +60,10 @@ Final booking uses `total_sms_unit` per recipient from the Nexah send response. 
 
 ### Periodic Balance Reconciliation (BALREC)
 
-- [ ] **BALREC-01**: A scheduled job polls Nexah `/smscredit` at a configurable interval (default: 15 minutes)
-- [ ] **BALREC-02**: The job compares Nexah's reported credit balance against Sendam's tracked platform balance
-- [ ] **BALREC-03**: On mismatch, a `BALANCE` deviation alert is recorded: Nexah-reported balance, Sendam-tracked balance, delta, timestamp, status `OPEN`
-- [ ] **BALREC-04**: The polling interval is configurable via application properties (`sendam.reconciliation.interval-minutes`)
+- [x] **BALREC-01**: A scheduled job polls Nexah `/smscredit` at a configurable interval (default: 15 minutes)
+- [x] **BALREC-02**: The job compares Nexah's reported credit balance against Sendam's tracked platform balance
+- [x] **BALREC-03**: On mismatch, a `BALANCE` deviation alert is recorded: Nexah-reported balance, Sendam-tracked balance, delta, timestamp, status `OPEN`
+- [x] **BALREC-04**: The polling interval is configurable via application properties (`sendam.reconciliation.interval-minutes`)
 
 ### Deviation Alert Management (DEVMGMT)
 
@@ -131,10 +131,10 @@ Final booking uses `total_sms_unit` per recipient from the Nexah send response. 
 | SEGDEV-02 | Phase 22 | Complete |
 | SEGDEV-03 | Phase 22 | Complete |
 | SEGDEV-04 | Phase 22 | Complete |
-| BALREC-01 | Phase 23 | Pending |
-| BALREC-02 | Phase 23 | Pending |
-| BALREC-03 | Phase 23 | Pending |
-| BALREC-04 | Phase 23 | Pending |
+| BALREC-01 | Phase 23 | Complete |
+| BALREC-02 | Phase 23 | Complete |
+| BALREC-03 | Phase 23 | Complete |
+| BALREC-04 | Phase 23 | Complete |
 | DEVMGMT-01 | Phase 24 | Pending |
 | DEVMGMT-02 | Phase 24 | Pending |
 | DEVMGMT-03 | Phase 24 | Pending |
