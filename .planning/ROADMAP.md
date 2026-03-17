@@ -232,6 +232,19 @@ Plans:
 - [x] 24-03: DeviationAlertManagementService (list/get/acknowledge/resolve)
 - [x] 24-04: AdminDeviationAlertResource REST controller + AppEndpoints + AuditEventType
 
+#### Phase 25: SMS Billing Finalization Hardening
+**Goal**: Close three tech debt items identified in the v1.3 milestone audit: fix the stale SMS credit reservation leak in `SmsSchedulerService.forceFinalize()`, harden the boxed-Long NPE risk at the billing listener boundary, and fix a Javadoc typo in `InsufficientPlatformBalanceException`.
+**Depends on**: Phases 22, 23
+**Gap Closure**: Addresses tech debt from v1.3-MILESTONE-AUDIT.md
+**Success Criteria** (what must be TRUE):
+  1. Timed-out SMS whose `forceFinalize()` is called have their credit reservations released — credits are no longer held in limbo
+  2. `SmsFinalisedEvent.actualSegments()` is a primitive `long` (or guarded at listener boundary) — no auto-unboxing NPE risk
+  3. `InsufficientPlatformBalanceException` Javadoc correctly states HTTP 422
+**Plans**: TBD
+
+Plans:
+- [ ] 25-01: TBD
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -260,3 +273,4 @@ Plans:
 | 22. Final Booking & Segment Deviation | v1.3 | 3/3 | Complete | 2026-03-17 |
 | 23. Periodic Balance Reconciliation | v1.3 | 2/2 | Complete | 2026-03-17 |
 | 24. Deviation Alert Management | v1.3 | 4/4 | Complete | 2026-03-17 |
+| 25. SMS Billing Finalization Hardening | v1.3 | 0/TBD | Pending | — |
