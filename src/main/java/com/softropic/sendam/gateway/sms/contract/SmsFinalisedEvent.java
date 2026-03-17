@@ -11,7 +11,7 @@ public record SmsFinalisedEvent(
     String sendRequestId,
     List<RecipientSummary> recipients,
     Long reservationId,
-    Long actualSegments
+    long actualSegments
 ) {
     public record RecipientSummary(
         String recipient,

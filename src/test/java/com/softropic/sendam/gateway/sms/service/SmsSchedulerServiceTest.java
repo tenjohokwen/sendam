@@ -2,10 +2,13 @@ package com.softropic.sendam.gateway.sms.service;
 
 import com.softropic.sendam.gateway.provider.nexah.contract.ProviderUnavailableException;
 import com.softropic.sendam.gateway.sms.contract.SendRequestStatus;
+import com.softropic.sendam.gateway.sms.contract.SmsFinalisedEvent;
 import com.softropic.sendam.gateway.sms.repo.SendRequest;
 import com.softropic.sendam.gateway.sms.repo.SendRequestRecipient;
 import com.softropic.sendam.gateway.sms.repo.SendRequestRecipientRepository;
 import com.softropic.sendam.gateway.sms.repo.SendRequestRepository;
+
+import org.springframework.context.ApplicationEventPublisher;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +35,8 @@ class SmsSchedulerServiceTest {
     private SendRequestRecipientRepository recipientRepository;
     @Mock
     private SmsSender smsSender;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @Spy
     private List<SmsSender> smsSenders = new ArrayList<>();
@@ -88,5 +93,6 @@ class SmsSchedulerServiceTest {
         assertThat(stale.getSendStatus()).isEqualTo(SendRequestStatus.FAIL_FINALIZED);
         verify(sendRequestRepository).save(stale);
         verify(recipientRepository).save(r1);
+        verify(eventPublisher).publishEvent(any(SmsFinalisedEvent.class));
     }
 }

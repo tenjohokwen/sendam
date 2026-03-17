@@ -2,11 +2,13 @@ package com.softropic.sendam.gateway.sms.service;
 
 import com.softropic.sendam.gateway.provider.nexah.contract.ProviderUnavailableException;
 import com.softropic.sendam.gateway.sms.contract.SendRequestStatus;
+import com.softropic.sendam.gateway.sms.contract.SmsFinalisedEvent;
 import com.softropic.sendam.gateway.sms.repo.SendRequest;
 import com.softropic.sendam.gateway.sms.repo.SendRequestRecipient;
 import com.softropic.sendam.gateway.sms.repo.SendRequestRecipientRepository;
 import com.softropic.sendam.gateway.sms.repo.SendRequestRepository;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,7 @@ public class SmsSchedulerService {
     private final SendRequestRepository sendRequestRepository;
     private final SendRequestRecipientRepository recipientRepository;
     private final List<SmsSender> smsSenders; // Autowires all SmsSender implementations
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * Dispatches both due scheduled requests and pending immediate requests.
@@ -130,14 +133,18 @@ public class SmsSchedulerService {
             }
         }
         
-        // Finalize parent logic moved from provider module to sms module
-        // We'll trigger the same logic used for normal DLR processing
-        // This will be easier once the ProviderReportListener is implemented.
-        // For now, let's just mark it FAIL_FINALIZED.
         parent.setSendStatus(SendRequestStatus.FAIL_FINALIZED);
         parent.setFinalizedAt(Instant.now());
         sendRequestRepository.save(parent);
-        
+
+        eventPublisher.publishEvent(new SmsFinalisedEvent(
+            parent.getClientId(),
+            parent.getSendRequestId(),
+            List.of(),
+            parent.getReservationId(),
+            0L
+        ));
+
         log.info("SendRequest {} force-finalized as FAIL_FINALIZED", parent.getSendRequestId());
     }
 }
