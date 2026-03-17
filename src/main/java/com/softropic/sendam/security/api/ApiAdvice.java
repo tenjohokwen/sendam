@@ -4,6 +4,7 @@ package com.softropic.sendam.security.api;
 import com.softropic.sendam.gateway.sms.contract.CancelNotAllowedException;
 import com.softropic.sendam.gateway.billing.contract.DuplicateTransactionIdException;
 import com.softropic.sendam.gateway.billing.contract.InsufficientBalanceException;
+import com.softropic.sendam.gateway.billing.contract.InsufficientPlatformBalanceException;
 import com.softropic.sendam.gateway.provider.nexah.contract.ProviderUnavailableException;
 import com.softropic.sendam.gateway.account.contract.RateLimitExceededException;
 import com.softropic.sendam.gateway.sms.contract.SmsValidationException;
@@ -389,6 +390,21 @@ public class ApiAdvice {
     public ErrorDto topupAlreadyProcessedHandler(final TopupAlreadyProcessedException exception) {
         final String defaultMsg = "This top-up has already been processed and cannot be modified.";
         return logErrorAndReturnDTO(exception, defaultMsg, "TOPUP_ALREADY_PROCESSED");
+    }
+
+    /**
+     * Handles InsufficientPlatformBalanceException thrown when approving a client top-up
+     * would reduce the platform balance below zero. Returns HTTP 422 — distinguishes
+     * from InsufficientBalanceException (client balance, HTTP 400).
+     *
+     * @param exception InsufficientPlatformBalanceException with currentBalance, requestedAmount
+     * @return 422 Unprocessable Entity with error_code INSUFFICIENT_PLATFORM_BALANCE
+     */
+    @ExceptionHandler(InsufficientPlatformBalanceException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ErrorDto insufficientPlatformBalanceHandler(final InsufficientPlatformBalanceException exception) {
+        final String defaultMsg = "Platform balance is insufficient to approve this top-up.";
+        return logErrorAndReturnDTO(exception, defaultMsg, "INSUFFICIENT_PLATFORM_BALANCE");
     }
 
     /**

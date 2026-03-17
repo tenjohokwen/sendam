@@ -6,6 +6,8 @@ public enum AuditEventType {
     CLIENT_CREATED,
     TOPUP_APPROVED,
     TOPUP_REJECTED,
+    // PLAT-01: Admin records a Nexah credit purchase
+    NEXAH_PURCHASE_RECORDED,
     ADMIN_API_KEY_CREATED,
     ADMIN_API_KEY_REVOKED,
 
