@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 ## Current Position
 
 Phase: 19 of 24 (Platform Credit Account)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-03-17 — Roadmap created for v1.3 (6 phases, 40 requirements)
+Plan: 1 of 4 complete
+Status: In progress
+Last activity: 2026-03-17 — Completed 19-01-PLAN.md (DB foundation: V11 migration + JPA entities/repos)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ░░░░░░░░░░░░░░░░ 0%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 █░░░░░░░░░░░░░░░ 6%
 
 ## Accumulated Context
 
@@ -121,6 +121,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - DashboardSystemCard cbStateLabel verified via wrapper.text().toContain() — more resilient than QBadge stub attribute inspection
 - @quasar/quasar-app-extension-testing-unit-vitest installed with --legacy-peer-deps to resolve peer conflict
 
+**19-01 decisions:**
+- Singleton row uses id=1 in Flyway INSERT — TSID-generated IDs encode timestamp bits at high-bit values far above 1; safe in practice. findForUpdate() uses no WHERE clause so the id value is never referenced by application code.
+- PlatformLedgerEntryType created in Plan 01 alongside the entity to avoid compile errors — Plan 02 must NOT recreate it
+- findByOptionalType uses a single JPQL optional-filter query: WHERE (:type IS NULL OR e.entryType = :type) — single method covers filtered and unfiltered cases
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -139,5 +144,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: v1.3 roadmap created — 6 phases (19–24), 40 requirements mapped
-Resume file: None — ready to plan Phase 19
+Stopped at: Completed 19-01-PLAN.md — V11 migration, PlatformCreditBalance, PlatformCreditBalanceRepository, PlatformCreditLedgerEntry, PlatformCreditLedgerRepository, PlatformLedgerEntryType
+Resume file: None — ready for 19-02 (PlatformCreditService)
