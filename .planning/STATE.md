@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 ## Current Position
 
 Phase: 24 of 24 (Deviation Alert Management)
-Plan: 2 of 3
+Plan: 3 of 3
 Status: In progress
-Last activity: 2026-03-17 — Completed 24-02-PLAN.md: DeviationAlertError enum, AlertStatusTransitionException, contract DTOs (DeviationAlertNoteRequest, DeviationAlertEventDto, DeviationAlertDto), JPQL findByOptionalFilters on both repos; 206 tests pass
+Last activity: 2026-03-17 — Completed 24-03-PLAN.md: DeviationAlertManagementService with listAlerts/getAlert/acknowledge/resolve; cross-repo merge-and-sort for type=null; AlertStatusTransitionException guard; DeviationAlertEvent single-FK pattern; 7 unit tests; 213 tests pass
 
 Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ████████████████████████ 100%
 
@@ -187,6 +187,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - DeviationAlertDto uses Long (boxed) for type-specific numerics (nexahBalance, sendamBalance, shortfallAmount, unrecoveredAmount) — null signals field not applicable for alert type; primitive long only for delta which is guaranteed on all types
 - RecipientBreakdownDto as inner record of DeviationAlertDto — co-located with owning DTO; referenced as DeviationAlertDto.RecipientBreakdownDto by callers
 
+**24-03 decisions:**
+- guardTransition helper extracted: shared by acknowledge and resolve; throws AlertStatusTransitionException(message, alertId, currentStatus) before any write
+- saveEvent centralises DeviationAlertEvent construction: balanceAlertIdFk and segmentAlertIdFk are explicit nullable params; exactly one is non-null per call — enforces single-FK contract at call site
+- Comparator.nullsLast(reverseOrder()) for merge sort in listAlerts null-type path — defensive for theoretical null createdDate edge case
+
 **22-02 decisions:**
 - BOOK-06 issues two alerts (SEGMENT + PLATFORM_FREEZE) in one transaction — SEGMENT records the client's deviation; PLATFORM_FREEZE records the platform-level incident for operator investigation
 - Client balance lock acquired before creditReservationService.debit() in BOOK-04/05/06 — ensures clientAvailable read is atomic with subsequent debit; re-entrant lock within same transaction is safe on PostgreSQL
@@ -218,5 +223,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Phase 24, Plan 02 complete — DeviationAlertError enum, AlertStatusTransitionException, 3 contract DTOs, JPQL findByOptionalFilters on both repos; 206 tests pass
-Resume file: None — ready for Phase 24, Plan 03 (DeviationAlertManagementService)
+Stopped at: Phase 24, Plan 03 complete — DeviationAlertManagementService with listAlerts/getAlert/acknowledge/resolve; 7 unit tests; 213 total tests pass
+Resume file: None — ready for Phase 24, Plan 04 (REST controller for deviation alert management)
