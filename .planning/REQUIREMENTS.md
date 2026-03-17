@@ -1,128 +1,121 @@
-# Requirements: Sendam v1.2 — Gateway Admin UI
+# Requirements: Sendam v1.3 — Provider Integrity & Platform Credit Account
 
-**Defined:** 2026-03-12
-**Core Value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**This milestone:** Admin UI for monitoring and managing the gateway
+**Defined:** 2026-03-17
+**Core Value:** Clients can send SMS and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
+
+---
 
 ## v1 Requirements
 
-### Foundation
+### Platform Credit Account (PLAT)
 
-- [x] **FOUND-01**: Admin UI is built with Vue 3 Composition API (`<script setup>` exclusively), Quasar Framework, plain JavaScript (no TypeScript), primary color `#1976d2`, large components split into functional sub-components (max 250 lines)
-- [x] **FOUND-02**: UI supports English (en-US) and French (fr-FR) with full i18n key parity
-- [x] **FOUND-03**: All `Long` values from backend API are handled as `String` in the frontend to prevent JavaScript precision loss
-- [x] **FOUND-04**: All listing pages implement server-side pagination
-- [x] **FOUND-05**: Every async operation displays a loading state (`QInnerLoading` or `:loading` on buttons)
-- [x] **FOUND-06**: All API calls are centralized in an `api/` folder organized by domain
-- [x] **FOUND-07**: API errors in standard `ErrorDto` format (`helpCode`, `errorMsg.key`, `errorMsg.message`) are handled and surfaced to the user
-- [x] **FOUND-08**: All form inputs use lazy-rules validation (validate on blur)
+- [ ] **PLAT-01**: Admin can record a Nexah credit purchase, specifying the amount purchased; platform balance increases by that amount and a ledger entry is written
+- [ ] **PLAT-02**: Platform balance has an append-only ledger; each entry records: entry type, amount (signed), balance_after, reference, and timestamp
+- [ ] **PLAT-03**: Platform ledger distinguishes between entry types: `NEXAH_PURCHASE` (credits bought from Nexah), `TOPUP_DEBIT` (client top-up approved), and `SHORTFALL_ABSORPTION` (client overdraft absorbed by platform)
+- [ ] **PLAT-04**: Admin can query the current platform balance
+- [ ] **PLAT-05**: Admin can query the platform balance ledger history, paginated and filterable by entry type
+- [ ] **PLAT-06**: Approving a client top-up debits the platform balance by the approved amount; the debit is atomic with the client credit
+- [ ] **PLAT-07**: Client top-up approval is rejected if the platform balance would go negative
 
-### Dashboard
+### Credit Reservation (RESV)
 
-- [x] **DASH-01**: Admin can view aggregated system stats: total active clients, total credits in system, SMS success/failure rates, delivery rate, segment totals, daily breakdown, top-up analysis, webhook delivery aggregates, provider send aggregate
-- [x] **DASH-02**: Admin can view Nexah circuit breaker state (system health indicator)
+- [ ] **RESV-01**: Before sending to Nexah, Sendam calculates expected segment count per recipient using the standard SMS segment formula (GSM-7 vs UCS-2 encoding, 160/153 and 70/67 character thresholds)
+- [ ] **RESV-02**: Reservation amount = `(calculated_segments + 1) × recipient_count` — the +1 buffer per recipient guards against Nexah reporting a higher count than Sendam expects
+- [ ] **RESV-03**: The raw expected amount without buffer (`calculated_segments × recipient_count`) is stored alongside the reservation for deviation comparison
+- [ ] **RESV-04**: Per-recipient expected segment count is stored (not just the total) to enable per-recipient breakdown in deviation alerts
 
-### Client Management
+### Final Booking on Nexah Send Response (BOOK)
 
-- [x] **CLNT-01**: Admin can view all clients with their ID (String), label, and current available balance
-- [x] **CLNT-02**: Admin can register new clients via a creation form
-- [x] **CLNT-03**: Admin can filter/search clients by ID or name
+Final booking uses `total_sms_unit` per recipient from the Nexah send response. Five scenarios:
 
-### API Key Management
+- [ ] **BOOK-01** *(Nexah total < expected)*: Book actual amount, refund excess reservation to client, record a `SEGMENT` deviation alert
+- [ ] **BOOK-02** *(Nexah total = expected)*: Book actual amount, refund excess reservation to client, no deviation alert raised
+- [ ] **BOOK-03** *(Nexah total > expected but ≤ reserved)*: Book actual amount, refund remaining reservation to client, record a `SEGMENT` deviation alert
+- [ ] **BOOK-04** *(Nexah total > reserved, client has sufficient credits)*: Book actual amount (extra deducted from client beyond the reservation), record a `SEGMENT` deviation alert
+- [ ] **BOOK-05** *(Nexah total > reserved, client has insufficient credits)*: Deduct all remaining client credits; remainder absorbed from platform balance via a `SHORTFALL_ABSORPTION` ledger entry; freeze client account; record a `SEGMENT` deviation alert including the shortfall amount and the freeze
+- [ ] **BOOK-06** *(BOOK-05 but platform balance also insufficient)*: Absorb as much as the platform balance allows (down to 0); record the unrecovered remainder; freeze the entire platform; record a `PLATFORM_FREEZE` deviation alert with full shortfall detail
 
-- [x] **AKEY-01**: Admin can view all API keys associated with a specific client
-- [x] **AKEY-02**: Admin can generate a new API key for any client
-- [x] **AKEY-03**: Admin can revoke an existing API key for any client
-- [x] **AKEY-04**: Raw API key value is shown only once upon creation
+### Client Account Freeze (CFREEZE)
 
-### Top-up Management
+- [ ] **CFREEZE-01**: A frozen client account rejects all new credit reservations (SMS send requests are rejected at the reservation step)
+- [ ] **CFREEZE-02**: All pending scheduled SMS for a frozen client are suspended (not cancelled — they retain their schedule)
+- [ ] **CFREEZE-03**: Freeze reason and timestamp are recorded on the client account record
+- [ ] **CFREEZE-04**: Admin can unfreeze a client account with a mandatory resolution note; suspended scheduled SMS resume upon unfreeze
+- [ ] **CFREEZE-05**: In-flight sends (already submitted to Nexah, DR not yet received) at freeze time complete normally — their booking is processed when the response/DR arrives
 
-- [x] **TOUP-01**: Admin can view a list of top-up requests in `PENDING_APPROVAL` status
-- [x] **TOUP-02**: Admin can approve a top-up request, immediately crediting the client's balance
-- [x] **TOUP-03**: Admin can reject a top-up request without changing the client's balance
-- [x] **TOUP-04**: Admin can view historical top-up requests with their final status (APPROVED/REJECTED)
+### Platform Freeze (PFLAT)
 
-### SMS Monitoring
+- [ ] **PFLAT-01**: A platform freeze blocks all new credit reservations across all clients (all SMS send requests rejected)
+- [ ] **PFLAT-02**: All pending scheduled SMS across all clients are suspended on platform freeze
+- [ ] **PFLAT-03**: Platform freeze reason, unrecovered shortfall amount, and timestamp are recorded
+- [ ] **PFLAT-04**: In-flight sends at freeze time complete normally — their bookings are processed when responses/DRs arrive
+- [ ] **PFLAT-05**: Admin explicitly lifts the platform freeze with a mandatory resolution note; all suspended scheduled SMS resume upon unfreeze
 
-- [x] **SMSM-01**: Admin can view a list of SMS requests in `ACCEPTED` state scheduled for future delivery
-- [x] **SMSM-02**: Admin can drill into a `sendRequestId` to view per-recipient delivery reports (DLR)
+### Segment Deviation Detection (SEGDEV)
 
-### Webhooks
+- [ ] **SEGDEV-01**: On Nexah send response, Sendam computes the deviation: `actual_total (from Nexah) − expected_total (stored at reservation time)`
+- [ ] **SEGDEV-02**: Any non-zero deviation (positive or negative) produces exactly one `SEGMENT` deviation alert per send request
+- [ ] **SEGDEV-03**: The `SEGMENT` alert contains the full picture: sendRequestId, client, total expected segments, total actual segments, total delta, per-recipient breakdown (recipient number, expected segments, actual segments, per-recipient delta), financial action taken (amount refunded / extra debited / shortfall absorbed / freeze triggered), timestamp
+- [ ] **SEGDEV-04**: Per-recipient breakdown is stored as structured data (not free text) so it can be queried
 
-- [x] **WEBH-01**: Admin can view registered webhook URLs per client
-- [x] **WEBH-02**: Admin can monitor outgoing delivery report statuses to client webhooks (PENDING/DELIVERED/FAILED)
+### Periodic Balance Reconciliation (BALREC)
 
-### UX Standards
+- [ ] **BALREC-01**: A scheduled job polls Nexah `/smscredit` at a configurable interval (default: 15 minutes)
+- [ ] **BALREC-02**: The job compares Nexah's reported credit balance against Sendam's tracked platform balance
+- [ ] **BALREC-03**: On mismatch, a `BALANCE` deviation alert is recorded: Nexah-reported balance, Sendam-tracked balance, delta, timestamp, status `OPEN`
+- [ ] **BALREC-04**: The polling interval is configurable via application properties (`sendam.reconciliation.interval-minutes`)
 
-- [x] **UXST-01**: All success and error notifications use `$q.notify()`
-- [x] **UXST-02**: Form labels and contrast ratios meet WCAG AA standards
-- [x] **UXST-03**: Sidebar navigation for desktop; bottom tabs or burger menu for mobile
-- [x] **UXST-04**: Action buttons are disabled during loading states to prevent duplicate submissions
+### Deviation Alert Management (DEVMGMT)
 
-### Testing
+- [ ] **DEVMGMT-01**: Admin can list deviation alerts, paginated, filterable by type (`SEGMENT` / `BALANCE` / `PLATFORM_FREEZE`) and status (`OPEN` / `ACKNOWLEDGED` / `RESOLVED`)
+- [ ] **DEVMGMT-02**: Each alert exposes all structured detail: type, status, delta, financial impact, timestamp, and for `SEGMENT` alerts the full per-recipient breakdown
+- [ ] **DEVMGMT-03**: Admin can acknowledge an alert with a mandatory free-text note; status → `ACKNOWLEDGED`
+- [ ] **DEVMGMT-04**: Admin can resolve an alert with a mandatory free-text note; status → `RESOLVED`
+- [ ] **DEVMGMT-05**: Each alert retains a full immutable audit trail: original deviation data, all status transitions with timestamps, and all admin notes
 
-- [x] **TEST-01**: Vitest + Vue Test Utils are mandatory for all components
-- [x] **TEST-02**: One test file per component
-- [x] **TEST-03**: Tests simulate actual user flows including edge cases like network failures
+---
 
 ## v2 Requirements
 
-### SMS Monitoring
+### Notifications
 
-- **SMSM-03**: Admin can view stats on purged old records
+- **NOTIF-01**: Admin receives an email notification when a new deviation alert is created — in v1.3 admin polls the API
+- **NOTIF-02**: Configurable deviation threshold for `SEGMENT` alerts — only alert if `|delta| > N` credits to reduce noise from minor rounding differences
+
+---
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| TypeScript | Explicitly excluded — plain JS only per spec |
-| Multi-provider support | Only Nexah; no abstraction until second provider needed |
-| Client self-service UI | Admin-only interface; no client-facing UI |
+| Automatic deviation resolution | Deviations require human judgement and evidence before Nexah reconciliation |
+| Client-facing deviation visibility | Internal operational concern; client billing is always finalized using Nexah's actual figures |
+| Platform balance overwrite from Nexah poll | Reconciliation is advisory; Sendam's ledger is the source of truth |
+| Nexah credit purchase automation | Sendam does not control the Nexah account programmatically |
+| Cancelling in-flight sends on freeze | Sends already submitted to Nexah cannot be recalled |
+
+---
 
 ## Traceability
 
-Which phases cover which requirements. Updated by create-roadmap.
+*Populated by `/gsd:create-roadmap`*
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | Phase 13 | Complete |
-| FOUND-02 | Phase 13 | Complete |
-| FOUND-03 | Phase 13 | Complete |
-| FOUND-04 | Phase 13 | Complete |
-| FOUND-05 | Phase 14 | Complete |
-| FOUND-06 | Phase 13 | Complete |
-| FOUND-07 | Phase 13 | Complete |
-| FOUND-08 | Phase 14 | Complete |
-| DASH-01 | Phase 17 | Complete |
-| DASH-02 | Phase 17 | Complete |
-| CLNT-01 | Phase 14 | Complete |
-| CLNT-02 | Phase 14 | Complete |
-| CLNT-03 | Phase 14 | Complete |
-| AKEY-01 | Phase 14 | Complete |
-| AKEY-02 | Phase 14 | Complete |
-| AKEY-03 | Phase 14 | Complete |
-| AKEY-04 | Phase 14 | Complete |
-| TOUP-01 | Phase 15 | Complete |
-| TOUP-02 | Phase 15 | Complete |
-| TOUP-03 | Phase 15 | Complete |
-| TOUP-04 | Phase 15 | Complete |
-| SMSM-01 | Phase 16 | Complete |
-| SMSM-02 | Phase 16 | Complete |
-| WEBH-01 | Phase 16 | Complete |
-| WEBH-02 | Phase 16 | Complete |
-| UXST-01 | Phase 14 | Complete |
-| UXST-02 | Phase 13 | Complete |
-| UXST-03 | Phase 13 | Complete |
-| UXST-04 | Phase 14 | Complete |
-| TEST-01 | Phase 18 | Complete |
-| TEST-02 | Phase 18 | Complete |
-| TEST-03 | Phase 18 | Complete |
+| PLAT-01 – PLAT-07 | — | Pending |
+| RESV-01 – RESV-04 | — | Pending |
+| BOOK-01 – BOOK-06 | — | Pending |
+| CFREEZE-01 – CFREEZE-05 | — | Pending |
+| PFLAT-01 – PFLAT-05 | — | Pending |
+| SEGDEV-01 – SEGDEV-04 | — | Pending |
+| BALREC-01 – BALREC-04 | — | Pending |
+| DEVMGMT-01 – DEVMGMT-05 | — | Pending |
 
 **Coverage:**
-- v1 requirements: 32 total
-- Mapped to phases: 32
-- Unmapped: 0 ✓
+- v1 requirements: 34 total across 8 categories
+- Mapped to phases: 0 (pending roadmap)
+- Unmapped: 34 ⚠️
 
 ---
-*Requirements defined: 2026-03-12*
-*Last updated: 2026-03-12 — moved FOUND-05, FOUND-08, UXST-01, UXST-04 from Phase 13 to Phase 14 (first phase with real async operations and forms)*
+*Requirements defined: 2026-03-17*
+*Last updated: 2026-03-17 after initial definition*
