@@ -142,14 +142,18 @@ public class SmsService {
             throw new ProviderUnavailableException("SMS provider is currently unavailable");
         }
 
-        // Step 7: Calculate segments and total credits to reserve
-        int segmentCount = SmsSegmentCalculator.calculate(request.message());
-        long totalCredits = (long) segmentCount * recipientCount;
+        // Step 7: Calculate segments and reservation amounts (RESV-01, RESV-02, RESV-03)
+        // expectedSegments: per-recipient segment count from GSM-7/UCS-2 formula (RESV-01)
+        int expectedSegments = SmsSegmentCalculator.calculate(request.message());
+        // rawExpectedCredits: unbuffered expected total — stored for deviation comparison (RESV-03)
+        long rawExpectedCredits = (long) expectedSegments * recipientCount;
+        // reservationAmount: +1 buffer per recipient guards against Nexah over-reporting (RESV-02)
+        long reservationAmount = (long) (expectedSegments + 1) * recipientCount;
 
-        // Step 8: Reserve credits — throws InsufficientBalanceException if insufficient
+        // Step 8: Reserve credits using buffered amount — throws InsufficientBalanceException if insufficient
         // (handled by existing ApiAdvice handler → 400 INSUFFICIENT_CLIENT_BALANCE)
         String reference = "sms:" + request.sendRequestId();
-        long reservationId = creditReservationService.reserve(clientId, totalCredits, reference);
+        long reservationId = creditReservationService.reserve(clientId, reservationAmount, reference);
 
         // Step 9: Persist SendRequest row
         SendRequest sendRequest = SendRequest.builder()
@@ -160,8 +164,9 @@ public class SmsService {
                 .sendStatus(SendRequestStatus.ACCEPTED)
                 .scheduleTime(request.scheduleTime())
                 .messageCount(recipientCount)
-                .segmentCount(segmentCount)
-                .reservedCredits(totalCredits)
+                .segmentCount(expectedSegments)
+                .reservedCredits(reservationAmount)        // buffered amount (RESV-02)
+                .rawExpectedCredits(rawExpectedCredits)    // unbuffered amount (RESV-03)
                 .reservationId(reservationId)
                 .status(EntityStatus.ACTIVE)
                 .build();
@@ -175,13 +180,14 @@ public class SmsService {
             "SMS submitted: sendRequestId=" + request.sendRequestId() + ", recipients=" + recipientCount
         ));
 
-        // Step 10: Persist one SendRequestRecipient row per recipient
+        // Step 10: Persist one SendRequestRecipient row per recipient (RESV-04: store expectedSegments)
         request.recipients().forEach(phone ->
                 recipientRepo.save(SendRequestRecipient.builder()
                         .sendRequestIdFk(sendRequest.getId())
                         .clientId(clientId)
                         .recipient(phone)
                         .sendStatus(SendRequestStatus.ACCEPTED)
+                        .expectedSegments(expectedSegments)    // RESV-04: per-recipient for Phase 22 deviation
                         .status(EntityStatus.ACTIVE)
                         .build())
         );
@@ -190,7 +196,7 @@ public class SmsService {
         long balanceAfter = creditService.getBalance(clientId).availableBalance();
 
         // Step 12: Return response
-        log.debug("SMS send accepted for clientId={}, sendRequestId={}, reservedCredits={}", clientId, request.sendRequestId(), totalCredits);
+        log.debug("SMS send accepted for clientId={}, sendRequestId={}, reservedCredits={}", clientId, request.sendRequestId(), reservationAmount);
         return toResponse(sendRequest, balanceAfter);
     }
 
