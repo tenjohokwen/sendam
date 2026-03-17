@@ -16,28 +16,41 @@ import static org.mockito.Mockito.*;
 class SmsFinalisedBillingListenerTest {
 
     @Mock
-    private CreditReservationService creditReservationService;
+    private FinalBookingService finalBookingService;
 
     @InjectMocks
     private SmsFinalisedBillingListener listener;
 
     @Test
-    @DisplayName("onSmsFinalized: success - debits reservation when actualSegments > 0")
-    void onSmsFinalized_debit() {
+    @DisplayName("onSmsFinalized: delegates to FinalBookingService.book() with all event fields")
+    void onSmsFinalized_delegates_book() {
         SmsFinalisedEvent event = new SmsFinalisedEvent(100L, "req-123", List.of(), 42L, 2L);
 
         listener.onSmsFinalized(event);
 
-        verify(creditReservationService).debit(100L, 42L, 2L);
+        verify(finalBookingService).book(100L, "req-123", 2L, 42L);
+        verifyNoMoreInteractions(finalBookingService);
     }
 
     @Test
-    @DisplayName("onSmsFinalized: success - releases reservation when actualSegments is 0")
-    void onSmsFinalized_release() {
-        SmsFinalisedEvent event = new SmsFinalisedEvent(100L, "req-123", List.of(), 42L, 0L);
+    @DisplayName("onSmsFinalized: delegates to FinalBookingService.book() when actualSegments is 0")
+    void onSmsFinalized_delegates_book_zero_segments() {
+        SmsFinalisedEvent event = new SmsFinalisedEvent(100L, "req-456", List.of(), 99L, 0L);
 
         listener.onSmsFinalized(event);
 
-        verify(creditReservationService).release(100L, 42L);
+        verify(finalBookingService).book(100L, "req-456", 0L, 99L);
+        verifyNoMoreInteractions(finalBookingService);
+    }
+
+    @Test
+    @DisplayName("onSmsFinalized: delegates to FinalBookingService.book() when reservationId is null")
+    void onSmsFinalized_delegates_book_null_reservation() {
+        SmsFinalisedEvent event = new SmsFinalisedEvent(100L, "req-789", List.of(), null, 5L);
+
+        listener.onSmsFinalized(event);
+
+        verify(finalBookingService).book(100L, "req-789", 5L, null);
+        verifyNoMoreInteractions(finalBookingService);
     }
 }
