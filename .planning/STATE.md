@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 ## Current Position
 
 Phase: 19 of 24 (Platform Credit Account)
-Plan: 2 of 4 complete
+Plan: 3 of 4 complete
 Status: In progress
-Last activity: 2026-03-17 — Completed 19-02-PLAN.md (service layer: PlatformCreditService + 7 contract files)
+Last activity: 2026-03-17 — Completed 19-03-PLAN.md (REST layer: AdminPlatformCreditResource + TopupService atomic debit)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ██░░░░░░░░░░░░░░ 13%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ███░░░░░░░░░░░░░ 19%
 
 ## Accumulated Context
 
@@ -132,6 +132,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - PlatformLedgerEntryDto uses @JsonProperty("balance_after") — mirrors LedgerEntryDto snake_case convention for consistent API response shape
 - Lock order documented in applyLedgerEntry comment: (1) topup row [caller], (2) client credit balance [CreditService], (3) platform balance [PlatformCreditService] — Plan 04 must call in this order
 
+**19-03 decisions:**
+- AdminPlatformCreditResource uses class-level @PreAuthorize("hasRole('ADMIN')") — all three endpoints share the same authority; prevents accidental omission on future additions to the controller
+- HTTP 422 (UNPROCESSABLE_ENTITY) for InsufficientPlatformBalanceException — distinguishes platform balance shortfall (422) from client balance shortfall (400, InsufficientBalanceException); callers can programmatically differentiate
+- TopupService.approve() three-lock atomic sequence is now complete: topup row (findByIdForUpdate) → client credit (CreditService.applyLedgerEntry) → platform balance (PlatformCreditService.applyLedgerEntry); all in one @Transactional propagated from TopupService.approve()
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -150,5 +155,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Completed 19-02-PLAN.md — PlatformError, InsufficientPlatformBalanceException, 5 contract records, PlatformCreditService
-Resume file: None — ready for 19-03 (REST layer: PlatformCreditResource)
+Stopped at: Completed 19-03-PLAN.md — AdminPlatformCreditResource, security wiring, ApiAdvice HTTP 422 handler, AuditEventType, TopupService atomic debit
+Resume file: None — ready for 19-04 (if planned) or Phase 20
