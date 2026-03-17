@@ -98,24 +98,54 @@ Final booking uses `total_sms_unit` per recipient from the Nexah send response. 
 
 ## Traceability
 
-*Populated by `/gsd:create-roadmap`*
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PLAT-01 – PLAT-07 | — | Pending |
-| RESV-01 – RESV-04 | — | Pending |
-| BOOK-01 – BOOK-06 | — | Pending |
-| CFREEZE-01 – CFREEZE-05 | — | Pending |
-| PFLAT-01 – PFLAT-05 | — | Pending |
-| SEGDEV-01 – SEGDEV-04 | — | Pending |
-| BALREC-01 – BALREC-04 | — | Pending |
-| DEVMGMT-01 – DEVMGMT-05 | — | Pending |
+| PLAT-01 | Phase 19 | Pending |
+| PLAT-02 | Phase 19 | Pending |
+| PLAT-03 | Phase 19 | Pending |
+| PLAT-04 | Phase 19 | Pending |
+| PLAT-05 | Phase 19 | Pending |
+| PLAT-06 | Phase 19 | Pending |
+| PLAT-07 | Phase 19 | Pending |
+| CFREEZE-01 | Phase 20 | Pending |
+| CFREEZE-02 | Phase 20 | Pending |
+| CFREEZE-03 | Phase 20 | Pending |
+| CFREEZE-04 | Phase 20 | Pending |
+| CFREEZE-05 | Phase 20 | Pending |
+| PFLAT-01 | Phase 20 | Pending |
+| PFLAT-02 | Phase 20 | Pending |
+| PFLAT-03 | Phase 20 | Pending |
+| PFLAT-04 | Phase 20 | Pending |
+| PFLAT-05 | Phase 20 | Pending |
+| RESV-01 | Phase 21 | Pending |
+| RESV-02 | Phase 21 | Pending |
+| RESV-03 | Phase 21 | Pending |
+| RESV-04 | Phase 21 | Pending |
+| BOOK-01 | Phase 22 | Pending |
+| BOOK-02 | Phase 22 | Pending |
+| BOOK-03 | Phase 22 | Pending |
+| BOOK-04 | Phase 22 | Pending |
+| BOOK-05 | Phase 22 | Pending |
+| BOOK-06 | Phase 22 | Pending |
+| SEGDEV-01 | Phase 22 | Pending |
+| SEGDEV-02 | Phase 22 | Pending |
+| SEGDEV-03 | Phase 22 | Pending |
+| SEGDEV-04 | Phase 22 | Pending |
+| BALREC-01 | Phase 23 | Pending |
+| BALREC-02 | Phase 23 | Pending |
+| BALREC-03 | Phase 23 | Pending |
+| BALREC-04 | Phase 23 | Pending |
+| DEVMGMT-01 | Phase 24 | Pending |
+| DEVMGMT-02 | Phase 24 | Pending |
+| DEVMGMT-03 | Phase 24 | Pending |
+| DEVMGMT-04 | Phase 24 | Pending |
+| DEVMGMT-05 | Phase 24 | Pending |
 
 **Coverage:**
-- v1 requirements: 34 total across 8 categories
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 34 ⚠️
+- v1 requirements: 40 total across 8 categories
+- Mapped to phases: 40 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-17*
-*Last updated: 2026-03-17 after initial definition*
+*Last updated: 2026-03-17 after roadmap creation — all 40 requirements mapped to phases 19–24*

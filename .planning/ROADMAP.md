@@ -4,7 +4,8 @@
 
 - ✅ **v1.0 SMS Gateway** — Phases 1-7 (shipped 2026-03-11) — see `.planning/milestones/v1.0-ROADMAP.md`
 - ✅ **v1.1 Operations & Observability** — Phases 8-12 (shipped 2026-03-12) — see `.planning/milestones/v1.1-ROADMAP.md`
-- 🚧 **v1.2 Gateway Admin UI** — Phases 13–18 (in progress)
+- ✅ **v1.2 Gateway Admin UI** — Phases 13–18 (shipped 2026-03-14) — see `.planning/milestones/v1.2-ROADMAP.md`
+- 🚧 **v1.3 Provider Integrity & Platform Credit Account** — Phases 19–24 (in progress)
 
 ## Phases
 
@@ -32,7 +33,8 @@
 
 </details>
 
-### 🚧 v1.2 Gateway Admin UI (In Progress)
+<details>
+<summary>✅ v1.2 Gateway Admin UI (Phases 13-18) — SHIPPED 2026-03-14</summary>
 
 **Milestone Goal:** Admin UI for monitoring and managing the SMS gateway — built with Vue 3 + Quasar, plain JS, full i18n (en-US/fr-FR).
 
@@ -128,6 +130,97 @@ Plans:
 - [x] 18-03: Dialog component tests (CreateClientDialog, RawKeyDialog, ApiKeysDialog, DlrDialog)
 - [x] 18-04: Page component tests (ClientsPage, TopupsPage, SmsMonitorPage, WebhooksPage, AdminDashboardPage)
 
+</details>
+
+### 🚧 v1.3 Provider Integrity & Platform Credit Account (In Progress)
+
+**Milestone Goal:** Introduce a platform-level credit account so client credits are backed by real Nexah credits, detect billing deviations between Sendam's segment calculations and Nexah's reported consumption, and give admins traceable evidence for reconciliation.
+
+#### Phase 19: Platform Credit Account
+**Goal**: Platform balance entity + ledger; admin records Nexah purchases; constrained top-up approval that debits platform balance.
+**Depends on**: Phase 18
+**Requirements**: PLAT-01, PLAT-02, PLAT-03, PLAT-04, PLAT-05, PLAT-06, PLAT-07
+**Success Criteria** (what must be TRUE):
+  1. Admin can record a Nexah credit purchase; platform balance increases and a NEXAH_PURCHASE ledger entry is written
+  2. Admin can query the current platform balance
+  3. Admin can browse platform ledger history filtered by entry type (NEXAH_PURCHASE / TOPUP_DEBIT / SHORTFALL_ABSORPTION)
+  4. Approving a client top-up atomically debits the platform balance; approval fails if platform balance would go negative
+**Plans**: TBD
+
+Plans:
+- [ ] 19-01: TBD
+
+#### Phase 20: Account Freeze Infrastructure
+**Goal**: Client and platform freeze lifecycle — freeze on shortfall, suspend scheduled SMS, admin unfreeze with mandatory note and auto-resume.
+**Depends on**: Phase 19
+**Requirements**: CFREEZE-01, CFREEZE-02, CFREEZE-03, CFREEZE-04, CFREEZE-05, PFLAT-01, PFLAT-02, PFLAT-03, PFLAT-04, PFLAT-05
+**Success Criteria** (what must be TRUE):
+  1. A frozen client's SMS send requests are rejected at credit reservation
+  2. A frozen client's pending scheduled SMS are suspended (not cancelled); they resume on unfreeze
+  3. Admin can unfreeze a client with a mandatory resolution note; freeze reason + timestamp are persisted
+  4. A platform freeze blocks all new credit reservations across all clients
+  5. Admin can lift a platform freeze with a mandatory resolution note; all suspended scheduled SMS across all clients resume
+**Plans**: TBD
+
+Plans:
+- [ ] 20-01: TBD
+
+#### Phase 21: Enhanced Credit Reservation
+**Goal**: Store per-recipient expected segment counts at reservation time so the booking step can detect deviations.
+**Depends on**: Phase 20
+**Requirements**: RESV-01, RESV-02, RESV-03, RESV-04
+**Success Criteria** (what must be TRUE):
+  1. Before each send, per-recipient expected segment count is calculated using the standard GSM-7/UCS-2 formula and stored
+  2. Reservation amount includes a +1 buffer per recipient; the raw expected amount (no buffer) is also stored
+  3. Per-recipient expected segments are stored as structured data (not a total only) to support per-recipient deviation breakdown
+**Plans**: TBD
+
+Plans:
+- [ ] 21-01: TBD
+
+#### Phase 22: Final Booking & Segment Deviation
+**Goal**: Post-response booking using Nexah's actual `total_sms_unit`; shortfall absorption from platform balance; freeze triggers; SEGMENT deviation alert creation.
+**Depends on**: Phases 19, 20, 21
+**Requirements**: BOOK-01, BOOK-02, BOOK-03, BOOK-04, BOOK-05, BOOK-06, SEGDEV-01, SEGDEV-02, SEGDEV-03, SEGDEV-04
+**Success Criteria** (what must be TRUE):
+  1. When Nexah matches expected exactly, client is refunded the reservation buffer — no deviation alert raised
+  2. When Nexah reports a different count (higher or lower) than expected, a SEGMENT deviation alert is created with full per-recipient breakdown
+  3. When Nexah reports more segments than reserved and client has sufficient credits, the extra is debited from the client
+  4. When Nexah reports more segments than reserved and client has insufficient credits, the shortfall is absorbed from the platform balance and the client is frozen
+  5. When both client and platform balance are insufficient, platform absorbs to zero, platform is frozen, and a PLATFORM_FREEZE deviation alert is created
+**Plans**: TBD
+
+Plans:
+- [ ] 22-01: TBD
+
+#### Phase 23: Periodic Balance Reconciliation
+**Goal**: Scheduled job compares Nexah-reported credit balance against Sendam's tracked platform balance; raises BALANCE deviation alerts on mismatch.
+**Depends on**: Phase 19
+**Requirements**: BALREC-01, BALREC-02, BALREC-03, BALREC-04
+**Success Criteria** (what must be TRUE):
+  1. A scheduled job runs at a configurable interval (default 15 min) and polls Nexah `/smscredit`
+  2. When Nexah's reported balance differs from Sendam's tracked platform balance, a BALANCE deviation alert is created with expected/actual/delta
+  3. The interval is configurable via `sendam.reconciliation.interval-minutes` application property
+**Plans**: TBD
+
+Plans:
+- [ ] 23-01: TBD
+
+#### Phase 24: Deviation Alert Management
+**Goal**: Admin REST API for listing, acknowledging, and resolving all deviation alert types (SEGMENT / BALANCE / PLATFORM_FREEZE).
+**Depends on**: Phases 22, 23
+**Requirements**: DEVMGMT-01, DEVMGMT-02, DEVMGMT-03, DEVMGMT-04, DEVMGMT-05
+**Success Criteria** (what must be TRUE):
+  1. Admin can list deviation alerts paginated, filtered by type (SEGMENT / BALANCE / PLATFORM_FREEZE) and status (OPEN / ACKNOWLEDGED / RESOLVED)
+  2. Each alert exposes full structured detail: type, status, delta, financial impact, timestamp, and per-recipient breakdown for SEGMENT alerts
+  3. Admin can acknowledge an alert with a mandatory free-text note; status transitions to ACKNOWLEDGED
+  4. Admin can resolve an alert with a mandatory free-text note; status transitions to RESOLVED
+  5. Each alert retains a full immutable audit trail of all status transitions with timestamps and all admin notes
+**Plans**: TBD
+
+Plans:
+- [ ] 24-01: TBD
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -150,3 +243,9 @@ Plans:
 | 16. SMS Monitoring & Webhooks | v1.2 | 4/4 | Complete | 2026-03-12 |
 | 17. Dashboard | v1.2 | 3/3 | Complete | 2026-03-14 |
 | 18. Testing | v1.2 | 4/4 | Complete | 2026-03-14 |
+| 19. Platform Credit Account | v1.3 | 0/TBD | Not started | - |
+| 20. Account Freeze Infrastructure | v1.3 | 0/TBD | Not started | - |
+| 21. Enhanced Credit Reservation | v1.3 | 0/TBD | Not started | - |
+| 22. Final Booking & Segment Deviation | v1.3 | 0/TBD | Not started | - |
+| 23. Periodic Balance Reconciliation | v1.3 | 0/TBD | Not started | - |
+| 24. Deviation Alert Management | v1.3 | 0/TBD | Not started | - |
