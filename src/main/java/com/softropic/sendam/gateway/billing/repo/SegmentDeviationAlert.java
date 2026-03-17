@@ -2,6 +2,7 @@ package com.softropic.sendam.gateway.billing.repo;
 
 import com.softropic.sendam.common.persistence.AbstractAuditingEntity;
 import com.softropic.sendam.common.persistence.EntityStatus;
+import com.softropic.sendam.gateway.billing.contract.AlertStatus;
 import com.softropic.sendam.gateway.billing.contract.DeviationAlertType;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
@@ -73,6 +74,11 @@ public class SegmentDeviationAlert extends AbstractAuditingEntity {
 
     @Column(name = "financial_action", nullable = false, length = 30)
     private String financialAction;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "alert_status", nullable = false, length = 20)
+    private AlertStatus alertStatus = AlertStatus.OPEN;
 
     @Builder.Default
     protected EntityStatus status = EntityStatus.ACTIVE;

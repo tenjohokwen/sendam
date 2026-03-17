@@ -2,6 +2,7 @@ package com.softropic.sendam.gateway.billing.repo;
 
 import com.softropic.sendam.common.persistence.AbstractAuditingEntity;
 import com.softropic.sendam.common.persistence.EntityStatus;
+import com.softropic.sendam.gateway.billing.contract.AlertStatus;
 import com.softropic.sendam.gateway.billing.contract.DeviationAlertType;
 
 import jakarta.persistence.Column;
@@ -46,6 +47,11 @@ public class BalanceDeviationAlert extends AbstractAuditingEntity {
 
     @Column(name = "delta", nullable = false)
     private long delta;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "alert_status", nullable = false, length = 20)
+    private AlertStatus alertStatus = AlertStatus.OPEN;
 
     @Builder.Default
     protected EntityStatus status = EntityStatus.ACTIVE;
