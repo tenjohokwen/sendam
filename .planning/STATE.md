@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 ## Current Position
 
 Phase: 22 of 24 (Final Booking & Segment Deviation)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-03-17 — Phase 21 (Enhanced Credit Reservation) complete — 2/2 plans, 3/3 must-haves verified; 194 tests pass
+Plan: 1 of 3
+Status: In progress
+Last activity: 2026-03-17 — Completed 22-01-PLAN.md: V14 migration, SegmentDeviationAlert entity/repo, 3 enum additions; 194 tests pass
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ████████████████░░░░ 50%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ██████████████████░░ 58%
 
 ## Accumulated Context
 
@@ -157,6 +157,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - segmentCount field on SendRequest set to expectedSegments (same formula, aligned naming) — semantics unchanged (per-message segment count, not total)
 - BalanceResponse constructor in tests: (long availableBalance, String unit, String currency, Instant lastUpdatedAt) — plan template assumed different signature; adapted to actual code
 
+**22-01 decisions:**
+- BIGINT PRIMARY KEY (not BIGSERIAL) for V14 migration — all project tables use TSID-generated IDs via @Tsid; BIGSERIAL would conflict with ID generation strategy
+- RecipientDeviationEntry as inner record inside SegmentDeviationAlert — co-located with entity; no separate file; Plan 02 references as SegmentDeviationAlert.RecipientDeviationEntry
+- SegmentDeviationAlertRepository minimal stub — Plan 02 only needs save(); Phase 24 adds query methods for admin deviation alert listing
+
 **20-03 decisions:**
 - AdminClientFreezeResource uses class-level @PreAuthorize("hasRole('ADMIN')") — consistent with AdminPlatformCreditResource pattern (19-03 precedent)
 - ADMIN_CLIENT_FREEZE = /api/admin/clients/*/freeze/** added alongside existing ADMIN_CLIENTS — belt-and-suspenders specificity; same pattern as ADMIN_API_KEYS alongside ADMIN_CLIENTS
@@ -182,5 +187,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Phase 21 complete — V13 migration, JPA entity fields, SmsService +1 buffer formula, 4 RESV tests; 194 tests pass
-Resume file: None — ready for Phase 22
+Stopped at: Phase 22, Plan 01 complete — V14 migration, SegmentDeviationAlert entity/repo, 3 enum additions; 194 tests pass
+Resume file: None — ready for Phase 22 Plan 02
