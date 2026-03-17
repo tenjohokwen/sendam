@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 ## Current Position
 
 Phase: 19 of 24 (Platform Credit Account)
-Plan: 1 of 4 complete
+Plan: 2 of 4 complete
 Status: In progress
-Last activity: 2026-03-17 — Completed 19-01-PLAN.md (DB foundation: V11 migration + JPA entities/repos)
+Last activity: 2026-03-17 — Completed 19-02-PLAN.md (service layer: PlatformCreditService + 7 contract files)
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 █░░░░░░░░░░░░░░░ 6%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ██░░░░░░░░░░░░░░ 13%
 
 ## Accumulated Context
 
@@ -126,6 +126,12 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - PlatformLedgerEntryType created in Plan 01 alongside the entity to avoid compile errors — Plan 02 must NOT recreate it
 - findByOptionalType uses a single JPQL optional-filter query: WHERE (:type IS NULL OR e.entryType = :type) — single method covers filtered and unfiltered cases
 
+**19-02 decisions:**
+- applyLedgerEntry has no @Transactional annotation — class-level @Transactional covers it; propagation=REQUIRED means callers (TopupService Plan 04) propagate their own transaction so topup row + client credit + platform balance all commit/rollback atomically
+- InsufficientPlatformBalanceException does not carry clientId — platform balance is not per-client; currentBalance and requestedAmount are the diagnostic fields
+- PlatformLedgerEntryDto uses @JsonProperty("balance_after") — mirrors LedgerEntryDto snake_case convention for consistent API response shape
+- Lock order documented in applyLedgerEntry comment: (1) topup row [caller], (2) client credit balance [CreditService], (3) platform balance [PlatformCreditService] — Plan 04 must call in this order
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -144,5 +150,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Completed 19-01-PLAN.md — V11 migration, PlatformCreditBalance, PlatformCreditBalanceRepository, PlatformCreditLedgerEntry, PlatformCreditLedgerRepository, PlatformLedgerEntryType
-Resume file: None — ready for 19-02 (PlatformCreditService)
+Stopped at: Completed 19-02-PLAN.md — PlatformError, InsufficientPlatformBalanceException, 5 contract records, PlatformCreditService
+Resume file: None — ready for 19-03 (REST layer: PlatformCreditResource)
