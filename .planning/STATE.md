@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 
 ## Current Position
 
-Phase: 23 of 24 (Periodic Balance Reconciliation)
-Plan: 2 of 2
-Status: Phase complete
-Last activity: 2026-03-17 — Completed 23-02-PLAN.md: BalanceDeviationAlertService, BalanceReconciliationJob, BalanceReconciliationJobTest; 206 tests pass; Phase 23 complete
+Phase: 24 of 24 (Deviation Alert Management)
+Plan: 1 of 3
+Status: In progress
+Last activity: 2026-03-17 — Completed 24-01-PLAN.md: V16 migration (alert_status + deviation_alert_event), AlertStatus enum, updated entities, DeviationAlertEvent + repo; 206 tests pass
 
 Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ████████████████████████ 100%
 
@@ -177,6 +177,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - Silent skip on Nexah exception: catch any Exception (not just ProviderUnavailableException); log.warn + return, no re-throw, no alert
 - platformCreditService.getBalance() short-circuits on Nexah failure — no point reading Sendam balance if Nexah balance is unavailable
 
+**24-01 decisions:**
+- DeviationAlertEvent extends BaseEntity (not AbstractAuditingEntity) — owns acted_at/acted_by; Spring Security auditing columns not applicable to admin-action events
+- Nullable FK pattern: segmentAlertIdFk null for BALANCE rows; balanceAlertIdFk null for SEGMENT/PLATFORM_FREEZE rows — single table for all alert event types avoids per-alert-type event tables
+- AlertStatus.canTransitionTo() uses Java 17 switch expression with no default case — compiler forces update of transition rules when new enum constant added
+
 **22-02 decisions:**
 - BOOK-06 issues two alerts (SEGMENT + PLATFORM_FREEZE) in one transaction — SEGMENT records the client's deviation; PLATFORM_FREEZE records the platform-level incident for operator investigation
 - Client balance lock acquired before creditReservationService.debit() in BOOK-04/05/06 — ensures clientAvailable read is atomic with subsequent debit; re-entrant lock within same transaction is safe on PostgreSQL
@@ -208,5 +213,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Phase 23, Plan 02 complete — BalanceDeviationAlertService, BalanceReconciliationJob, BalanceReconciliationJobTest (3 tests); 206 tests pass; Phase 23 fully complete
-Resume file: None — ready for Phase 24 (Deviation Alert Management)
+Stopped at: Phase 24, Plan 01 complete — V16 migration (alert_status + deviation_alert_event), AlertStatus enum, SegmentDeviationAlert/BalanceDeviationAlert updated, DeviationAlertEvent + repo; 206 tests pass
+Resume file: None — ready for Phase 24, Plan 02 (DeviationAlertService)
