@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 ## Current Position
 
 Phase: 22 of 24 (Final Booking & Segment Deviation)
-Plan: 2 of 3
-Status: In progress
-Last activity: 2026-03-17 — Completed 22-02-PLAN.md: FinalBookingService BOOK-01/06, SegmentDeviationService, listener shim; 195 tests pass
+Plan: 3 of 3
+Status: Phase complete
+Last activity: 2026-03-17 — Completed 22-03-PLAN.md: FinalBookingService unit tests (8 BOOK/SEGDEV tests); 203 tests pass
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ████████████████████░░ 65%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ██████████████████████░ 72%
 
 ## Accumulated Context
 
@@ -162,6 +162,10 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - RecipientDeviationEntry as inner record inside SegmentDeviationAlert — co-located with entity; no separate file; Plan 02 references as SegmentDeviationAlert.RecipientDeviationEntry
 - SegmentDeviationAlertRepository minimal stub — Plan 02 only needs save(); Phase 24 adds query methods for admin deviation alert listing
 
+**22-03 decisions:**
+- @MockitoSettings(LENIENT) on test class when @BeforeEach stubs are not consumed by all tests (early-return paths like zero-segments and exact-match BOOK-02 do not reach all stubs)
+- Mockito.mock(Entity.class) for entities with @Tsid id — builder cannot set id at test time; when(entity.getId()).thenReturn(pk) is required pattern
+
 **22-02 decisions:**
 - BOOK-06 issues two alerts (SEGMENT + PLATFORM_FREEZE) in one transaction — SEGMENT records the client's deviation; PLATFORM_FREEZE records the platform-level incident for operator investigation
 - Client balance lock acquired before creditReservationService.debit() in BOOK-04/05/06 — ensures clientAvailable read is atomic with subsequent debit; re-entrant lock within same transaction is safe on PostgreSQL
@@ -193,5 +197,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Phase 22, Plan 02 complete — FinalBookingService BOOK-01/06, SegmentDeviationService, listener shim; 195 tests pass
-Resume file: None — ready for Phase 22 Plan 03
+Stopped at: Phase 22, Plan 03 complete — FinalBookingService unit tests (8 BOOK/SEGDEV tests); 203 tests pass; Phase 22 fully complete
+Resume file: None — ready for Phase 23
