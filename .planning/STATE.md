@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 ## Current Position
 
 Phase: 20 of 24 (Account Freeze Infrastructure)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-03-17 — Phase 19 (Platform Credit Account) complete — 3/3 plans, 4/4 must-haves verified
+Plan: 1 of 3
+Status: In progress
+Last activity: 2026-03-17 — Completed 20-01-PLAN.md — V12 migration, freeze entity fields, PlatformFreezeState, SUSPENDED enum, bulk repository queries
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 █████░░░░░░░░░░░ 17%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ██████░░░░░░░░░░ 25%
 
 ## Accumulated Context
 
@@ -137,6 +137,12 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - HTTP 422 (UNPROCESSABLE_ENTITY) for InsufficientPlatformBalanceException — distinguishes platform balance shortfall (422) from client balance shortfall (400, InsufficientBalanceException); callers can programmatically differentiate
 - TopupService.approve() three-lock atomic sequence is now complete: topup row (findByIdForUpdate) → client credit (CreditService.applyLedgerEntry) → platform balance (PlatformCreditService.applyLedgerEntry); all in one @Transactional propagated from TopupService.approve()
 
+**20-01 decisions:**
+- PlatformFreezeState.shortfall_amount is nullable — manually-initiated admin freezes have no shortfall; only Phase 22 PFLAT-03 (automatic low-balance trigger) populates this field
+- SUSPENDED inserted between ACCEPTED and SUBMITTED in SendRequestStatus — new constant is backward-compatible; unfreezing restores status to ACCEPTED
+- PlatformFreezeStateRepository uses two-method pattern: findState() (non-locking read) and findForUpdate() (pessimistic write lock for transitions) — mirrors PlatformCreditBalanceRepository
+- Fully-qualified enum class name in JPQL bulk queries (com.softropic.sendam.gateway.sms.contract.SendRequestStatus.SUSPENDED) — avoids import ambiguity in @Query strings
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -155,5 +161,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Completed 19-03-PLAN.md — AdminPlatformCreditResource, security wiring, ApiAdvice HTTP 422 handler, AuditEventType, TopupService atomic debit
-Resume file: None — ready for 19-04 (if planned) or Phase 20
+Stopped at: Completed 20-01-PLAN.md — V12 migration, freeze entity fields, PlatformFreezeState entity+repo, SUSPENDED enum, bulk SendRequest queries
+Resume file: None — ready for 20-02
