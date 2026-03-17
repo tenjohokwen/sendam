@@ -258,7 +258,10 @@ public class SmsService {
                         "Send request not found",
                         "send_request"));
 
-        if (request.getSendStatus() != SendRequestStatus.ACCEPTED || request.getScheduleTime() == null) {
+        // CFREEZE-04: allow cancellation of SUSPENDED scheduled SMS (frozen state) in addition to ACCEPTED
+        boolean statusAllowed = request.getSendStatus() == SendRequestStatus.ACCEPTED
+                || request.getSendStatus() == SendRequestStatus.SUSPENDED;
+        if (!statusAllowed || request.getScheduleTime() == null) {
             String reason = request.getScheduleTime() == null
                     ? " and is not a scheduled request"
                     : "";

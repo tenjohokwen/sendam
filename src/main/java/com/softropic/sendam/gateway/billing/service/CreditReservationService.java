@@ -2,10 +2,13 @@ package com.softropic.sendam.gateway.billing.service;
 
 import com.softropic.sendam.gateway.billing.contract.LedgerEntryType;
 import com.softropic.sendam.gateway.billing.contract.InsufficientBalanceException;
+import com.softropic.sendam.gateway.billing.contract.PlatformFrozenException;
 import com.softropic.sendam.gateway.billing.repo.ClientCreditBalance;
 import com.softropic.sendam.gateway.billing.repo.ClientCreditBalanceRepository;
 import com.softropic.sendam.gateway.billing.repo.CreditLedgerEntry;
 import com.softropic.sendam.gateway.billing.repo.CreditLedgerRepository;
+import com.softropic.sendam.gateway.account.contract.AccountFrozenException;
+import com.softropic.sendam.gateway.account.service.ClientFreezeService;
 import com.softropic.sendam.common.exception.ResourceNotFoundException;
 import com.softropic.sendam.common.persistence.EntityStatus;
 
@@ -27,6 +30,11 @@ import lombok.extern.slf4j.Slf4j;
  * <p>This service does NOT delegate to CreditService.applyLedgerEntry() to avoid
  * any implicit dependency on call ordering within a single transaction. It manages
  * its own lock acquisition independently.
+ *
+ * <p>Cross-module service dependency: injects ClientFreezeService (gateway.account.service)
+ * for the client-level freeze guard in reserve(). This is permitted — the prohibition in
+ * ARCHITECTURE.md is on repo-level cross-module imports; service-to-service injection is
+ * an accepted orchestration pattern.
  */
 @Service
 @Transactional
@@ -36,6 +44,8 @@ public class CreditReservationService {
 
     private final ClientCreditBalanceRepository balanceRepository;
     private final CreditLedgerRepository ledgerRepository;
+    private final ClientFreezeService clientFreezeService;
+    private final PlatformFreezeService platformFreezeService;
 
     /**
      * Reserves {@code amount} credits for the given client atomically.
@@ -56,6 +66,21 @@ public class CreditReservationService {
     public long reserve(Long clientId, long amount, String reference) {
         if (amount <= 0) {
             throw new IllegalArgumentException("reserve amount must be positive");
+        }
+
+        // Check 1: Client-level freeze (CFREEZE-01)
+        // Non-locking read — freeze is committed atomically; brief window where a
+        // request slips through is acceptable (credits already reserved cannot be un-reserved
+        // retroactively without changing billing semantics).
+        if (clientFreezeService.isFrozen(clientId)) {
+            throw new AccountFrozenException(
+                    "Client account is frozen; credit reservation rejected", clientId);
+        }
+
+        // Check 2: Platform-level freeze (PFLAT-01)
+        if (platformFreezeService.isFrozen()) {
+            throw new PlatformFrozenException(
+                    "Platform is frozen; all credit reservations are suspended");
         }
 
         ClientCreditBalance lockRow = balanceRepository.findByClientIdForUpdate(clientId)
