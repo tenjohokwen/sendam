@@ -8,6 +8,7 @@ import com.softropic.sendam.gateway.billing.contract.InsufficientPlatformBalance
 import com.softropic.sendam.gateway.provider.nexah.contract.ProviderUnavailableException;
 import com.softropic.sendam.gateway.account.contract.AccountFrozenException;
 import com.softropic.sendam.gateway.account.contract.RateLimitExceededException;
+import com.softropic.sendam.gateway.billing.contract.AlertStatusTransitionException;
 import com.softropic.sendam.gateway.billing.contract.PlatformFrozenException;
 import com.softropic.sendam.gateway.sms.contract.SmsValidationException;
 import com.softropic.sendam.gateway.billing.contract.TopupAlreadyProcessedException;
@@ -437,6 +438,21 @@ public class ApiAdvice {
     public ErrorDto platformFrozenHandler(final PlatformFrozenException exception) {
         final String defaultMsg = "Service temporarily unavailable due to platform maintenance.";
         return logErrorAndReturnDTO(exception, defaultMsg, "PLATFORM_FROZEN");
+    }
+
+    /**
+     * Handles AlertStatusTransitionException thrown when an admin attempts an invalid
+     * deviation alert status transition (e.g. acknowledging an already-ACKNOWLEDGED alert,
+     * or any transition from RESOLVED). HTTP 409 — same pattern as CancelNotAllowedException.
+     *
+     * @param exception AlertStatusTransitionException with alertId and currentStatus
+     * @return 409 Conflict with error_code INVALID_STATUS_TRANSITION
+     */
+    @ExceptionHandler(AlertStatusTransitionException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorDto alertStatusTransitionHandler(final AlertStatusTransitionException exception) {
+        final String defaultMsg = "This status transition is not allowed for the alert in its current state.";
+        return logErrorAndReturnDTO(exception, defaultMsg, "INVALID_STATUS_TRANSITION");
     }
 
     /**
