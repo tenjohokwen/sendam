@@ -45,4 +45,44 @@ public interface SendRequestRepository extends JpaRepository<SendRequest, Long> 
     @Modifying
     @Query("DELETE FROM SendRequest s WHERE s.id IN :ids")
     void deleteAllByIdIn(@Param("ids") List<Long> ids);
+
+    /**
+     * Suspends all ACCEPTED scheduled sends for a specific client (client freeze).
+     * Must be called within a @Transactional context.
+     */
+    @Modifying
+    @Query("UPDATE SendRequest s SET s.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.SUSPENDED " +
+           "WHERE s.clientId = :clientId " +
+           "AND s.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.ACCEPTED " +
+           "AND s.scheduleTime IS NOT NULL")
+    int suspendScheduledForClient(@Param("clientId") Long clientId);
+
+    /**
+     * Resumes all SUSPENDED sends for a specific client (client unfreeze).
+     * Must be called within a @Transactional context.
+     */
+    @Modifying
+    @Query("UPDATE SendRequest s SET s.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.ACCEPTED " +
+           "WHERE s.clientId = :clientId " +
+           "AND s.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.SUSPENDED")
+    int resumeScheduledForClient(@Param("clientId") Long clientId);
+
+    /**
+     * Suspends all ACCEPTED scheduled sends across ALL clients (platform freeze).
+     * Must be called within a @Transactional context.
+     */
+    @Modifying
+    @Query("UPDATE SendRequest s SET s.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.SUSPENDED " +
+           "WHERE s.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.ACCEPTED " +
+           "AND s.scheduleTime IS NOT NULL")
+    int suspendAllScheduled();
+
+    /**
+     * Resumes all SUSPENDED sends across ALL clients (platform unfreeze).
+     * Must be called within a @Transactional context.
+     */
+    @Modifying
+    @Query("UPDATE SendRequest s SET s.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.ACCEPTED " +
+           "WHERE s.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.SUSPENDED")
+    int resumeAllScheduled();
 }
