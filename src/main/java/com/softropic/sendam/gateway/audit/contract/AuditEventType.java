@@ -33,5 +33,7 @@ public enum AuditEventType {
     // SEGDEV-02: non-zero segment deviation detected
     SEGMENT_DEVIATION,
     // BOOK-06: platform frozen due to unrecovered shortfall
-    PLATFORM_FREEZE_SHORTFALL
+    PLATFORM_FREEZE_SHORTFALL,
+    // BALREC-03: balance reconciliation mismatch detected
+    BALANCE_DEVIATION
 }

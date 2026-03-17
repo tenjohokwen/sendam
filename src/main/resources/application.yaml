@@ -107,6 +107,10 @@ nexah:
   senderid: ${NEXAH_SENDERID}
   baseUrl: https://smsvas.com/bulk/public/index.php/api/v1
 
+sendam:
+  reconciliation:
+    interval-minutes: 15
+
 email:
   providerConfigs:
     -
