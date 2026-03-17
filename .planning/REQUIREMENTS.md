@@ -67,11 +67,11 @@ Final booking uses `total_sms_unit` per recipient from the Nexah send response. 
 
 ### Deviation Alert Management (DEVMGMT)
 
-- [ ] **DEVMGMT-01**: Admin can list deviation alerts, paginated, filterable by type (`SEGMENT` / `BALANCE` / `PLATFORM_FREEZE`) and status (`OPEN` / `ACKNOWLEDGED` / `RESOLVED`)
-- [ ] **DEVMGMT-02**: Each alert exposes all structured detail: type, status, delta, financial impact, timestamp, and for `SEGMENT` alerts the full per-recipient breakdown
-- [ ] **DEVMGMT-03**: Admin can acknowledge an alert with a mandatory free-text note; status → `ACKNOWLEDGED`
-- [ ] **DEVMGMT-04**: Admin can resolve an alert with a mandatory free-text note; status → `RESOLVED`
-- [ ] **DEVMGMT-05**: Each alert retains a full immutable audit trail: original deviation data, all status transitions with timestamps, and all admin notes
+- [x] **DEVMGMT-01**: Admin can list deviation alerts, paginated, filterable by type (`SEGMENT` / `BALANCE` / `PLATFORM_FREEZE`) and status (`OPEN` / `ACKNOWLEDGED` / `RESOLVED`)
+- [x] **DEVMGMT-02**: Each alert exposes all structured detail: type, status, delta, financial impact, timestamp, and for `SEGMENT` alerts the full per-recipient breakdown
+- [x] **DEVMGMT-03**: Admin can acknowledge an alert with a mandatory free-text note; status → `ACKNOWLEDGED`
+- [x] **DEVMGMT-04**: Admin can resolve an alert with a mandatory free-text note; status → `RESOLVED`
+- [x] **DEVMGMT-05**: Each alert retains a full immutable audit trail: original deviation data, all status transitions with timestamps, and all admin notes
 
 ---
 
@@ -135,11 +135,11 @@ Final booking uses `total_sms_unit` per recipient from the Nexah send response. 
 | BALREC-02 | Phase 23 | Complete |
 | BALREC-03 | Phase 23 | Complete |
 | BALREC-04 | Phase 23 | Complete |
-| DEVMGMT-01 | Phase 24 | Pending |
-| DEVMGMT-02 | Phase 24 | Pending |
-| DEVMGMT-03 | Phase 24 | Pending |
-| DEVMGMT-04 | Phase 24 | Pending |
-| DEVMGMT-05 | Phase 24 | Pending |
+| DEVMGMT-01 | Phase 24 | Complete |
+| DEVMGMT-02 | Phase 24 | Complete |
+| DEVMGMT-03 | Phase 24 | Complete |
+| DEVMGMT-04 | Phase 24 | Complete |
+| DEVMGMT-05 | Phase 24 | Complete |
 
 **Coverage:**
 - v1 requirements: 40 total across 8 categories
