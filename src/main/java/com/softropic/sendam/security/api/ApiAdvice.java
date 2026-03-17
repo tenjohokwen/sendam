@@ -6,7 +6,9 @@ import com.softropic.sendam.gateway.billing.contract.DuplicateTransactionIdExcep
 import com.softropic.sendam.gateway.billing.contract.InsufficientBalanceException;
 import com.softropic.sendam.gateway.billing.contract.InsufficientPlatformBalanceException;
 import com.softropic.sendam.gateway.provider.nexah.contract.ProviderUnavailableException;
+import com.softropic.sendam.gateway.account.contract.AccountFrozenException;
 import com.softropic.sendam.gateway.account.contract.RateLimitExceededException;
+import com.softropic.sendam.gateway.billing.contract.PlatformFrozenException;
 import com.softropic.sendam.gateway.sms.contract.SmsValidationException;
 import com.softropic.sendam.gateway.billing.contract.TopupAlreadyProcessedException;
 import jakarta.persistence.LockTimeoutException;
@@ -405,6 +407,36 @@ public class ApiAdvice {
     public ErrorDto insufficientPlatformBalanceHandler(final InsufficientPlatformBalanceException exception) {
         final String defaultMsg = "Platform balance is insufficient to approve this top-up.";
         return logErrorAndReturnDTO(exception, defaultMsg, "INSUFFICIENT_PLATFORM_BALANCE");
+    }
+
+    /**
+     * Handles AccountFrozenException thrown by CreditReservationService when the client
+     * account is frozen. The client's credentials are valid, but the account is on billing hold.
+     * HTTP 403 distinguishes this from 401 (unauthenticated) and 402 (not used).
+     *
+     * @param exception AccountFrozenException with clientId
+     * @return 403 Forbidden with error_code ACCOUNT_FROZEN
+     */
+    @ExceptionHandler(AccountFrozenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorDto accountFrozenHandler(final AccountFrozenException exception) {
+        final String defaultMsg = "Client account is frozen. Contact support to resolve.";
+        return logErrorAndReturnDTO(exception, defaultMsg, "ACCOUNT_FROZEN");
+    }
+
+    /**
+     * Handles PlatformFrozenException thrown by CreditReservationService when the platform
+     * is frozen due to a critical shortfall. All SMS operations are temporarily suspended.
+     * HTTP 503 signals "retry later" to clients.
+     *
+     * @param exception PlatformFrozenException
+     * @return 503 Service Unavailable with error_code PLATFORM_FROZEN
+     */
+    @ExceptionHandler(PlatformFrozenException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorDto platformFrozenHandler(final PlatformFrozenException exception) {
+        final String defaultMsg = "Service temporarily unavailable due to platform maintenance.";
+        return logErrorAndReturnDTO(exception, defaultMsg, "PLATFORM_FROZEN");
     }
 
     /**
