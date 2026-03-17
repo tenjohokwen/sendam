@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** v1.3 — Phase 24: Deviation Alert Management
+**Current focus:** v1.3 COMPLETE — Phase 24: Deviation Alert Management
 
 ## Current Position
 
 Phase: 24 of 24 (Deviation Alert Management)
-Plan: 3 of 3
-Status: In progress
-Last activity: 2026-03-17 — Completed 24-03-PLAN.md: DeviationAlertManagementService with listAlerts/getAlert/acknowledge/resolve; cross-repo merge-and-sort for type=null; AlertStatusTransitionException guard; DeviationAlertEvent single-FK pattern; 7 unit tests; 213 tests pass
+Plan: 4 of 4
+Status: Phase complete — v1.3 COMPLETE
+Last activity: 2026-03-17 — Completed 24-04-PLAN.md: AdminDeviationAlertResource (4-endpoint admin REST API for deviation alert lifecycle); AppEndpoints.ADMIN_DEVIATION_ALERTS constant; AuditEventType.DEVIATION_ALERT_ACKNOWLEDGED + DEVIATION_ALERT_RESOLVED; 213 tests pass
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ████████████████████████ 100%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 COMPLETE ████████████████████████ 100%
 
 ## Accumulated Context
 
@@ -192,6 +192,10 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - saveEvent centralises DeviationAlertEvent construction: balanceAlertIdFk and segmentAlertIdFk are explicit nullable params; exactly one is non-null per call — enforces single-FK contract at call site
 - Comparator.nullsLast(reverseOrder()) for merge sort in listAlerts null-type path — defensive for theoretical null createdDate edge case
 
+**24-04 decisions:**
+- ADMIN_DEVIATION_ALERTS = /api/admin/deviations/** added as 17th entry in SECURED_MAPPINGS — Map.ofEntries has no entry limit (unlike Map.of); plan note about hard limit does not apply
+- AdminDeviationAlertResource is a pure thin delegate: all four methods are single-line delegations to DeviationAlertManagementService; no business logic in controller layer
+
 **22-02 decisions:**
 - BOOK-06 issues two alerts (SEGMENT + PLATFORM_FREEZE) in one transaction — SEGMENT records the client's deviation; PLATFORM_FREEZE records the platform-level incident for operator investigation
 - Client balance lock acquired before creditReservationService.debit() in BOOK-04/05/06 — ensures clientAvailable read is atomic with subsequent debit; re-entrant lock within same transaction is safe on PostgreSQL
@@ -223,5 +227,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Phase 24, Plan 03 complete — DeviationAlertManagementService with listAlerts/getAlert/acknowledge/resolve; 7 unit tests; 213 total tests pass
-Resume file: None — ready for Phase 24, Plan 04 (REST controller for deviation alert management)
+Stopped at: Phase 24, Plan 04 complete — AdminDeviationAlertResource REST controller; v1.3 COMPLETE; all 213 tests pass
+Resume file: None — v1.3 milestone complete; no further plans defined

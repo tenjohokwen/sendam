@@ -5,7 +5,7 @@
 - ✅ **v1.0 SMS Gateway** — Phases 1-7 (shipped 2026-03-11) — see `.planning/milestones/v1.0-ROADMAP.md`
 - ✅ **v1.1 Operations & Observability** — Phases 8-12 (shipped 2026-03-12) — see `.planning/milestones/v1.1-ROADMAP.md`
 - ✅ **v1.2 Gateway Admin UI** — Phases 13–18 (shipped 2026-03-14) — see `.planning/milestones/v1.2-ROADMAP.md`
-- 🚧 **v1.3 Provider Integrity & Platform Credit Account** — Phases 19–24 (in progress)
+- ✅ **v1.3 Provider Integrity & Platform Credit Account** — Phases 19–24 (complete 2026-03-17)
 
 ## Phases
 
@@ -224,10 +224,13 @@ Plans:
   3. Admin can acknowledge an alert with a mandatory free-text note; status transitions to ACKNOWLEDGED
   4. Admin can resolve an alert with a mandatory free-text note; status transitions to RESOLVED
   5. Each alert retains a full immutable audit trail of all status transitions with timestamps and all admin notes
-**Plans**: TBD
+**Plans**: 4 plans (complete)
 
 Plans:
-- [ ] 24-01: TBD
+- [x] 24-01: DeviationAlertEvent entity + AlertStatus enum + DB migration
+- [x] 24-02: DTOs + query repositories + AlertStatusTransitionException
+- [x] 24-03: DeviationAlertManagementService (list/get/acknowledge/resolve)
+- [x] 24-04: AdminDeviationAlertResource REST controller + AppEndpoints + AuditEventType
 
 ## Progress
 
@@ -256,4 +259,4 @@ Plans:
 | 21. Enhanced Credit Reservation | v1.3 | 2/2 | Complete | 2026-03-17 |
 | 22. Final Booking & Segment Deviation | v1.3 | 3/3 | Complete | 2026-03-17 |
 | 23. Periodic Balance Reconciliation | v1.3 | 2/2 | Complete | 2026-03-17 |
-| 24. Deviation Alert Management | v1.3 | 0/TBD | Not started | - |
+| 24. Deviation Alert Management | v1.3 | 4/4 | Complete | 2026-03-17 |
