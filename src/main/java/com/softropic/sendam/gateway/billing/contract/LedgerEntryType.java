@@ -5,5 +5,7 @@ public enum LedgerEntryType {
     TOPUP_APPROVED,
     SMS_RESERVATION,
     SMS_DEBIT,
-    SMS_REFUND
+    SMS_REFUND,
+    // BOOK-04/05/06: extra client debit beyond the buffered reservation
+    SMS_EXTRA_DEBIT
 }

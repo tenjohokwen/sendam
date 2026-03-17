@@ -28,5 +28,10 @@ public enum AuditEventType {
     CLIENT_ACCOUNT_UNFROZEN,
     // PFLAT-03: Admin freeze/unfreeze platform
     PLATFORM_FROZEN,
-    PLATFORM_UNFROZEN
+    PLATFORM_UNFROZEN,
+
+    // SEGDEV-02: non-zero segment deviation detected
+    SEGMENT_DEVIATION,
+    // BOOK-06: platform frozen due to unrecovered shortfall
+    PLATFORM_FREEZE_SHORTFALL
 }
