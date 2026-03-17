@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** v1.3 — Phase 20: Account Freeze Infrastructure
+**Current focus:** v1.3 — Phase 21: Enhanced Credit Reservation
 
 ## Current Position
 
-Phase: 20 of 24 (Account Freeze Infrastructure)
-Plan: 3 of 3
-Status: Phase complete
-Last activity: 2026-03-17 — Completed 20-03-PLAN.md — REST endpoints, ApiAdvice handlers, CreditReservationService freeze guards, 190 tests
+Phase: 21 of 24 (Enhanced Credit Reservation)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-03-17 — Phase 20 (Account Freeze Infrastructure) complete — 3/3 plans, 5/5 must-haves verified
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ████████████░░░░ 75%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ████████████░░░░ 33%
 
 ## Accumulated Context
 

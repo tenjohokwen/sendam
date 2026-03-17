@@ -162,10 +162,12 @@ Plans:
   3. Admin can unfreeze a client with a mandatory resolution note; freeze reason + timestamp are persisted
   4. A platform freeze blocks all new credit reservations across all clients
   5. Admin can lift a platform freeze with a mandatory resolution note; all suspended scheduled SMS across all clients resume
-**Plans**: TBD
+**Plans**: 3/3 complete
 
 Plans:
-- [ ] 20-01: TBD
+- [x] 20-01: Flyway migration V12 — account freeze schema + JPA entities + bulk SMS queries
+- [x] 20-02: ClientFreezeService, PlatformFreezeService, exception types + unit tests
+- [x] 20-03: Admin REST API freeze/unfreeze endpoints + credit reservation freeze guards
 
 #### Phase 21: Enhanced Credit Reservation
 **Goal**: Store per-recipient expected segment counts at reservation time so the booking step can detect deviations.
@@ -246,7 +248,7 @@ Plans:
 | 17. Dashboard | v1.2 | 3/3 | Complete | 2026-03-14 |
 | 18. Testing | v1.2 | 4/4 | Complete | 2026-03-14 |
 | 19. Platform Credit Account | v1.3 | 3/3 | Complete | 2026-03-17 |
-| 20. Account Freeze Infrastructure | v1.3 | 0/TBD | Not started | - |
+| 20. Account Freeze Infrastructure | v1.3 | 3/3 | Complete | 2026-03-17 |
 | 21. Enhanced Credit Reservation | v1.3 | 0/TBD | Not started | - |
 | 22. Final Booking & Segment Deviation | v1.3 | 0/TBD | Not started | - |
 | 23. Periodic Balance Reconciliation | v1.3 | 0/TBD | Not started | - |
