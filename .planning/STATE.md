@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 ## Current Position
 
 Phase: 22 of 24 (Final Booking & Segment Deviation)
-Plan: 1 of 3
+Plan: 2 of 3
 Status: In progress
-Last activity: 2026-03-17 — Completed 22-01-PLAN.md: V14 migration, SegmentDeviationAlert entity/repo, 3 enum additions; 194 tests pass
+Last activity: 2026-03-17 — Completed 22-02-PLAN.md: FinalBookingService BOOK-01/06, SegmentDeviationService, listener shim; 195 tests pass
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ██████████████████░░ 58%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ████████████████████░░ 65%
 
 ## Accumulated Context
 
@@ -162,6 +162,12 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - RecipientDeviationEntry as inner record inside SegmentDeviationAlert — co-located with entity; no separate file; Plan 02 references as SegmentDeviationAlert.RecipientDeviationEntry
 - SegmentDeviationAlertRepository minimal stub — Plan 02 only needs save(); Phase 24 adds query methods for admin deviation alert listing
 
+**22-02 decisions:**
+- BOOK-06 issues two alerts (SEGMENT + PLATFORM_FREEZE) in one transaction — SEGMENT records the client's deviation; PLATFORM_FREEZE records the platform-level incident for operator investigation
+- Client balance lock acquired before creditReservationService.debit() in BOOK-04/05/06 — ensures clientAvailable read is atomic with subsequent debit; re-entrant lock within same transaction is safe on PostgreSQL
+- platformAvailable > 0 guard before BOOK-06 partial absorption — prevents applyLedgerEntry(-0) call; mirrors clientAvailable > 0 guard for drain step
+- SegmentDeviationAlertData record defined inside SegmentDeviationService — data transfer object co-located with the service that owns it; FinalBookingService imports via inner class reference
+
 **20-03 decisions:**
 - AdminClientFreezeResource uses class-level @PreAuthorize("hasRole('ADMIN')") — consistent with AdminPlatformCreditResource pattern (19-03 precedent)
 - ADMIN_CLIENT_FREEZE = /api/admin/clients/*/freeze/** added alongside existing ADMIN_CLIENTS — belt-and-suspenders specificity; same pattern as ADMIN_API_KEYS alongside ADMIN_CLIENTS
@@ -187,5 +193,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Phase 22, Plan 01 complete — V14 migration, SegmentDeviationAlert entity/repo, 3 enum additions; 194 tests pass
-Resume file: None — ready for Phase 22 Plan 02
+Stopped at: Phase 22, Plan 02 complete — FinalBookingService BOOK-01/06, SegmentDeviationService, listener shim; 195 tests pass
+Resume file: None — ready for Phase 22 Plan 03
