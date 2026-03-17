@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** v1.3 COMPLETE — Phase 25: SMS Billing Finalization Hardening (in progress)
+**Current focus:** v1.3 COMPLETE — Phase 25: SMS Billing Finalization Hardening COMPLETE
 
 ## Current Position
 
 Phase: 25 of 25 (SMS Billing Finalization Hardening)
 Plan: 1 of 1
-Status: Phase in progress
+Status: Phase complete — v1.3 all phases done
 Last activity: 2026-03-17 — Completed 25-01-PLAN.md: SmsFinalisedEvent.actualSegments → primitive long; SmsSchedulerService.forceFinalize() publishes SmsFinalisedEvent(0L) to release reservation; InsufficientPlatformBalanceException Javadoc HTTP 422 typo fixed; 213 tests pass
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 COMPLETE | v1.4 in progress ████████████████████████░ 96%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 COMPLETE ████████████████████████████ 100%
 
 ## Accumulated Context
 

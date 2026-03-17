@@ -240,10 +240,10 @@ Plans:
   1. Timed-out SMS whose `forceFinalize()` is called have their credit reservations released — credits are no longer held in limbo
   2. `SmsFinalisedEvent.actualSegments()` is a primitive `long` (or guarded at listener boundary) — no auto-unboxing NPE risk
   3. `InsufficientPlatformBalanceException` Javadoc correctly states HTTP 422
-**Plans**: TBD
+**Plans**: 1/1 complete
 
 Plans:
-- [ ] 25-01: TBD
+- [x] 25-01: forceFinalize credit reservation release + SmsFinalisedEvent primitive long + Javadoc HTTP 422 fix
 
 ## Progress
 
@@ -273,4 +273,4 @@ Plans:
 | 22. Final Booking & Segment Deviation | v1.3 | 3/3 | Complete | 2026-03-17 |
 | 23. Periodic Balance Reconciliation | v1.3 | 2/2 | Complete | 2026-03-17 |
 | 24. Deviation Alert Management | v1.3 | 4/4 | Complete | 2026-03-17 |
-| 25. SMS Billing Finalization Hardening | v1.3 | 0/TBD | Pending | — |
+| 25. SMS Billing Finalization Hardening | v1.3 | 1/1 | Complete | 2026-03-17 |
