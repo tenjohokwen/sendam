@@ -100,13 +100,13 @@ Final booking uses `total_sms_unit` per recipient from the Nexah send response. 
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PLAT-01 | Phase 19 | Pending |
-| PLAT-02 | Phase 19 | Pending |
-| PLAT-03 | Phase 19 | Pending |
-| PLAT-04 | Phase 19 | Pending |
-| PLAT-05 | Phase 19 | Pending |
-| PLAT-06 | Phase 19 | Pending |
-| PLAT-07 | Phase 19 | Pending |
+| PLAT-01 | Phase 19 | Complete |
+| PLAT-02 | Phase 19 | Complete |
+| PLAT-03 | Phase 19 | Complete |
+| PLAT-04 | Phase 19 | Complete |
+| PLAT-05 | Phase 19 | Complete |
+| PLAT-06 | Phase 19 | Complete |
+| PLAT-07 | Phase 19 | Complete |
 | CFREEZE-01 | Phase 20 | Complete |
 | CFREEZE-02 | Phase 20 | Complete |
 | CFREEZE-03 | Phase 20 | Complete |
