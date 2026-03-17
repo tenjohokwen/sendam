@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 ## Current Position
 
 Phase: 20 of 24 (Account Freeze Infrastructure)
-Plan: 1 of 3
+Plan: 2 of 3
 Status: In progress
-Last activity: 2026-03-17 — Completed 20-01-PLAN.md — V12 migration, freeze entity fields, PlatformFreezeState, SUSPENDED enum, bulk repository queries
+Last activity: 2026-03-17 — Completed 20-02-PLAN.md — exception types, ClientFreezeService, PlatformFreezeService, 10 unit tests
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ██████░░░░░░░░░░ 25%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ████████░░░░░░░░ 50%
 
 ## Accumulated Context
 
@@ -143,6 +143,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - PlatformFreezeStateRepository uses two-method pattern: findState() (non-locking read) and findForUpdate() (pessimistic write lock for transitions) — mirrors PlatformCreditBalanceRepository
 - Fully-qualified enum class name in JPQL bulk queries (com.softropic.sendam.gateway.sms.contract.SendRequestStatus.SUSPENDED) — avoids import ambiguity in @Query strings
 
+**20-02 decisions:**
+- Cross-module repo dependency: ClientFreezeService (account.service) injects SendRequestRepository (sms.repo) directly — freeze service is a domain orchestrator needing atomic SMS bulk-update; documented in class comment
+- PlatformFreezeService lives in billing.service — keeps CreditReservationService (also billing) calling isFrozen() within the same package without cross-module service dependency
+- isFrozen() uses @Transactional(readOnly=true) method-level override — class-level @Transactional is readWrite; method-level narrows to read for non-locking state checks
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -161,5 +166,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Completed 20-01-PLAN.md — V12 migration, freeze entity fields, PlatformFreezeState entity+repo, SUSPENDED enum, bulk SendRequest queries
-Resume file: None — ready for 20-02
+Stopped at: Completed 20-02-PLAN.md — exception types, ClientFreezeService, PlatformFreezeService, 10 unit tests (177→187 tests)
+Resume file: None — ready for 20-03
