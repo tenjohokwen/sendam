@@ -193,10 +193,12 @@ Plans:
   3. When Nexah reports more segments than reserved and client has sufficient credits, the extra is debited from the client
   4. When Nexah reports more segments than reserved and client has insufficient credits, the shortfall is absorbed from the platform balance and the client is frozen
   5. When both client and platform balance are insufficient, platform absorbs to zero, platform is frozen, and a PLATFORM_FREEZE deviation alert is created
-**Plans**: TBD
+**Plans**: 3/3 complete
 
 Plans:
-- [ ] 22-01: TBD
+- [x] 22-01: V14 migration + SegmentDeviationAlert entity + enum additions
+- [x] 22-02: FinalBookingService 6-scenario orchestration + SegmentDeviationService + billing listener shim
+- [x] 22-03: FinalBookingService unit tests — all 8 BOOK/SEGDEV scenarios
 
 #### Phase 23: Periodic Balance Reconciliation
 **Goal**: Scheduled job compares Nexah-reported credit balance against Sendam's tracked platform balance; raises BALANCE deviation alerts on mismatch.
@@ -251,6 +253,6 @@ Plans:
 | 19. Platform Credit Account | v1.3 | 3/3 | Complete | 2026-03-17 |
 | 20. Account Freeze Infrastructure | v1.3 | 3/3 | Complete | 2026-03-17 |
 | 21. Enhanced Credit Reservation | v1.3 | 2/2 | Complete | 2026-03-17 |
-| 22. Final Booking & Segment Deviation | v1.3 | 0/TBD | Not started | - |
+| 22. Final Booking & Segment Deviation | v1.3 | 3/3 | Complete | 2026-03-17 |
 | 23. Periodic Balance Reconciliation | v1.3 | 0/TBD | Not started | - |
 | 24. Deviation Alert Management | v1.3 | 0/TBD | Not started | - |

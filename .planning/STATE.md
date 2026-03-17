@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** v1.3 — Phase 22: Final Booking & Segment Deviation
+**Current focus:** v1.3 — Phase 23: Periodic Balance Reconciliation
 
 ## Current Position
 
