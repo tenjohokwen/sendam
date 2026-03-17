@@ -101,6 +101,32 @@ public class NexahClient {
         }
     }
 
+    /**
+     * Fetches the total credit balance from Nexah /smscredit endpoint.
+     * Used by BalanceReconciliationJob — NOT wrapped by circuit breaker (background probe).
+     * Returns the top-level "credit" field (total credits remaining across all countries).
+     *
+     * @return total Nexah credits as a long value
+     * @throws ProviderUnavailableException if the response is null or responsecode is not 1
+     */
+    @SuppressWarnings("unchecked")
+    public long fetchCreditBalance() {
+        final String url = properties.baseUrl() + "/smscredit";
+        final Map<String, String> body = Map.of(
+                "user", properties.user(),
+                "password", properties.password()
+        );
+        Map<String, Object> response = restTemplate.postForObject(url, body, Map.class);
+        if (response == null) {
+            throw new ProviderUnavailableException("Nexah /smscredit returned null response");
+        }
+        Object rc = response.get("responsecode");
+        if (!Integer.valueOf(1).equals(rc) && !"1".equals(String.valueOf(rc))) {
+            throw new ProviderUnavailableException("Nexah /smscredit non-success responsecode: " + rc);
+        }
+        return ((Number) response.get("credit")).longValue();
+    }
+
     private List<HttpMessageConverter<?>> messageConverters() {
         List<HttpMessageConverter<?>> converters = new ArrayList<>();
         MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
