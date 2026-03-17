@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 ## Current Position
 
 Phase: 20 of 24 (Account Freeze Infrastructure)
-Plan: 2 of 3
-Status: In progress
-Last activity: 2026-03-17 — Completed 20-02-PLAN.md — exception types, ClientFreezeService, PlatformFreezeService, 10 unit tests
+Plan: 3 of 3
+Status: Phase complete
+Last activity: 2026-03-17 — Completed 20-03-PLAN.md — REST endpoints, ApiAdvice handlers, CreditReservationService freeze guards, 190 tests
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ████████░░░░░░░░ 50%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 ████████████░░░░ 75%
 
 ## Accumulated Context
 
@@ -148,6 +148,13 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - PlatformFreezeService lives in billing.service — keeps CreditReservationService (also billing) calling isFrozen() within the same package without cross-module service dependency
 - isFrozen() uses @Transactional(readOnly=true) method-level override — class-level @Transactional is readWrite; method-level narrows to read for non-locking state checks
 
+**20-03 decisions:**
+- AdminClientFreezeResource uses class-level @PreAuthorize("hasRole('ADMIN')") — consistent with AdminPlatformCreditResource pattern (19-03 precedent)
+- ADMIN_CLIENT_FREEZE = /api/admin/clients/*/freeze/** added alongside existing ADMIN_CLIENTS — belt-and-suspenders specificity; same pattern as ADMIN_API_KEYS alongside ADMIN_CLIENTS
+- CreditReservationService.reserve() freeze check order: client first, platform second, balance lock last — client-specific check is cheaper and fails faster for the common per-client case
+- Cross-module service import of ClientFreezeService (account.service) into CreditReservationService (billing.service) documented in class Javadoc — service-to-service injection is permitted; prohibition is on repo-level cross-module imports
+- SmsService.cancelScheduled() SUSPENDED support: additive statusAllowed boolean (ACCEPTED || SUSPENDED) preserves original semantics with self-documenting CFREEZE-04 comment
+
 ### Pending Todos
 
 (None — clean slate for v1.2)
@@ -166,5 +173,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Completed 20-02-PLAN.md — exception types, ClientFreezeService, PlatformFreezeService, 10 unit tests (177→187 tests)
-Resume file: None — ready for 20-03
+Stopped at: Completed 20-03-PLAN.md — all 10 CFREEZE/PFLAT requirements satisfied; Phase 20 complete; 190 passing tests
+Resume file: None — ready for Phase 21
