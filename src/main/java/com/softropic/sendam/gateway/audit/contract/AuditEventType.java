@@ -35,5 +35,10 @@ public enum AuditEventType {
     // BOOK-06: platform frozen due to unrecovered shortfall
     PLATFORM_FREEZE_SHORTFALL,
     // BALREC-03: balance reconciliation mismatch detected
-    BALANCE_DEVIATION
+    BALANCE_DEVIATION,
+
+    // DEVMGMT-03: admin acknowledges a deviation alert
+    DEVIATION_ALERT_ACKNOWLEDGED,
+    // DEVMGMT-04: admin resolves a deviation alert
+    DEVIATION_ALERT_RESOLVED
 }

@@ -35,6 +35,7 @@ public final class AppEndpoints {
     public static final String                    ADMIN_PLATFORM_CREDITS = "/api/admin/platform/credits/**";
     public static final String                    ADMIN_CLIENT_FREEZE    = "/api/admin/clients/*/freeze/**";
     public static final String                    ADMIN_PLATFORM_FREEZE  = "/api/admin/platform/freeze/**";
+    public static final String                    ADMIN_DEVIATION_ALERTS = "/api/admin/deviations/**";
     public static final Map<String, String[]> SECURED_MAPPINGS;
     public static final List<String>          SECURED_ENDPOINTS; //"/api/register"
     public static final String FROM_CHROME = "/.well-known/appspecific/com.chrome.devtools.json"; //TODO investigate how to handle this
@@ -65,7 +66,8 @@ public final class AppEndpoints {
             Map.entry(ADMIN_WEBHOOK_MONITOR,  new String[]{AuthoritiesConstants.ADMIN}),
             Map.entry(ADMIN_PLATFORM_CREDITS, new String[]{AuthoritiesConstants.ADMIN}),
             Map.entry(ADMIN_CLIENT_FREEZE,   new String[]{AuthoritiesConstants.ADMIN}),
-            Map.entry(ADMIN_PLATFORM_FREEZE, new String[]{AuthoritiesConstants.ADMIN})
+            Map.entry(ADMIN_PLATFORM_FREEZE,   new String[]{AuthoritiesConstants.ADMIN}),
+            Map.entry(ADMIN_DEVIATION_ALERTS,  new String[]{AuthoritiesConstants.ADMIN})
         );
         SECURED_ENDPOINTS = List.copyOf(SECURED_MAPPINGS.keySet());
         ALL_UNRESTRICTED = new ArrayList<>(PUBLIC_STATIC_RESOURCES);
