@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Clients can send SMS messages and trust that billing is exact, idempotent, and auditable — credits are never silently lost or incorrectly charged.
-**Current focus:** v1.3 COMPLETE — Phase 24: Deviation Alert Management
+**Current focus:** v1.3 COMPLETE — Phase 25: SMS Billing Finalization Hardening (in progress)
 
 ## Current Position
 
-Phase: 24 of 24 (Deviation Alert Management)
-Plan: 4 of 4
-Status: Phase complete — v1.3 COMPLETE
-Last activity: 2026-03-17 — Completed 24-04-PLAN.md: AdminDeviationAlertResource (4-endpoint admin REST API for deviation alert lifecycle); AppEndpoints.ADMIN_DEVIATION_ALERTS constant; AuditEventType.DEVIATION_ALERT_ACKNOWLEDGED + DEVIATION_ALERT_RESOLVED; 213 tests pass
+Phase: 25 of 25 (SMS Billing Finalization Hardening)
+Plan: 1 of 1
+Status: Phase in progress
+Last activity: 2026-03-17 — Completed 25-01-PLAN.md: SmsFinalisedEvent.actualSegments → primitive long; SmsSchedulerService.forceFinalize() publishes SmsFinalisedEvent(0L) to release reservation; InsufficientPlatformBalanceException Javadoc HTTP 422 typo fixed; 213 tests pass
 
-Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 COMPLETE ████████████████████████ 100%
+Progress: v1.0 COMPLETE | v1.1 COMPLETE | v1.2 COMPLETE | v1.3 COMPLETE | v1.4 in progress ████████████████████████░ 96%
 
 ## Accumulated Context
 
@@ -196,6 +196,11 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 - ADMIN_DEVIATION_ALERTS = /api/admin/deviations/** added as 17th entry in SECURED_MAPPINGS — Map.ofEntries has no entry limit (unlike Map.of); plan note about hard limit does not apply
 - AdminDeviationAlertResource is a pure thin delegate: all four methods are single-line delegations to DeviationAlertManagementService; no business logic in controller layer
 
+**25-01 decisions:**
+- SmsFinalisedEvent.actualSegments changed to primitive long — all existing call sites use long-compatible literals; no callers required change
+- forceFinalize() always publishes SmsFinalisedEvent with 0L actualSegments (never the estimated value) — zero-segments path in FinalBookingService.book() calls CreditReservationService.release() and returns; correct treatment for a timeout with no DLR
+- SmsSchedulerServiceTest verifies only event publication, not billing chain — billing chain has its own unit tests; stale SendRequest reservationId=null is handled by FinalBookingService null-guard early return
+
 **22-02 decisions:**
 - BOOK-06 issues two alerts (SEGMENT + PLATFORM_FREEZE) in one transaction — SEGMENT records the client's deviation; PLATFORM_FREEZE records the platform-level incident for operator investigation
 - Client balance lock acquired before creditReservationService.debit() in BOOK-04/05/06 — ensures clientAvailable read is atomic with subsequent debit; re-entrant lock within same transaction is safe on PostgreSQL
@@ -227,5 +232,5 @@ All v1.0 and v1.1 decisions are logged in PROJECT.md Key Decisions table and arc
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Phase 24, Plan 04 complete — AdminDeviationAlertResource REST controller; v1.3 COMPLETE; all 213 tests pass
-Resume file: None — v1.3 milestone complete; no further plans defined
+Stopped at: Phase 25, Plan 01 complete — three v1.3 audit tech debt items closed; 213 tests pass
+Resume file: None
