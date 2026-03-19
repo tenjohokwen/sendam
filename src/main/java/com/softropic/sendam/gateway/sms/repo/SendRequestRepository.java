@@ -23,19 +23,27 @@ public interface SendRequestRepository extends JpaRepository<SendRequest, Long> 
            "ORDER BY s.scheduleTime ASC")
     Page<SendRequest> findScheduledAccepted(Pageable pageable);
 
-    @Query("SELECT s FROM SendRequest s WHERE s.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.ACCEPTED " +
-           "AND s.scheduleTime IS NOT NULL AND s.scheduleTime <= :now")
-    List<SendRequest> findDueScheduledRequests(@Param("now") Instant now);
+    @Query(value = "SELECT * FROM main.send_request s " +
+           "WHERE s.send_status = 'ACCEPTED' " +
+           "AND (s.schedule_time IS NULL OR s.schedule_time <= :now) " +
+           "ORDER BY s.schedule_time ASC NULLS FIRST " +
+           "LIMIT :limit " +
+           "FOR UPDATE SKIP LOCKED", nativeQuery = true)
+    List<SendRequest> findAndLockAcceptedRequests(@Param("now") Instant now, @Param("limit") int limit);
 
-    @Query("SELECT s FROM SendRequest s WHERE s.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.ACCEPTED " +
-           "AND s.scheduleTime IS NULL")
-    List<SendRequest> findPendingImmediateRequests();
+    @Query(value = "SELECT s.* FROM main.send_request s " +
+           "WHERE s.send_status = 'SENDING' " +
+           "AND s.last_modified_date < :cutoff " +
+           "LIMIT :limit " +
+           "FOR UPDATE SKIP LOCKED", nativeQuery = true)
+    List<SendRequest> findAndLockStuckSendingRequests(@Param("cutoff") Instant cutoff, @Param("limit") int limit);
 
-    @Query("SELECT DISTINCT s FROM SendRequest s JOIN SendRequestRecipient r ON r.sendRequestIdFk = s.id " +
-           "WHERE s.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.SUBMITTED " +
-           "AND r.sendStatus = com.softropic.sendam.gateway.sms.contract.SendRequestStatus.SUBMITTED " +
-           "AND s.lastModifiedDate < :cutoff")
-    List<SendRequest> findStaleSubmittedRequests(@Param("cutoff") Instant cutoff);
+    @Query(value = "SELECT s.* FROM main.send_request s " +
+           "WHERE s.send_status = 'SUBMITTED' " +
+           "AND s.last_modified_date < :cutoff " +
+           "LIMIT :limit " +
+           "FOR UPDATE SKIP LOCKED", nativeQuery = true)
+    List<SendRequest> findAndLockStaleSubmittedRequests(@Param("cutoff") Instant cutoff, @Param("limit") int limit);
 
     @Query("SELECT s.id FROM SendRequest s WHERE s.finalizedAt < :cutoff " +
            "AND s.sendStatus IN (com.softropic.sendam.gateway.sms.contract.SendRequestStatus.FINALIZED, " +

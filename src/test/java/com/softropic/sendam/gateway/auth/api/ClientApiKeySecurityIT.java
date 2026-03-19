@@ -79,8 +79,8 @@ public class ClientApiKeySecurityIT {
                 "ON CONFLICT (version, bus_id) DO NOTHING"
             );
             jdbcTemplate.update(
-                "INSERT INTO main.client_account (id, name, status, created_by, created_date, last_modified_by, last_modified_date, request_id) " +
-                "VALUES (?, 'IT Test Client', 'ACTIVE', 'test', NOW(), 'test', NOW(), 'test-req')",
+                "INSERT INTO main.client_account (id, name, status, frozen, created_by, created_date, last_modified_by, last_modified_date, request_id) " +
+                "VALUES (?, 'IT Test Client', 'ACTIVE', false, 'test', NOW(), 'test', NOW(), 'test-req')",
                 TEST_CLIENT_ID
             );
             return null;

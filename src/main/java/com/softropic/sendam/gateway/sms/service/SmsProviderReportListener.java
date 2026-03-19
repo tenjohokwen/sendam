@@ -120,7 +120,7 @@ public class SmsProviderReportListener {
             parent.getSendRequestId(), 
             summaries,
             parent.getReservationId(),
-            (long) totalActualSegments
+            totalActualSegments
         ));
     }
 

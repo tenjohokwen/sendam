@@ -71,7 +71,7 @@ class SmsServiceTest {
     @Test
     @DisplayName("sendSms: success - immediate send reserves credits and persists request")
     void sendSms_success_immediate() {
-        SendSmsRequest request = new SendSmsRequest("req-123", SENDER, MESSAGE, RECIPIENTS, null);
+        SendSmsRequest request = new SendSmsRequest("req-123", MESSAGE, RECIPIENTS, null);
 
         lenient().when(sendRequestRepo.findByClientIdAndSendRequestId(CLIENT_ID, "req-123")).thenReturn(Optional.empty());
         lenient().when(rateLimitingService.tryConsume(anyString(), anyString(), anyLong(), anyLong(), any(), anyLong())).thenReturn(true);
@@ -96,24 +96,9 @@ class SmsServiceTest {
     }
 
     @Test
-    @DisplayName("sendSms: failure - invalid sender ID throws SmsValidationException")
-    void sendSms_invalidSenderId() {
-        SendSmsRequest request = new SendSmsRequest("req-123", "INVALID_SENDER_ID_TOO_LONG", MESSAGE, RECIPIENTS, null);
-
-        lenient().when(sendRequestRepo.findByClientIdAndSendRequestId(CLIENT_ID, "req-123")).thenReturn(Optional.empty());
-        lenient().when(rateLimitingService.tryConsume(anyString(), anyString(), anyLong(), anyLong(), any(), anyLong())).thenReturn(true);
-
-        assertThatThrownBy(() -> smsService.sendSms(CLIENT_ID, request))
-                .isInstanceOf(SmsValidationException.class)
-                .hasFieldOrPropertyWithValue("errorCode", SmsError.INVALID_SENDER_ID);
-
-        verify(creditReservationService, never()).reserve(anyLong(), anyLong(), anyString());
-    }
-
-    @Test
     @DisplayName("sendSms: failure - recipient rate limit exceeded")
     void sendSms_recipientRateLimitExceeded() {
-        SendSmsRequest request = new SendSmsRequest("req-123", SENDER, MESSAGE, RECIPIENTS, null);
+        SendSmsRequest request = new SendSmsRequest("req-123", MESSAGE, RECIPIENTS, null);
 
         lenient().when(sendRequestRepo.findByClientIdAndSendRequestId(CLIENT_ID, "req-123")).thenReturn(Optional.empty());
         lenient().when(rateLimitingService.tryConsume(anyString(), eq("sms_recipients"), anyLong(), anyLong(), any(), anyLong())).thenReturn(false);
@@ -127,7 +112,7 @@ class SmsServiceTest {
     @Test
     @DisplayName("sendSms: failure - provider unavailable (CircuitBreaker OPEN)")
     void sendSms_providerUnavailable() {
-        SendSmsRequest request = new SendSmsRequest("req-123", SENDER, MESSAGE, RECIPIENTS, null);
+        SendSmsRequest request = new SendSmsRequest("req-123", MESSAGE, RECIPIENTS, null);
 
         lenient().when(sendRequestRepo.findByClientIdAndSendRequestId(CLIENT_ID, "req-123")).thenReturn(Optional.empty());
         lenient().when(rateLimitingService.tryConsume(anyString(), anyString(), anyLong(), anyLong(), any(), anyLong())).thenReturn(true);
@@ -142,7 +127,7 @@ class SmsServiceTest {
     @Test
     @DisplayName("sendSms: success - idempotency returns existing request")
     void sendSms_idempotency() {
-        SendSmsRequest request = new SendSmsRequest("req-123", SENDER, MESSAGE, RECIPIENTS, null);
+        SendSmsRequest request = new SendSmsRequest("req-123", MESSAGE, RECIPIENTS, null);
         SendRequest existing = SendRequest.builder()
                 .id(1L)
                 .sendRequestId("req-123")
@@ -170,7 +155,6 @@ class SmsServiceTest {
         // 3 recipients → rawExpected = 1*3 = 3, reservation = (1+1)*3 = 6
         SendSmsRequest request = new SendSmsRequest(
                 "req-resv-buf",
-                "SENDER",
                 "Hello World",
                 List.of("671234567", "672345678", "673456789"),
                 null);
@@ -208,7 +192,6 @@ class SmsServiceTest {
         String twoSegmentMsg = "A".repeat(161); // 161 GSM-7 chars → 2 segments
         SendSmsRequest request = new SendSmsRequest(
                 "req-resv-raw",
-                "SENDER",
                 twoSegmentMsg,
                 List.of("671234567", "672345678"),
                 null);
@@ -243,7 +226,6 @@ class SmsServiceTest {
         // 1-segment message, 2 recipients → each recipient row gets expectedSegments=1
         SendSmsRequest request = new SendSmsRequest(
                 "req-resv-perrecip",
-                "SENDER",
                 "Hello",
                 List.of("671234567", "672345678"),
                 null);
@@ -277,7 +259,6 @@ class SmsServiceTest {
     void sendSms_singleRecipientSingleSegment_reservationIsTwo() {
         SendSmsRequest request = new SendSmsRequest(
                 "req-resv-edge",
-                "SENDER",
                 "Hi",
                 List.of("671234567"),
                 null);

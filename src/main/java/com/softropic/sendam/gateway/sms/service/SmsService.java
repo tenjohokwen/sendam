@@ -57,6 +57,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SmsService {
 
+    private static final String SMS_SENDER = "SENDAM"; //TODO this needs to be whitelisted
     private static final Pattern SENDER_ID_PATTERN = Pattern.compile("^[A-Z0-9]{1,11}$");
 
     private final SendRequestRepository sendRequestRepo;
@@ -102,21 +103,13 @@ public class SmsService {
                     "Recipient rate limit exceeded: max 1000 recipients per minute");
         }
 
-        //TODO correct this. The sender id needs to be fixed and not from the client. It is configured by softropic and internal
-        // Step 3: Validate sender ID
-        if (!SENDER_ID_PATTERN.matcher(request.sender()).matches()) {
-            throw new SmsValidationException(
-                    "Invalid sender ID: must be 1-11 uppercase alphanumeric characters",
-                    SmsError.INVALID_SENDER_ID);
-        }
-
-        // Step 4: Validate message (JSR-303 @NotBlank handles null/blank at DTO level,
+        // Step 3: Validate message (JSR-303 @NotBlank handles null/blank at DTO level,
         // but defend here as well per plan instruction)
         if (request.message() == null || request.message().isBlank()) {
             throw new SmsValidationException("Message must not be blank", SmsError.INVALID_MESSAGE);
         }
 
-        // Step 5: Validate all recipients — collect ALL failures before throwing
+        // Step 4: Validate all recipients — collect ALL failures before throwing
         List<String> invalid = request.recipients().stream()
                 .filter(phone -> !isValidRecipient(phone))
                 .toList();
@@ -126,14 +119,14 @@ public class SmsService {
                     SmsError.INVALID_PHONE_NUMBER);
         }
 
-        // Step 6: Validate scheduleTime (only if present — must be in the future)
+        // Step 5: Validate scheduleTime (only if present — must be in the future)
         if (request.scheduleTime() != null && !request.scheduleTime().isAfter(Instant.now())) {
             throw new SmsValidationException(
                     "scheduleTime must be in the future",
                     SmsError.INVALID_SCHEDULE_TIME);
         }
 
-        // Step 6.5: Check provider availability before reserving credits (PROVIDER-01)
+        // Step 5.5: Check provider availability before reserving credits (PROVIDER-01)
         // Circuit breaker state check is in-memory — no network call.
         // Reject both OPEN (fully tripped) and HALF_OPEN (probe in progress) to avoid
         // reserving credits for requests that the dispatcher will likely fail.
@@ -142,7 +135,7 @@ public class SmsService {
             throw new ProviderUnavailableException("SMS provider is currently unavailable");
         }
 
-        // Step 7: Calculate segments and reservation amounts (RESV-01, RESV-02, RESV-03)
+        // Step 6: Calculate segments and reservation amounts (RESV-01, RESV-02, RESV-03)
         // expectedSegments: per-recipient segment count from GSM-7/UCS-2 formula (RESV-01)
         int expectedSegments = SmsSegmentCalculator.calculate(request.message());
         // rawExpectedCredits: unbuffered expected total — stored for deviation comparison (RESV-03)
@@ -150,16 +143,16 @@ public class SmsService {
         // reservationAmount: +1 buffer per recipient guards against Nexah over-reporting (RESV-02)
         long reservationAmount = (long) (expectedSegments + 1) * recipientCount;
 
-        // Step 8: Reserve credits using buffered amount — throws InsufficientBalanceException if insufficient
+        // Step 7: Reserve credits using buffered amount — throws InsufficientBalanceException if insufficient
         // (handled by existing ApiAdvice handler → 400 INSUFFICIENT_CLIENT_BALANCE)
         String reference = "sms:" + request.sendRequestId();
         long reservationId = creditReservationService.reserve(clientId, reservationAmount, reference);
 
-        // Step 9: Persist SendRequest row
+        // Step 8: Persist SendRequest row
         SendRequest sendRequest = SendRequest.builder()
                 .clientId(clientId)
                 .sendRequestId(request.sendRequestId())
-                .sender(request.sender())
+                .sender(SMS_SENDER)
                 .message(request.message())
                 .sendStatus(SendRequestStatus.ACCEPTED)
                 .scheduleTime(request.scheduleTime())
@@ -180,7 +173,7 @@ public class SmsService {
             "SMS submitted: sendRequestId=" + request.sendRequestId() + ", recipients=" + recipientCount
         ));
 
-        // Step 10: Persist one SendRequestRecipient row per recipient (RESV-04: store expectedSegments)
+        // Step 9: Persist one SendRequestRecipient row per recipient (RESV-04: store expectedSegments)
         request.recipients().forEach(phone ->
                 recipientRepo.save(SendRequestRecipient.builder()
                         .sendRequestIdFk(sendRequest.getId())
@@ -192,10 +185,10 @@ public class SmsService {
                         .build())
         );
 
-        // Step 11: Read balance AFTER reservation for response
+        // Step 10: Read balance AFTER reservation for response
         long balanceAfter = creditService.getBalance(clientId).availableBalance();
 
-        // Step 12: Return response
+        // Step 11: Return response
         log.debug("SMS send accepted for clientId={}, sendRequestId={}, reservedCredits={}", clientId, request.sendRequestId(), reservationAmount);
         return toResponse(sendRequest, balanceAfter);
     }

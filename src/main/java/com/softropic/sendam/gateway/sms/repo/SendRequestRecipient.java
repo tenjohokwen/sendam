@@ -4,6 +4,8 @@ import com.softropic.sendam.gateway.sms.contract.SendRequestStatus;
 import com.softropic.sendam.common.persistence.AbstractAuditingEntity;
 import com.softropic.sendam.common.persistence.EntityStatus;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -59,4 +61,20 @@ public class SendRequestRecipient extends AbstractAuditingEntity {
 
     @Builder.Default
     protected EntityStatus status = EntityStatus.ACTIVE;
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("sendRequestIdFk", sendRequestIdFk)
+                .append("clientId", clientId)
+                .append("recipient", recipient)
+                .append("sendStatus", sendStatus)
+                .append("gatewayMessageId", gatewayMessageId)
+                .append("providerMessageId", providerMessageId)
+                .append("segmentsConsumed", segmentsConsumed)
+                .append("expectedSegments", expectedSegments)
+                .append("status", status)
+                .toString();
+    }
 }

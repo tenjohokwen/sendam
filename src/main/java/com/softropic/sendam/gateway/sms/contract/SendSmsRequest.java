@@ -13,9 +13,6 @@ public record SendSmsRequest(
     @JsonProperty("sendRequestId") String sendRequestId,
 
     @NotBlank
-    @JsonProperty("sender") String sender,
-
-    @NotBlank
     @JsonProperty("message") String message,
 
     @NotEmpty @Size(max = 1000)

@@ -103,10 +103,9 @@ public class PlatformFreezeService {
      */
     @Transactional(readOnly = true)
     public boolean isFrozen() {
-        PlatformFreezeState state = freezeStateRepository.findState()
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Platform freeze state not initialized", "platform_freeze_state"));
-        return state.isFrozen();
+        return freezeStateRepository.findState()
+                .map(PlatformFreezeState::isFrozen)
+                .orElse(false);
     }
 
     private String resolveActor() {
