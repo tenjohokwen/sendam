@@ -8,23 +8,29 @@ import com.softropic.sendam.email.repo.EnvelopeEntityRepository;
 import com.softropic.sendam.email.repo.RecipientEntity;
 import com.softropic.sendam.email.service.MailManager;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -47,8 +53,25 @@ class EmailRetrySchedulerTest {
     @Mock
     private MailManager mailManager;
 
+    @Mock
+    private TransactionTemplate transactionTemplate;
+
     @InjectMocks
     private EmailRetryScheduler scheduler;
+
+    @BeforeEach
+    void setUp() {
+        // Mock transactionTemplate to just execute the callback
+        lenient().when(transactionTemplate.execute(any())).thenAnswer(invocation -> {
+            TransactionCallback<?> callback = invocation.getArgument(0);
+            return callback.doInTransaction(null);
+        });
+        lenient().doAnswer(invocation -> {
+            Consumer<?> callback = invocation.getArgument(0);
+            ((Consumer<Object>) callback).accept(null);
+            return null;
+        }).when(transactionTemplate).executeWithoutResult(any());
+    }
 
     // -----------------------------------------------------------------
     // empty batch
@@ -126,6 +149,7 @@ class EmailRetrySchedulerTest {
         String sendId = UUID.randomUUID().toString();
         EnvelopeEntity expired = buildEntity(sendId, 1, Instant.now().minus(Duration.ofSeconds(1)));
         when(envelopeEntityRepository.fetchFailedEmails()).thenReturn(List.of(expired));
+        when(envelopeEntityRepository.findById(expired.getId())).thenReturn(Optional.of(expired));
 
         scheduler.retryFailedEmails();
 
@@ -141,6 +165,7 @@ class EmailRetrySchedulerTest {
         EnvelopeEntity entity = buildEntity(sendId, (int) EmailRetryScheduler.MAX_RETRY_ATTEMPTS,
                                             Instant.now().minus(Duration.ofSeconds(1)));
         when(envelopeEntityRepository.fetchFailedEmails()).thenReturn(List.of(entity));
+        when(envelopeEntityRepository.findById(entity.getId())).thenReturn(Optional.of(entity));
 
         scheduler.retryFailedEmails();
 
@@ -158,6 +183,7 @@ class EmailRetrySchedulerTest {
         EnvelopeEntity exhausted = buildEntity(sendId, (int) EmailRetryScheduler.MAX_RETRY_ATTEMPTS,
                                                Instant.now().plus(Duration.ofDays(1)));
         when(envelopeEntityRepository.fetchFailedEmails()).thenReturn(List.of(exhausted));
+        when(envelopeEntityRepository.findById(exhausted.getId())).thenReturn(Optional.of(exhausted));
 
         scheduler.retryFailedEmails();
 
@@ -185,6 +211,7 @@ class EmailRetrySchedulerTest {
         EnvelopeEntity entity = buildEntity(sendId, (int) EmailRetryScheduler.MAX_RETRY_ATTEMPTS + 2,
                                             Instant.now().plus(Duration.ofDays(1)));
         when(envelopeEntityRepository.fetchFailedEmails()).thenReturn(List.of(entity));
+        when(envelopeEntityRepository.findById(entity.getId())).thenReturn(Optional.of(entity));
 
         scheduler.retryFailedEmails();
 

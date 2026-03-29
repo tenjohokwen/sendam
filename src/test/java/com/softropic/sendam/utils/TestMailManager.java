@@ -18,7 +18,7 @@ public class TestMailManager extends MailManager {
     private final        Map<String, Envelope> sentMails = new ConcurrentHashMap<>();
 
     public TestMailManager() {
-        super(null, null, null, null);
+        super(null, null, null, null, null);
     }
 
     @Override

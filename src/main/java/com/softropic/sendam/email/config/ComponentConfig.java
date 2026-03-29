@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.support.RetryTemplate;
 
+import org.springframework.transaction.support.TransactionTemplate;
+
 import java.time.Duration;
 
 @Configuration
@@ -28,8 +30,9 @@ public class ComponentConfig {
     MailManager mailManager(final MailService mailService,
                             final EnvelopeEntityRepository envelopeEntityRepo,
                             final CircuitBreakerFactory<?, ?> circuitBreakerFactory,
-                            final RetryTemplate retryTemplate) {
-        return new MailManager(mailService, envelopeEntityRepo, circuitBreakerFactory, retryTemplate);
+                            final RetryTemplate retryTemplate,
+                            final TransactionTemplate transactionTemplate) {
+        return new MailManager(mailService, envelopeEntityRepo, circuitBreakerFactory, retryTemplate, transactionTemplate);
     }
 
     @Bean

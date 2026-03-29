@@ -6,24 +6,24 @@ import com.softropic.sendam.email.contract.Recipient;
 import com.softropic.sendam.email.repo.EnvelopeEntity;
 import com.softropic.sendam.email.repo.EnvelopeEntityRepository;
 
-import jakarta.mail.MessagingException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
-import org.springframework.transaction.event.TransactionalEventListener;
-import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.mail.MailParseException;
 import org.springframework.mail.MailPreparationException;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import jakarta.mail.MessagingException;
 
 
 public class MailManager {
@@ -34,6 +34,7 @@ public class MailManager {
     private final EnvelopeEntityRepository envelopeEntityRepository;
     private final CircuitBreakerFactory<?, ?> circuitBreakerFactory;
     private final RetryTemplate retryTemplate;
+    private final TransactionTemplate transactionTemplate;
 
     private static final List<Class<? extends Exception>> NON_REPAIRABLE_ERRORS = List.of(MailParseException.class,
                                                                                           MailPreparationException.class);
@@ -41,16 +42,17 @@ public class MailManager {
     public MailManager(final MailService mailService,
                        final EnvelopeEntityRepository envelopeEntityRepository,
                        final CircuitBreakerFactory<?, ?> circuitBreakerFactory,
-                       final RetryTemplate retryTemplate) {
+                       final RetryTemplate retryTemplate,
+                       final TransactionTemplate transactionTemplate) {
         this.mailService = mailService;
         this.envelopeEntityRepository = envelopeEntityRepository;
         this.circuitBreakerFactory = circuitBreakerFactory;
         this.retryTemplate = retryTemplate;
+        this.transactionTemplate = transactionTemplate;
     }
 
     @Async("sendMailPool")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sendEmailFromTemplate(final Envelope envelope) {
         sendEmailSync(envelope);
     }
@@ -100,15 +102,19 @@ public class MailManager {
             envelopeEntity = toEnvelopeEntity(envelope, exception);
             logger.error("Could not send email after retries and circuit breaker protection. {}", envelopeEntity, exception);
         }
-        final EnvelopeEntity entityBySendId = envelopeEntityRepository.findBySendId(envelopeEntity.getSendId());
-        if (entityBySendId != null) {
-            entityBySendId.setAttempts(entityBySendId.getAttempts() + 1);
-            entityBySendId.setStatus(envelopeEntity.getStatus());
-            entityBySendId.setError(envelopeEntity.getError());
-            entityBySendId.setRetry(envelopeEntity.isRetry());
-        } else {
-            envelopeEntityRepository.save(envelopeEntity);
-        }
+
+        final EnvelopeEntity finalEnvelopeEntity = envelopeEntity;
+        transactionTemplate.executeWithoutResult(status -> {
+            final EnvelopeEntity entityBySendId = envelopeEntityRepository.findBySendId(finalEnvelopeEntity.getSendId());
+            if (entityBySendId != null) {
+                entityBySendId.setAttempts(entityBySendId.getAttempts() + 1);
+                entityBySendId.setStatus(finalEnvelopeEntity.getStatus());
+                entityBySendId.setError(finalEnvelopeEntity.getError());
+                entityBySendId.setRetry(finalEnvelopeEntity.isRetry());
+            } else {
+                envelopeEntityRepository.save(finalEnvelopeEntity);
+            }
+        });
     }
 
     private EnvelopeEntity toEnvelopeEntity(final Envelope envelope, final Exception exception) {

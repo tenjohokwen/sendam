@@ -39,8 +39,7 @@ class NexahDispatchServiceTest {
         
         lenient().when(nexahProperties.user()).thenReturn("user");
         lenient().when(nexahProperties.password()).thenReturn("pass");
-        lenient().when(nexahProperties.senderid()).thenReturn("sender");
-        
+
         NexahSmsEntry entry = new NexahSmsEntry("Success", "sms-1", "gw-123", "237671234567", 0, "OK", 1, 100);
         when(nexahClient.sendSms(any())).thenReturn(new NexahSendResponse(1, "OK", "Sent", List.of(entry)));
 
@@ -59,7 +58,6 @@ class NexahDispatchServiceTest {
         
         lenient().when(nexahProperties.user()).thenReturn("user");
         lenient().when(nexahProperties.password()).thenReturn("pass");
-        lenient().when(nexahProperties.senderid()).thenReturn("sender");
 
         NexahSmsEntry entry1 = new NexahSmsEntry("Success", "sms-1", "gw-123", "237671234567", 0, "OK", 1, 100);
         when(nexahClient.sendSms(any())).thenReturn(new NexahSendResponse(1, "OK", "Sent", List.of(entry1)));
@@ -77,7 +75,6 @@ class NexahDispatchServiceTest {
         
         lenient().when(nexahProperties.user()).thenReturn("user");
         lenient().when(nexahProperties.password()).thenReturn("pass");
-        lenient().when(nexahProperties.senderid()).thenReturn("sender");
 
         when(nexahClient.sendSms(any())).thenThrow(new ProviderUnavailableException("down"));
 
@@ -92,7 +89,6 @@ class NexahDispatchServiceTest {
         
         lenient().when(nexahProperties.user()).thenReturn("user");
         lenient().when(nexahProperties.password()).thenReturn("pass");
-        lenient().when(nexahProperties.senderid()).thenReturn("sender");
 
         when(nexahClient.sendSms(any())).thenReturn(new NexahSendResponse(1, "OK", "Empty", List.of()));
 

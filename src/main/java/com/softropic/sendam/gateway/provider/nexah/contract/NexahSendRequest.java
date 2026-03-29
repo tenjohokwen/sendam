@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record NexahSendRequest(
         @JsonProperty("user") String user,
         @JsonProperty("password") String password,
-        @JsonProperty("senderid") String senderid,
         @JsonProperty("sms") String sms,
         @JsonProperty("mobiles") String mobiles
 ) {

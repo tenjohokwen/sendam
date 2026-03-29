@@ -13,23 +13,27 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.retry.support.RetryTemplate;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import jakarta.mail.MessagingException;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class MailManagerResilienceTest {
 
@@ -42,7 +46,7 @@ public class MailManagerResilienceTest {
     private EnvelopeEntityRepository envelopeEntityRepository;
 
     @Mock
-    private CircuitBreakerFactory<?, ?> circuitBreakerFactory;
+    private TransactionTemplate transactionTemplate;
 
     private Envelope envelope;
     private Recipient recipient;
@@ -50,6 +54,17 @@ public class MailManagerResilienceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        // Mock transactionTemplate to just execute the callback
+        when(transactionTemplate.execute(any())).thenAnswer(invocation -> {
+            TransactionCallback<?> callback = invocation.getArgument(0);
+            return callback.doInTransaction(null);
+        });
+        doAnswer(invocation -> {
+            Consumer<?> callback = invocation.getArgument(0);
+            ((Consumer<Object>) callback).accept(null);
+            return null;
+        }).when(transactionTemplate).executeWithoutResult(any());
 
         // REAL CircuitBreaker configuration for state transition testing
         CircuitBreakerRegistry circuitBreakerRegistry = CircuitBreakerRegistry.of(
@@ -73,7 +88,7 @@ public class MailManagerResilienceTest {
                 .fixedBackoff(Duration.ofMillis(10))
                 .build();
 
-        mailManager = new MailManager(mailService, envelopeEntityRepository, circuitBreakerFactory, retryTemplate);
+        mailManager = new MailManager(mailService, envelopeEntityRepository, circuitBreakerFactory, retryTemplate, transactionTemplate);
 
         recipient = new Recipient();
         recipient.setEmail("test@example.com");

@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  # Sendam's private database
+  sendam-db:
+    image: postgres:16
+    container_name: sendam-postgres
+    environment:
+      POSTGRES_DB: sendam
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - dev-bridge
+
+  # The Sendam application itself
+  sendam-app:
+    build: .
+    container_name: sendam-client
+    depends_on:
+      - sendam-db
+      - nexah-api
+    ports:
+      - "9991:9991"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://sendam-db:5432/sendam
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - NEXAH_API_URL=http://nexah-api:8383
+      #- port=9991
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - dev-bridge
+
+  # Nexah API (Pulling the image you created)
+  nexah-api:
+    image: nexah-simulator:latest  # Use the image name you tagged during build
+    container_name: nexah-simulator-container
+    depends_on:
+      - nexah-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://nexah-db:5432/nexah
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      WEBHOOK_URL: http://sendam-app:9991/v1/provider/dr
+    networks:
+      - dev-bridge
+
+  # Nexah's required database
+  nexah-db:
+    image: postgres:16
+    container_name: nexah-postgres
+    environment:
+      POSTGRES_DB: nexah
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - dev-bridge
+
+networks:
+  dev-bridge:
+    driver: bridge

@@ -58,7 +58,6 @@ import lombok.extern.slf4j.Slf4j;
 public class SmsService {
 
     private static final String SMS_SENDER = "SENDAM"; //TODO this needs to be whitelisted
-    private static final Pattern SENDER_ID_PATTERN = Pattern.compile("^[A-Z0-9]{1,11}$");
 
     private final SendRequestRepository sendRequestRepo;
     private final SendRequestRecipientRepository recipientRepo;

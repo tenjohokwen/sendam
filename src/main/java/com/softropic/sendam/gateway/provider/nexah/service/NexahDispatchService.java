@@ -68,7 +68,6 @@ public class NexahDispatchService implements SmsSender {
         NexahSendRequest nexahRequest = new NexahSendRequest(
                 nexahProperties.user(),
                 nexahProperties.password(),
-                request.getSender(),
                 request.getMessage(),
                 mobilesString
         );

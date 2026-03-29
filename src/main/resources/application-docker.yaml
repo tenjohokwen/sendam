@@ -1,6 +1,6 @@
 baseurl: http://localhost
 server:
-  port: "${port:9992}"
+  port: 9991
   error:
     whitelabel:
       enabled: false
@@ -16,6 +16,9 @@ server:
   forward-headers-strategy: native  #spring: config to get client ip in compliance with the RFC 7239 specification. see ForwardedHeaderFilter bean.
 
 spring:
+  sql:
+    init:
+      mode: always
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
@@ -25,10 +28,12 @@ spring:
   jmx.enabled: false
   jpa:
     generate-ddl: true
-    hibernate.ddl-auto: create-drop #none #update #create #create-drop #validate
+    hibernate.ddl-auto: create #none #update #create #create-drop #validate
     open-in-view: false #is enabled by default. Therefore, database queries may be performed during view rendering.
     properties:
       hibernate:
+        hbm2ddl:
+          create_namespaces: false
         dialect: org.hibernate.dialect.PostgreSQLDialect
         #type.java_time_use_direct_jdbc: true # There is no need for this. new policy is to use just Instant for dates. using jdbc.time_zone just in case
         default_schema: main
@@ -40,7 +45,7 @@ spring:
         query.fail_on_pagination_over_collection_fetch: true
       org.hibernate.envers.store_data_at_delete: true
   datasource:
-    url: jdbc:postgresql://localhost/sendam?TimeZone=UTC
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://sendam-db:5432/sendam}
     username: postgres
     password: postgres
     hikari:
@@ -168,6 +173,11 @@ client:
       requestAuthToken:
         uri: https://sandbox.momodeveloper.mtn.com/collection/token/
         method: POST
+
+nexah:
+  baseurl: ${NEXAH_API_URL}
+  user: test
+  password: test123
 
 # Immutable Log Component Configuration
 immutable-log:
